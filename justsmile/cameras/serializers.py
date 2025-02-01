@@ -13,7 +13,8 @@ class CameraSerializer(serializers.HyperlinkedModelSerializer):
     # create_datetime = serializers.CharField(source='topo_object.date_insert')
 
     def get_focus(self, obj):
-        return [point for point in obj.focus[0]] if obj.focus else None
+        focus = obj.focus
+        return [point for point in focus[0]] if focus else None
 
     class Meta:
         model = Camera
