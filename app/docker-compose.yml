@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
+    env_file:
+        - .docker/app.env
+        - .docker/db.env
+    volumes:
+      - ./justsmile:/app/justsmile
+    ports:
+      # - "127.0.0.1:${BACK_PORT:-8000}:8000"
+      - '8000:8000'
+    depends_on:
+      - db
+  db:
+    image: postgis/postgis:17-3.5
+    ports:
+        - "127.0.0.1:5432:5432"
+    env_file:
+        - .docker/db.env
+    volumes:
+        - postgres_data:/var/lib/postgresql/data
+volumes:
+    postgres_data:

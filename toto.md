@@ -23,3 +23,18 @@ out;
 
 // Pour récupérer tous les points qui sont des caméras et qui appartiennent à un batiment.
 // Voir pour aussi récupérer les caméra taguées comme ayant un mur comme support ?
+
+# Improve field of view for cameras
+
+Compute focus depending on the lens / type of camera.
+- Wide-Angle Camera : Lens 2.8mm. Angle 110°. Distance 10m.
+- Standard Camera : Lens 3.6mm. Angle 80°. Distance 15m.
+- Narrow Camera : Lens 12mm. Angle 15-30°. Distance 50m.
+- Some cameras can zoom ?
+
+Ressources : 
+- https://www.jvsg.com/calculators/cctv-lens-calculator/
+- https://www.jvsg.com/cctv-field-of-view-calculation/
+- http://artpictures.club/autumn-2023.html
+- https://github.com/berkbavas/FovCalculator
+
