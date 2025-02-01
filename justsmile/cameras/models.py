@@ -2,7 +2,8 @@ import math
 import overpy
 
 from django.contrib.gis.db import models
-from django.contrib.gis.geos import Polygon, Point, GEOSGeometry
+from django.contrib.gis.db.models.functions import Distance, Intersection, ClosestPoint
+from django.contrib.gis.geos import Polygon, Point, LineString, MultiLineString
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
@@ -111,35 +112,70 @@ class Camera(models.Model):
                 return math.cos(((abs(self.angle) - 15) * 207986.0) / 11916720)
         else:
             return 1  # default angle
+        
+    def get_intersection_point_with_building(self, endOfVisionField):
+        line_vision = LineString(self.location, endOfVisionField)  # Build a line between the camera and its end vision
+        try:
+            building_accross = Building.objects.filter(
+                geom__intersects=line_vision
+                ).exclude(
+                    geom__touches=line_vision  # Exclude building if it only touches with one point of the line to match cases when camera is on wall
+                ).annotate(
+                    closest_intersection_point=ClosestPoint(Intersection("geom", line_vision), self.location)
+                ).annotate(
+                    distance=Distance("closest_intersection_point", self.location)  # Add field with distance between location and intersection point of the building
+                ).order_by("distance").first()  # We sort by this distance so that new endOfVision is the closest to the camera
+            if building_accross:
+                endOfVisionField = building_accross.closest_intersection_point
+
+        except Exception as e:
+            # If this fails we keep the basic endOfVisionField computed initially
+            raise e  # FIXME: Remove in production
+        return endOfVisionField
+    
+    def compute_focus_dome(self):
+        height = self.compute_camera_height()
+        cameraIsIntoBuilding = Building.objects.filter(geom__contains=self.location).count()
+        focus = []
+
+        coefLat = (1.0 / math.cos(self.location.x * 3.14159265 / 180))
+        
+        for x in range(0, 63, 1):  # 6,3 ~= 2pi
+            endOfVisionField = Point([
+                self.location.x + 0.000063 * math.sin(x / 10) * height,
+                self.location.y + 0.000063 * math.cos(x / 10) * coefLat * height,
+            ])
+            if not cameraIsIntoBuilding:  # If the camera is into a building we keep the default calculation mode
+                endOfVisionField = self.get_intersection_point_with_building(endOfVisionField)
+                if not endOfVisionField:
+                    continue
+            focus.append(endOfVisionField)
+        focus.append(focus[0])
+
+        return Polygon(focus)
     
     def compute_focus_fixed(self):
         direction = self.compute_camera_direction()
         height = self.compute_camera_height()
         angle = self.compute_camera_angle()
 
+        cameraIsIntoBuilding = Building.objects.filter(geom__contains=self.location).count()
+
         focus = [self.location]
         coefLat = (1.0 / math.cos(self.location.x * 3.14159265 / 180))
-        for x in range(-5, 5, 2):
-            plotLatLng = Point([
+        for x in range(-5, 5, 1):
+            endOfVisionField = Point([
                 self.location.x + 0.000063 * math.sin(direction + x / 10) * height * angle,
                 self.location.y + 0.000063 * math.cos(direction + x / 10) * coefLat * height * angle,
-            ])
-            focus.append(plotLatLng)
-        focus.append(focus[0])
-        return Polygon(focus)
-    
-    def compute_focus_dome(self):
-        height = self.compute_camera_height()
+            ])  # This point is the end of the field of vision of camera
 
-        focus = []
-        coefLat = (1.0 / math.cos(self.location.x * 3.14159265 / 180))
-        for x in range(0, 63, 2):  # 6,3 ~= 2pi
-            plotLatLng = Point([
-                self.location.x + 0.000063 * math.sin(x / 10) * height,
-                self.location.y + 0.000063 * math.cos(x / 10) * coefLat * height,
-            ])
-            focus.append(plotLatLng)
-        focus.append(focus[0])
+            if not cameraIsIntoBuilding:  # If the camera is into a building we keep default focus calculation
+                endOfVisionField = self.get_intersection_point_with_building(endOfVisionField)
+                if not endOfVisionField:
+                    continue
+
+            focus.append(endOfVisionField)
+        focus.append(focus[0])  # We close the polygon by adding again our first point (camera location)
         return Polygon(focus)
 
     def compute_focus(self):
