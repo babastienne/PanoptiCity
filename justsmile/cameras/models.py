@@ -161,3 +161,7 @@ class Camera(models.Model):
     class Meta:
         verbose_name = "Camera"
         verbose_name_plural = "Cameras"
+
+class Building(models.Model):
+    id = models.BigIntegerField(primary_key=True, blank=False)
+    geom = models.PolygonField(blank=False)
