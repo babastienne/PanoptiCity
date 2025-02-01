@@ -25,11 +25,16 @@ class Command(BaseCommand):
         imported = 0
         skipped = 0
 
+
+        bbox = "43.59000411748475,1.4119791984558108,43.59845816697428,1.4270746707916262"
+        # FIXME: Small bbox = 43.59000411748475,1.4119791984558108,43.59845816697428,1.4270746707916262
+        # FIXME: Medium bbox = 43.56702144054462,1.3820457458496094,43.60848803975705,1.502809524536133
+
         try:
             self.api = overpy.Overpass()
 
             # fetch all ways and nodes
-            result = self.fetch_data("")
+            result = self.fetch_data(bbox)
             # TODO: use BBOX parameter and spilt BBOX by multiple requests if too large to avoid timing out with API
             # TODO: Import large data from file instead of API / think about updating strategy
             
@@ -47,18 +52,8 @@ class Command(BaseCommand):
         self.stdout.write(f"--- Summary ---\n{imported} new cameras imported or updated\n{skipped} cameras skipped (already existing)")
     
     def fetch_data(self, bbox):
-        return self.api.query("""
-            [out:json]
-            [timeout:25]
-            ;
-            node["man_made"="surveillance"]
-            (
-                43.59000411748475,1.4119791984558108,43.59845816697428,1.4270746707916262
-            );
-            out geom;
-        """)
-        # FIXME: Small bbox = 43.59000411748475,1.4119791984558108,43.59845816697428,1.4270746707916262
-        # FIXME: Medium bbox = 43.56702144054462,1.3820457458496094,43.60848803975705,1.502809524536133
+        query = f'[out:json][timeout:25];node["man_made"="surveillance"]({bbox});out geom;'
+        return self.api.query(query)
     
     def compute_direction(self, tags, camera):
         direction = None
