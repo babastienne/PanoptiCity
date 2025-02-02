@@ -120,6 +120,10 @@
                 if (request.readyState === 4 && request.status === 200) {
                     response = JSON.parse(request.responseText);
                     callback(response.results);
+                    if(response.next) {
+                        request.open(method, response.next, true);
+                        request.send()
+                    }
                 }
             };
             request.send();
