@@ -1,9 +1,8 @@
 import math
-import overpy
 
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Distance, Intersection, ClosestPoint
-from django.contrib.gis.geos import Polygon, Point, LineString, MultiLineString
+from django.contrib.gis.geos import Polygon, Point, LineString
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
