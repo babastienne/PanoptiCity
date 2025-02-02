@@ -1,9 +1,4 @@
 var map;
-var plotList;
-var plotLayers = [];
-var footprintPolygon;
-var infoPopup;
-
 
 // Draw the map for the first time.
 function initMap() {
@@ -30,122 +25,35 @@ function initMap() {
         "OpenStreetMap": osmTiles,
         "Carto": cartoTiles
     };
+    
+    const tiles_cams = new L.dataTileLayerCamera('http://localhost:8000/api/cameras.json?tile={z}/{x}/{y}', {
+        minZoom: 11,
+        display: true,
+    });
+    
+    const overlayMaps = {
+        "Cameras": tiles_cams,
+    }
+    
 
     // Set up the map.
-    map = new L.Map('map');
-    map.setView([43.5952783, 1.4189609], 19);
+    map = new L.map('map', {
+        center: [43.60139, 1.440207],
+        zoom: 16,
+        layers: [osmTiles]
+    });
+    map.addLayer(tiles_cams);  // Add this layer after initialization because it need to know map to init itself
     map.zoomControl.setPosition('topleft');
     map.attributionControl.setPosition('bottomright');
-    map.addLayer(osmTiles);
-    L.control.layers(baseMaps).addTo(map);
-
-    addPlots();
-    map.on('moveend', onMapMoved);
+    L.control.layers(baseMaps, overlayMaps).addTo(map);
 
     // Leaflet locate button
     L.control.locate().addTo(map);
-
-
-    // Handle min zoom to optimize queries
-    L.Control.textbox = L.Control.extend({
-        onAdd: function(map) { 
-            var text = L.DomUtil.create('div');
-            text.id = "minZoomRequired";
-            text.innerHTML = "Trop éloigné ! Zoomer pour afficher le contenu"
-            return text;
-        },
-    
-        onRemove: function(map) {
-            // Nothing to do here
-        }
-    });
-    L.control.textbox = function(opts) { return new L.Control.textbox(opts);}
-    infoPopup = L.control.textbox({ position: 'bottomleft' });
-}
-
-// Fetch data
-async function getCameras() {
-    let result = []
-    let bounds = map.getBounds();
-
-    try {
-        result = await fetch(
-            `http://localhost:8000/api/cameras.json?in_bbox=${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`
-        ).then(
-            (data)=>data.json()
-        )
-        console.log("POINTS");
-        console.log(result);
-    } catch (error) {
-        throw new Error("Error while trying to fetch data from backend");
-    }
-
-    return result?.results || result;
-}
-
-// Remove all markers from map.
-function removeMarkers() {
-    for (i=0; i<plotLayers.length; i++) {
-        map.removeLayer(plotLayers[i]);
-    }
-    if (footprintPolygon != null) {
-        map.removeLayer(footprintPolygon);
-    }
-    plotLayers=[];
-}
-
-// Things to do when the map has been moved.
-function onMapMoved(e) {
-    checkDisplay();
 }
 
 // Things to do when a marker has been clicked.
 function onClick(e) {
     e.target.openPopup();
-}
-
-function checkDisplay() {
-    if(map.getZoom() > 11) {
-        addPlots();
-        infoPopup.remove();
-    } else {
-        removeMarkers();
-        infoPopup.addTo(map);
-    }
-}
-
-async function addPlots() {
-    plotList = await getCameras();
-    // buildings = await getBuildings();
-    
-    removeMarkers();
-    for (i=0; i<plotList.length; i++) {
-        var plotLatLng;
-        var plotMarker = '';
-        
-        try {
-            plotLatLng = new L.LatLng(plotList[i].lat, plotList[i].lon);
-            // Add camera icon
-            plotMarker = new L.Marker(plotLatLng, {icon : eval(plotList[i].marker + 'Icon')});
-            
-            // Draw fixed camera's field of view and add it to map.
-            if (plotList[i].focus != null) {
-                // Draw camera's field of view and add it to map.
-                var  plotFocus = new L.Polygon(plotList[i].focus, { color: plotList[i].color, weight: 1, fillOpacity: 0.1 })
-                map.addLayer(plotFocus);
-                plotLayers.push(plotFocus);
-            }
-          
-            // Add camera details to camera marker.
-            addCameraDetailsData(plotMarker, plotList[i]);
-        } catch(e) {
-        }
-
-        if (plotMarker !== '') {
-            map.addLayer(plotMarker);
-            plotLayers.push(plotMarker);
-        }
-    }
 }
 
 // Add camera popup to camera marker.
