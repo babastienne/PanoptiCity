@@ -41,10 +41,17 @@ class Command(BaseCommand):
                         if self.verbose:
                             self.stdout.write(f"Building #{elem.id} already exists. Skipped.")
                         skipped += 1
+
+            # We remove buildings that are roofs
+            total = 0
+            for elem in osmium.FileProcessor('osm-data/midi-pyrenees-latest.osm.pbf', osmium.osm.WAY).with_filter(osmium.filter.TagFilter(('building', 'roof'))):
+                if Building.objects.filter(id=elem.id).exists():
+                    Building.objects.filter(id=elem.id).delete()
+                    total += 1
         except Exception:
             raise
 
-        self.stdout.write(f"--- Summary ---\n{imported} new buildings imported or updated\n{skipped} buildings skipped (already existing)")
+        self.stdout.write(f"--- Summary ---\n{imported} new buildings imported or updated\n{skipped} buildings skipped (already existing)\nFound and removed {total} buildings that are roofs")
 
     def create_building(self, building_overpass, total, imported):
         try:
@@ -53,13 +60,12 @@ class Command(BaseCommand):
                 id=building_overpass.id,
                 geom = geometry
             )
+            if self.verbose:
+                if building[1]:
+                    self.stdout.write(f"{imported}/{total} Building #{building_overpass.id} created.")
+                else:
+                    self.stdout.write(f"{imported}/{total} Building #{building_overpass.id} updated.")
             return building
         except Exception:
             pass
-
-        if self.verbose:
-            if building[1]:
-                self.stdout.write(f"{imported}/{total} Building #{building_overpass.id} created.")
-            else:
-                self.stdout.write(f"{imported}/{total} Building #{building_overpass.id} updated.")
         return None

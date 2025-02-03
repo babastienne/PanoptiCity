@@ -3,6 +3,8 @@
 - [ ] Rechercher une adresse
 - [x] Attributions OSM
 - [ ] Style mobile / RWD
+- [x] Gérer support de la pagination des résultats côté front-end.
+- [x] Gérer requêtes tuilées côté front-end
 
 # Calculateur d'itinéraire
 
@@ -14,15 +16,10 @@
 
 
 # Re-dessiner champ de vision caméra selon murs batiments 
+- [ ] Ne pas compter les caméras marquée comme "indoor" > Géré ? A Vérifier mais normalement c'est bon
+- [ ] Intégrer dans la base les multi-polygones ("relation" osm) car actuellement cela fait des vides
+- [x] Prise en compte du tag "roof" pour certains batiments pour permettre de voir à travers (exemple péages) https://wiki.openstreetmap.org/wiki/FR:Tag:building=roof?uselang=fr
 
-way["building"="yes"]({{bbox}});
-node(w)->.b;
-node["surveillance:type"="camera"]({{bbox}})->.t;
-node.b.t;
-out;
-
-// Pour récupérer tous les points qui sont des caméras et qui appartiennent à un batiment.
-// Voir pour aussi récupérer les caméra taguées comme ayant un mur comme support ?
 
 # Improve field of view for cameras
 
@@ -37,4 +34,6 @@ Ressources :
 - https://www.jvsg.com/cctv-field-of-view-calculation/
 - http://artpictures.club/autumn-2023.html
 - https://github.com/berkbavas/FovCalculator
+
+# Performances d'import des données ??!!
 
