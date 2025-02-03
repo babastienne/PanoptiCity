@@ -1,4 +1,0 @@
-django
-tzdata
-psycopg2-binary
-djangorestframework-gis

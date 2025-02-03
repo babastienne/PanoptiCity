@@ -3,8 +3,13 @@
 - [ ] Rechercher une adresse
 - [x] Attributions OSM
 - [ ] Style mobile / RWD
+- [ ] Déplacer code front dans app django ?
+
+# Performances utilisation
+
 - [x] Gérer support de la pagination des résultats côté front-end.
 - [x] Gérer requêtes tuilées côté front-end
+- [ ] Mettre en place cache côté serveur + mécanisme invalidation du cache lors des mises à jours
 
 # Calculateur d'itinéraire
 
@@ -35,5 +40,9 @@ Ressources :
 - http://artpictures.club/autumn-2023.html
 - https://github.com/berkbavas/FovCalculator
 
-# Performances d'import des données ??!!
 
+# Données
+
+## Performances d'import des données ??!!
+- [ ] Comment importer un grand volume de données ? Buffer lors de l'import ou tout en base ?
+- [ ] Comment tenir à jour la donnée ? Fréquence et procédure ?
