@@ -1,11 +1,3 @@
-/* Label with number of composite cameras. */
-var compositeCamerasIcon = L.icon({
-  iconUrl: 'images/icon.png',
-  iconSize: [0, 0],
-  iconAnchor: [0, 0],
-  labelAnchor: [-6, 0]
-});
-
 /* Gray icons for non-specific cameras and guards. */
 var camBlackIcon = L.icon({
   iconUrl: 'images/cam.png',
