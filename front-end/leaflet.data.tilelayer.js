@@ -3,21 +3,26 @@
     includes: L.Evented.prototype,
 
     url: null,
-    displayedCameraList: null,
     displayedFocusList: null,
     infoPopup: null,
     displayCameras: null,
     displayCamerasFocus: null,
     MIN_ZOOM_TO_DISPLAY_FOCUS: null,
+    markersCluster: null,
 
     initialize(url, options) {
       this.url = url;
-      (this.MIN_ZOOM_TO_DISPLAY_FOCUS = 16), (this.displayedCameraList = []);
+      this.MIN_ZOOM_TO_DISPLAY_FOCUS = 17;
       this.displayedFocusList = [];
-      this.displayCameras = true;
+      this.displayCameras = false;
       this.displayCamerasFocus = false;
       this.infoPopup = this._createInfoPopup();
       L.GridLayer.prototype.initialize.call(this, options);
+      this.markersCluster = L.markerClusterGroup({
+        disableClusteringAtZoom: 17,
+        spiderfyOnMaxZoom: false,
+        removeOutsideVisibleBounds: true,
+      });
     },
 
     _createInfoPopup: function () {
@@ -69,8 +74,7 @@
         // Add camera details to camera marker.
         addCameraDetailsData(plotMarker, camera);
         if (plotMarker !== "") {
-          map.addLayer(plotMarker);
-          this.displayedCameraList.push(plotMarker);
+          this.markersCluster.addLayer(plotMarker);
         }
       } catch (e) {
         console.error(`Error while trying to display the camera ${camera.id}`);
@@ -130,20 +134,18 @@
       } else {
         this.displayCamerasFocus = false;
       }
-      if (!this.displayedCameraList.length && localStorage.length) {
+      if (!this.displayCameras && localStorage.length) {
         // If there is nothing currently displayed on map and something in local storage
         this._displayAllCameras(); // Then we display it
+        map.addLayer(this.markersCluster); // We add the layer containing cameras position (+ cluster management)
       }
+      this.displayCameras = true;
       L.GridLayer.prototype.onAdd.call(this, map);
     },
 
     onRemove(map) {
       // Called when layer is removed from map
-      map.on("zoomend", this._onZoomAnim.bind(this));
-      for (i = 0; i < this.displayedCameraList.length; i++) {
-        map.removeLayer(this.displayedCameraList[i]); // We remove cameras from map
-      }
-      this.displayedCameraList = []; // We re-init the displayed camera list
+      map.removeLayer(this.markersCluster);
       for (i = 0; i < this.displayedFocusList.length; i++) {
         map.removeLayer(this.displayedFocusList[i]); // We remove the focus from map
       }
@@ -166,6 +168,9 @@
             this._displayFocus(responseData[i]);
           }
         }
+      }
+      if (!map.hasLayer(this.markersCluster)) {
+        map.addLayer(this.markersCluster);
       }
       done(null, tile);
     },
@@ -194,7 +199,7 @@
         this.displayCamerasFocus &&
         currentMapZoom < this.MIN_ZOOM_TO_DISPLAY_FOCUS
       ) {
-        // If we actually display camera focus and the zoom is below minimum for displaying focus
+        // If we currently display camera focus and the zoom is below minimum for displaying focus
         for (let i = 0; i < this.displayedFocusList.length; i++) {
           map.removeLayer(this.displayedFocusList[i]); // Then we remove the focus from map (if there is some)
         }
@@ -203,32 +208,29 @@
       }
       if (
         (this.options.maxZoom && currentMapZoom > this.options.maxZoom) || // If map zoom if greater than maxZoom
-        (this.options.minZoom && currentMapZoom < this.options.minZoom)
+        (this.options.minZoom && currentMapZoom < this.options.minZoom) // Or if map zoom is lower than minZoom
       ) {
-        // Or if map zoom is lower than minZoom
-        for (let i = 0; i < this.displayedCameraList.length; i++) {
-          map.removeLayer(this.displayedCameraList[i]); // Then we remove cameras from map
-        }
+        map.removeLayer(this.markersCluster);
         for (let i = 0; i < this.displayedFocusList.length; i++) {
           map.removeLayer(this.displayedFocusList[i]); // And we also remove their focus
         }
-        this.displayedCameraList = []; // We re-init the displayed camera list
         this.displayedFocusList = []; // We re-init the displayed focus list
         this.infoPopup.addTo(map); // We add popup to alert user that he need to change zoom to see content
         this.displayCameras = false;
         this.displayCamerasFocus = false;
       } else {
         this.infoPopup.remove(); // We remove the popup with message for user
-        this.displayCameras = true; // We store we can display cameras
+        if (!this.displayCameras && localStorage.length) {
+          // If there is nothing currently displayed on map and something in local storage
+          map.addLayer(this.markersCluster); // Then we display the cameras / cluster
+          this.displayCameras = true; // We store we can display cameras
+        }
         if (currentMapZoom >= this.MIN_ZOOM_TO_DISPLAY_FOCUS) {
           // when zoom is less than 16 the focus can't be seen so we avoid displaying it to save performances
           this.displayCamerasFocus = true;
           if (!this.displayedFocusList.length && localStorage.length) {
             this._displayAllFocus(); // If there is no focus currently displayed on map and something in local storage, we display it
           }
-        }
-        if (!this.displayedCameraList.length && localStorage.length) {
-          this._displayAllCameras(); // If there is nothing currently displayed on map and something in local storage, we display it
         }
       }
     },
