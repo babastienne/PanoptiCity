@@ -11,6 +11,7 @@
     markersCluster: null,
 
     initialize(url, options) {
+      // Function called one time when creating our object
       this.url = url;
       this.MIN_ZOOM_TO_DISPLAY_FOCUS = 17;
       this.displayedFocusList = [];
@@ -25,6 +26,52 @@
       });
     },
 
+    onAdd() {
+      // Called when layer is added to the map
+      map.on("zoomend", this._onZoomAnim.bind(this));
+      let currentMapZoom = map.getZoom();
+      if (currentMapZoom >= this.MIN_ZOOM_TO_DISPLAY_FOCUS) {
+        this.displayCamerasFocus = true;
+      } else {
+        this.displayCamerasFocus = false;
+      }
+      if (!this.displayCameras && localStorage.length) {
+        // If there is nothing currently displayed on map and something in local storage
+        this._displayAllCameras(); // Then we display it
+        map.addLayer(this.markersCluster); // We add the layer containing cameras position (+ cluster management)
+      }
+      this.displayCameras = true;
+      L.GridLayer.prototype.onAdd.call(this, map);
+    },
+
+    onRemove(map) {
+      // Called when layer is removed from map
+      map.removeLayer(this.markersCluster);
+      for (i = 0; i < this.displayedFocusList.length; i++) {
+        map.removeLayer(this.displayedFocusList[i]); // We remove the focus from map
+      }
+      this.displayedFocusList = []; // We re-init the displayed focus list
+      L.GridLayer.prototype.onRemove.call(this, map);
+    },
+
+    createTile(coords, done) {
+      // Called each time a tile is created / called
+      var tile = L.DomUtil.create("div", "leaflet-tile");
+      var url = this._expandUrl(this.url, coords);
+      if (localStorage.getItem(this._generateCoordsString(coords))) {
+        // Tile already in cache so already displayed
+        done(null, tile);
+      } else {
+        this._ajaxRequest(
+          "GET",
+          url,
+          this._updateCache.bind(this, done, coords, tile)
+        );
+      }
+      return tile;
+    },
+
+    // INTERNAL METHODS
     _createInfoPopup: function () {
       // Function called only call during initialization
       // Create a popup to display text to user of zoom too low
@@ -45,20 +92,45 @@
       return L.control.textbox({ position: "bottomleft" });
     },
 
-    createTile(coords, done) {
-      var tile = L.DomUtil.create("div", "leaflet-tile");
-      var url = this._expandUrl(this.url, coords);
-      if (localStorage.getItem(this._generateCoordsString(coords))) {
-        // Tile already in cache so already displayed
-        done(null, tile);
-      } else {
-        this._ajaxRequest(
-          "GET",
-          url,
-          this._updateCache.bind(this, done, coords, tile)
-        );
+    _ajaxRequest: function (method, url, callback) {
+      // Function handling api requests. Called by createTile method.
+      let request = new XMLHttpRequest();
+      request.open(method, url, true);
+      request.onreadystatechange = function () {
+        if (request.readyState === 4 && request.status === 200) {
+          let response = JSON.parse(request.responseText);
+          callback(response.results); // Callback function is '_updateCache'
+          if (response.next) {
+            // Handle pagination : if there is another page of result, we fetch it recursively
+            request.open(method, response.next, true);
+            request.send();
+          }
+        }
+      };
+      request.send();
+      return request;
+    },
+
+    _updateCache: function (done, coords, tile, responseData) {
+      localStorage.setItem(this._generateCoordsString(coords), false);
+      for (let i = 0; i < responseData.length; i++) {
+        if (!localStorage.getItem(`data-${responseData[i].id}`)) {
+          localStorage.setItem(
+            `data-${responseData[i].id}`,
+            JSON.stringify(responseData[i])
+          );
+          if (this.displayCameras) {
+            this._displayCamera(responseData[i]);
+          }
+          if (this.displayCamerasFocus) {
+            this._displayFocus(responseData[i]);
+          }
+        }
       }
-      return tile;
+      if (!map.hasLayer(this.markersCluster)) {
+        map.addLayer(this.markersCluster);
+      }
+      done(null, tile);
     },
 
     _displayCamera(camera) {
@@ -123,74 +195,6 @@
           this._displayFocus(camera);
         }
       }
-    },
-
-    onAdd() {
-      // Called when layer is added to the map
-      map.on("zoomend", this._onZoomAnim.bind(this));
-      let currentMapZoom = map.getZoom();
-      if (currentMapZoom >= this.MIN_ZOOM_TO_DISPLAY_FOCUS) {
-        this.displayCamerasFocus = true;
-      } else {
-        this.displayCamerasFocus = false;
-      }
-      if (!this.displayCameras && localStorage.length) {
-        // If there is nothing currently displayed on map and something in local storage
-        this._displayAllCameras(); // Then we display it
-        map.addLayer(this.markersCluster); // We add the layer containing cameras position (+ cluster management)
-      }
-      this.displayCameras = true;
-      L.GridLayer.prototype.onAdd.call(this, map);
-    },
-
-    onRemove(map) {
-      // Called when layer is removed from map
-      map.removeLayer(this.markersCluster);
-      for (i = 0; i < this.displayedFocusList.length; i++) {
-        map.removeLayer(this.displayedFocusList[i]); // We remove the focus from map
-      }
-      this.displayedFocusList = []; // We re-init the displayed focus list
-      L.GridLayer.prototype.onRemove.call(this, map);
-    },
-
-    _updateCache: function (done, coords, tile, responseData) {
-      localStorage.setItem(this._generateCoordsString(coords), false);
-      for (let i = 0; i < responseData.length; i++) {
-        if (!localStorage.getItem(`data-${responseData[i].id}`)) {
-          localStorage.setItem(
-            `data-${responseData[i].id}`,
-            JSON.stringify(responseData[i])
-          );
-          if (this.displayCameras) {
-            this._displayCamera(responseData[i]);
-          }
-          if (this.displayCamerasFocus) {
-            this._displayFocus(responseData[i]);
-          }
-        }
-      }
-      if (!map.hasLayer(this.markersCluster)) {
-        map.addLayer(this.markersCluster);
-      }
-      done(null, tile);
-    },
-
-    _ajaxRequest: function (method, url, callback) {
-      let request = new XMLHttpRequest();
-      request.open(method, url, true);
-      request.onreadystatechange = function () {
-        if (request.readyState === 4 && request.status === 200) {
-          let response = JSON.parse(request.responseText);
-          callback(response.results); // Callback function is '_updateCache'
-          if (response.next) {
-            // Handle pagination : if there is another page of result, we fetch it recursively
-            request.open(method, response.next, true);
-            request.send();
-          }
-        }
-      };
-      request.send();
-      return request;
     },
 
     _onZoomAnim: function (e) {
