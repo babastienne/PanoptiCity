@@ -9,7 +9,17 @@ function initMap() {
       maxNativeZoom: 19,
       maxZoom: 21,
       attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> | Babastienne',
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
+    }
+  );
+
+  var esriTiles = L.tileLayer(
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    {
+      maxNativeZoom: 19,
+      maxZoom: 21,
+      attribution:
+        '&copy; <a href="https://doc.arcgis.com/en/data-appliance/latest/maps/world-imagery.htm" targer="_blank">Esri</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
     }
   );
 
@@ -19,19 +29,20 @@ function initMap() {
       minZoom: 4,
       maxZoom: 21,
       attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attribution">CARTO</a> | Babastienne',
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | &copy; <a href="https://carto.com/attribution">CARTO</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
     }
   );
 
   var baseMaps = {
     OpenStreetMap: osmTiles,
+    Satellite: esriTiles,
     Carto: cartoTiles,
   };
 
   const tiles_cams = new L.dataTileLayerCamera(
     "http://localhost:8000/api/cameras.json?tile={z}/{x}/{y}",
     {
-      minZoom: 11,
+      minZoom: 13,
       display: true,
     }
   );
@@ -44,12 +55,12 @@ function initMap() {
   map = new L.map("map", {
     center: [43.60139, 1.440207],
     zoom: 16,
-    layers: [osmTiles],
   });
-  map.addLayer(tiles_cams); // Add this layer after initialization because it need to know map to init itself
   map.zoomControl.setPosition("topleft");
   map.attributionControl.setPosition("bottomright");
   L.control.layers(baseMaps, overlayMaps).addTo(map);
+  map.addLayer(osmTiles); // Add this layer after initialization because it need to know map to init itself
+  map.addLayer(tiles_cams); // Add this layer after initialization because it need to know map to init itself
 
   // Leaflet locate button
   L.control.locate().addTo(map);
