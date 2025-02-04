@@ -2,43 +2,74 @@ var map;
 
 // Draw the map for the first time.
 function initMap() {
-  osmTiles = new L.TileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  // osmTiles = new L.TileLayer(
+  //   "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  //   {
+  //     minZoom: 4,
+  //     maxNativeZoom: 19,
+  //     maxZoom: 21,
+  //     attribution:
+  //       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
+  //     label: "OpenStreetMap",
+  //   }
+  // );
+
+  var alidaeTiles = L.tileLayer(
+    "//tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.jpg",
     {
-      minZoom: 4,
       maxNativeZoom: 19,
       maxZoom: 21,
       attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
+        '&copy; CNES, Distribution Airbus DS, &copy; Airbus DS, &copy; PlanetObserver (Contains Copernicus Data) | &copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
+      label: "Satellite",
     }
   );
 
-  var esriTiles = L.tileLayer(
-    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+  // var osmBrightTiles = L.tileLayer(
+  //   "//tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.jpg",
+  //   {
+  //     maxNativeZoom: 19,
+  //     maxZoom: 21,
+  //     attribution:
+  //       '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
+  //   }
+  // );
+
+  var CartoDB_Voyager = L.tileLayer(
+    "//{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
     {
-      maxNativeZoom: 19,
-      maxZoom: 21,
       attribution:
-        '&copy; <a href="https://doc.arcgis.com/en/data-appliance/latest/maps/world-imagery.htm" targer="_blank">Esri</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: "abcd",
+      maxZoom: 20,
+      label: "Map",
     }
   );
 
-  cartoTiles = new L.TileLayer(
-    "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
-    {
-      minZoom: 4,
-      maxZoom: 21,
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | &copy; <a href="https://carto.com/attribution">CARTO</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
-    }
-  );
+  var baseMaps = [
+    CartoDB_Voyager,
+    alidaeTiles,
+    // osmTiles,
+    // osmBrightTiles: osmBrightTiles,
+  ];
 
-  var baseMaps = {
-    OpenStreetMap: osmTiles,
-    Satellite: esriTiles,
-    Carto: cartoTiles,
-  };
+  // Set up the map.
+  map = new L.map("map", {
+    center: [43.60139, 1.440207],
+    zoom: 16,
+  });
+  map.attributionControl.setPosition("bottomright");
+  var layerSwitcher = L.control.basemaps({
+    basemaps: baseMaps,
+    tileX: 15,
+    tileY: 10,
+    tileZ: 5,
+  });
+  layerSwitcher.setPosition("bottomright");
+  map.addControl(layerSwitcher);
+  map.zoomControl.setPosition("topleft");
 
+  // Create overlay layer with cameras
   const tiles_cams = new L.dataTileLayerCamera(
     "http://localhost:8000/api/cameras.json?tile={z}/{x}/{y}",
     {
@@ -46,20 +77,9 @@ function initMap() {
       display: true,
     }
   );
-
-  const overlayMaps = {
-    Cameras: tiles_cams,
-  };
-
-  // Set up the map.
-  map = new L.map("map", {
-    center: [43.60139, 1.440207],
-    zoom: 16,
-  });
-  map.zoomControl.setPosition("topleft");
-  map.attributionControl.setPosition("bottomright");
-  L.control.layers(baseMaps, overlayMaps).addTo(map);
-  map.addLayer(osmTiles); // Add this layer after initialization because it need to know map to init itself
+  // const overlayMaps = {
+  //   Cameras: tiles_cams,
+  // };
   map.addLayer(tiles_cams); // Add this layer after initialization because it need to know map to init itself
 
   // Leaflet locate button

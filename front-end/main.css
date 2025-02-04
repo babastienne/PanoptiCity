@@ -1,17 +1,17 @@
 body {
-    margin: 0;
+  margin: 0;
 }
 
 #map {
-    height: 100vh;
+  height: 100vh;
 }
 
 #minZoomRequired {
-    color: aliceblue;
-    margin: 1em;
-    padding: 1.5em;
-    border: 1px solid aliceblue;
-    background-color: #1c1b1d;
-    border-radius: 1em;
-    font-size: 1.5em;
+  color: aliceblue;
+  margin: 1em;
+  padding: 1.5em;
+  border: 0px;
+  background-color: #1c1b1d;
+  border-radius: 1em;
+  font-size: 1.5em;
 }

@@ -1,31 +1,44 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>My own Sunders</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-</head>
-<body>
-    
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
     <div id="map"></div>
-
 
     <!-- ** Load external libs ** -->
     <!-- Leaflet -->
-    <link rel="stylesheet" href="libs/leaflet/leaflet.css"/>
+    <link rel="stylesheet" href="libs/leaflet/leaflet.css" />
     <script src="libs/leaflet/leaflet.js"></script>
     <!-- Leaflet locate -->
-    <link rel="stylesheet" href="libs/leaflet-locate/L.Control.Locate.min.css" />
-    <script src="libs/leaflet-locate/L.Control.Locate.min.js" charset="utf-8"></script>    
+    <link
+      rel="stylesheet"
+      href="libs/leaflet-locate/L.Control.Locate.min.css"
+    />
+    <script
+      src="libs/leaflet-locate/L.Control.Locate.min.js"
+      charset="utf-8"
+    ></script>
+    <!-- Leaflet BaseMaps -->
+    <link
+      rel="stylesheet"
+      href="libs/Leaflet.Basemaps/L.Control.Basemaps.css"
+    />
+    <!-- Using this local version, modified on L until https://github.com/consbio/Leaflet.Basemaps/pull/28 is merged and released -->
+    <script
+      src="libs/Leaflet.Basemaps/L.Control.Basemaps.js"
+      charset="utf-8"
+    ></script>
     <!-- Turf -->
-    <script src="libs/turf/turf.min.js" charset="utf-8"></script>    
+    <script src="libs/turf/turf.min.js" charset="utf-8"></script>
 
     <!-- ** Custom css / JS ** -->
-    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
-    <script src='leaflet.data.tilelayer.js'></script>
-    <script src='leafletembed_icons.js'></script>
-    <script src='main.js'></script>
-</body>
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="leaflet.data.tilelayer.js"></script>
+    <script src="leafletembed_icons.js"></script>
+    <script src="main.js"></script>
+  </body>
 </html>
