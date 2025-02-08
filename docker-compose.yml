@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  postgis:
+    image: postgis/postgis:latest
+    environment:
+      POSTGRES_DB: justsmile
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgis_data:/var/lib/postgresql/data
+    ports:
+      - "5452:5432" # /!\
+
+  osm2pgsql:
+    image: iboates/osm2pgsql:latest
+    environment:
+      PGPASSWORD: postgres
+    volumes:
+      - ./back-end:/data
+
+volumes:
+  postgis_data:
