@@ -4,6 +4,7 @@
 
     url: null,
     displayedFocusList: null,
+    displayedCamerasList: null,
     infoPopup: null,
     displayCameras: null,
     displayCamerasFocus: null,
@@ -13,14 +14,15 @@
     initialize(url, options) {
       // Function called one time when creating our object
       this.url = url;
-      this.MIN_ZOOM_TO_DISPLAY_FOCUS = 17;
+      this.MIN_ZOOM_TO_DISPLAY_FOCUS = 16;
       this.displayedFocusList = [];
+      this.displayedCamerasList = [];
       this.displayCameras = false;
       this.displayCamerasFocus = false;
       this.infoPopup = this._createInfoPopup();
       L.GridLayer.prototype.initialize.call(this, options);
       this.markersCluster = L.markerClusterGroup({
-        disableClusteringAtZoom: 17,
+        disableClusteringAtZoom: 15,
         spiderfyOnMaxZoom: false,
         removeOutsideVisibleBounds: true,
       });
@@ -58,16 +60,16 @@
       // Called each time a tile is created / called
       var tile = L.DomUtil.create("div", "leaflet-tile");
       var url = this._expandUrl(this.url, coords);
-      if (localStorage.getItem(this._generateCoordsString(coords))) {
-        // Tile already in cache so already displayed
-        done(null, tile);
-      } else {
-        this._ajaxRequest(
-          "GET",
-          url,
-          this._updateCache.bind(this, done, coords, tile)
-        );
-      }
+      // if (localStorage.getItem(this._generateCoordsString(coords))) {
+      //   // Tile already in cache so already displayed
+      //   done(null, tile);
+      // } else {
+      this._ajaxRequest(
+        "GET",
+        url,
+        this._updateCache.bind(this, done, coords, tile)
+      );
+      // }
       return tile;
     },
 
@@ -99,12 +101,7 @@
       request.onreadystatechange = function () {
         if (request.readyState === 4 && request.status === 200) {
           let response = JSON.parse(request.responseText);
-          callback(response.results); // Callback function is '_updateCache'
-          if (response.next) {
-            // Handle pagination : if there is another page of result, we fetch it recursively
-            request.open(method, response.next, true);
-            request.send();
-          }
+          callback(response); // Callback function is '_updateCache'
         }
       };
       request.send();
@@ -112,16 +109,24 @@
     },
 
     _updateCache: function (done, coords, tile, responseData) {
-      localStorage.setItem(this._generateCoordsString(coords), false);
+      // localStorage.setItem(this._generateCoordsString(coords), "-");  // Store seen tile coordinates in localStorge
       for (let i = 0; i < responseData.length; i++) {
-        if (!localStorage.getItem(`data-${responseData[i].id}`)) {
+        let cameraInLocalStorage = localStorage.getItem(
+          `data-${responseData[i].id}`
+        );
+        if (this.displayCameras) {
+          this._displayCamera(responseData[i]);
+        }
+        if (
+          responseData[i]?.focus &&
+          !JSON.parse(cameraInLocalStorage)?.focus
+        ) {
+          // If there is focus in the response and no focus currently stored in localStorage for this camera
+          // Basically we store every camera detail with focus but not cameras with only points
           localStorage.setItem(
             `data-${responseData[i].id}`,
             JSON.stringify(responseData[i])
           );
-          if (this.displayCameras) {
-            this._displayCamera(responseData[i]);
-          }
           if (this.displayCamerasFocus) {
             this._displayFocus(responseData[i]);
           }
@@ -136,20 +141,27 @@
     _displayCamera(camera) {
       let plotLatLng;
       let plotMarker = "";
-
-      try {
-        plotLatLng = new L.LatLng(camera.lat, camera.lon);
-        // Add camera icon
-        plotMarker = new L.Marker(plotLatLng, {
-          icon: eval(camera.marker + "Icon"),
-        });
-        // Add camera details to camera marker.
-        addCameraDetailsData(plotMarker, camera);
-        if (plotMarker !== "") {
-          this.markersCluster.addLayer(plotMarker);
+      if (!this.displayedCamerasList.includes(camera.id)) {
+        // Only if not already displayed
+        try {
+          plotLatLng = new L.LatLng(camera.lat, camera.lon);
+          // Add camera icon
+          plotMarker = new L.Marker(plotLatLng, {
+            icon: eval(camera.marker + "Icon"),
+            id: camera.id,
+          });
+          // Add camera details to camera marker.
+          plotMarker.on("click", displayCameraDetails);
+          if (plotMarker !== "") {
+            this.markersCluster.addLayer(plotMarker);
+            // We add displayed cameras to the temporary list
+            this.displayedCamerasList.push(camera.id);
+          }
+        } catch (e) {
+          console.error(
+            `Error while trying to display the camera ${camera.id}`
+          );
         }
-      } catch (e) {
-        console.error(`Error while trying to display the camera ${camera.id}`);
       }
     },
 
@@ -175,6 +187,7 @@
     },
 
     _displayAllCameras: function () {
+      // Function called to display all cameras in LocalStorage
       for (let i = 0; i < localStorage.length; i++) {
         if (localStorage.key(i).substring(0, 4) == "data") {
           let camera = JSON.parse(localStorage.getItem(localStorage.key(i)));
@@ -241,7 +254,9 @@
 
     // UTILS FUNCTIONS
     _expandUrl: function (template, coords) {
-      return L.Util.template(template, coords);
+      let url = L.Util.template(template, coords);
+      url += coords.z >= this.MIN_ZOOM_TO_DISPLAY_FOCUS ? "&focus=1" : "";
+      return url;
     },
 
     _generateCoordsString: function (coords) {

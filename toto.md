@@ -50,3 +50,13 @@ Ressources :
 
 - [ ] Invalider les requêtes en cours avant pour gérer le cas de mouvements sur la carte
 - [ ] Limite de stockage / Size of localStorage
+
+### NOTES
+
+- Optim front : Debounce : https://www.freecodecamp.org/news/javascript-debounce-example/
+- [x] Optimize localstorage : do not store everything
+- [x] When Z < 16 : don't send focus
+- [x] Never send attributes except on click
+- [x] Réduire la précision des geoms
+
+( Back : d_within)
