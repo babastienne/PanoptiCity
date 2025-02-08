@@ -3,18 +3,20 @@ from rest_framework import serializers
 from cameras.models import Camera
 
 
-# Serializers define the API representation.
-class CameraSerializer(serializers.HyperlinkedModelSerializer):
-    lat = serializers.FloatField(source='location.x')
-    lon = serializers.FloatField(source='location.y')
-
-
+class CameraListSerializer(serializers.HyperlinkedModelSerializer):
+    lat = serializers.SerializerMethodField()
+    lon = serializers.SerializerMethodField()
     focus = serializers.SerializerMethodField()
-    # create_datetime = serializers.CharField(source='topo_object.date_insert')
+
+    def get_lat(self, obj):
+        return round(obj.location.y, 6)
+
+    def get_lon(self, obj):
+        return round(obj.location.x, 6)
 
     def get_focus(self, obj):
         focus = obj.focus
-        return [point for point in focus[0]] if focus else None
+        return [[round(point[1], 6), round(point[0], 6)] for point in focus[0]] if focus else None
 
     class Meta:
         model = Camera

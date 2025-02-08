@@ -1,7 +1,6 @@
 from rest_framework import viewsets
-from rest_framework_gis.filters import InBBoxFilter
+from rest_framework_gis.filters import InBBoxFilter, TMSTileFilter
 
-from cameras.filters import TMSTileFilter
 from cameras.models import Camera
 from cameras.serializers import CameraSerializer
 

@@ -80,7 +80,7 @@ class Command(BaseCommand):
     def create_camera(self, camera_osm):
         camera, created = Camera.objects.get_or_create(
             id=camera_osm.id,
-            location = Point([camera_osm.lat, camera_osm.lon], srid=4326)
+            location = Point([camera_osm.lon, camera_osm.lat], srid=4326)
         )
         tags = camera_osm.tags
         if 'description' in tags:

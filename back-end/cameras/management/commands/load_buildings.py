@@ -44,7 +44,7 @@ class Command(BaseCommand):
 
             # We remove buildings that are roofs
             total = 0
-            for elem in osmium.FileProcessor('osm-data/midi-pyrenees-latest.osm.pbf', osmium.osm.WAY).with_filter(osmium.filter.TagFilter(('building', 'roof'))):
+            for elem in osmium.FileProcessor(filename, osmium.osm.WAY).with_filter(osmium.filter.TagFilter(('building', 'roof'))):
                 if Building.objects.filter(id=elem.id).exists():
                     Building.objects.filter(id=elem.id).delete()
                     total += 1
@@ -55,7 +55,7 @@ class Command(BaseCommand):
 
     def create_building(self, building_overpass, total, imported):
         try:
-            geometry = Polygon([[x.lat, x.lon] for x in building_overpass.nodes], srid=4326)
+            geometry = Polygon([[x.lon, x.lat] for x in building_overpass.nodes], srid=4326)
             building = Building.objects.get_or_create(
                 id=building_overpass.id,
                 geom = geometry
