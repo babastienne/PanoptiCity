@@ -6,4 +6,6 @@ sandbox.py
 
 # Data folder and files
 osm-data/
-tmp_buildings.opl
+
+# Env file
+.env

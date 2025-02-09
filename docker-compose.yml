@@ -4,20 +4,48 @@ services:
   postgis:
     image: postgis/postgis:latest
     environment:
-      POSTGRES_DB: justsmile
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgis_data:/var/lib/postgresql/data
     ports:
-      - "5452:5432" # /!\
+      - "${POSTGRES_PORT}:5432"
 
   osm2pgsql:
     image: iboates/osm2pgsql:latest
+    depends_on:
+      - postgis
     environment:
-      PGPASSWORD: postgres
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGUSER: ${POSTGRES_USER}
+      PGDATABASE: ${POSTGRES_DB}
+      PGPORT: 5432
+      PGHOST: postgis
     volumes:
       - ./back-end:/data
+      - ./osm-data:/data/osm-data
+
+  web:
+    build: .
+    container_name: django-docker
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgis
+    volumes:
+      - ./osm-data:/osm-data
+    environment:
+      DJANGO_SECRET_KEY: ${SECRET_KEY}
+      DEBUG: ${DEBUG}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: postgis
+      POSTGRES_PORT: 5432
+      #  DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS}
+    env_file:
+      - .env
 
 volumes:
   postgis_data:

@@ -20,16 +20,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0@1fpg4l%)8a@uqgqipk-8^108(@5$&$21d&7(y(#ic8-uy)8+'
+SECRET_KEY = SECRET_KEY = os.environ.get("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.environ.get("DEBUG", default=0))
 
 ALLOWED_HOSTS = []
 
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -43,6 +39,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_gis',
     'cameras',
+    'gunicorn',
     # 'debug_toolbar',  # FIXME: Remove for production
 ]
 
@@ -89,11 +86,11 @@ WSGI_APPLICATION = 'justsmile.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": "justsmile",
-        "USER": "postgres",
-        "PASSWORD": "postgres",
-        "HOST": "127.0.0.1",
-        "PORT": "5452",
+        "NAME": os.getenv('POSTGRES_DB', 'postgres'),
+        "USER": os.getenv('POSTGRES_USER', 'postgres'),
+        "PASSWORD": os.getenv('POSTGRES_PASSWORD', "postgres"),
+        "HOST": os.getenv('POSTGRES_HOST', "127.0.0.1"),
+        "PORT": os.getenv('POSTGRES_PORT', "5452"),
     }
 }
 

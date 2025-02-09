@@ -5,6 +5,8 @@ from django.contrib.gis.geos import Point
 
 from cameras.models import Camera
 
+from timeit import default_timer as timer
+from datetime import timedelta
 
 class Command(BaseCommand):
     help = 'Load all cameras from osm file'
@@ -14,8 +16,9 @@ class Command(BaseCommand):
         parser.add_argument('--update', '-u', action='store_true', default=False, dest='update_field', help='Force update of cameras (can take some time)')
         parser.add_argument('--details', '-d', action='store_true', dest='verbose_field', help='If parameter is set, show more logs')
 
-
     def handle(self, *args, **options):
+        start = timer()
+
         filename = options['camera_file']
         update = options.get('update_field')
         self.verbose = options.get('verbose_field')
@@ -24,22 +27,20 @@ class Command(BaseCommand):
         skipped = 0
 
         try:
-            for elem in osmium.FileProcessor(filename, osmium.osm.NODE).with_filter(osmium.filter.KeyFilter('man_made')):
-                    # When using the bracket notation, make sure the tag exists.
-                if 'man_made' in elem.tags:
-                    if elem.tags['man_made'] == 'surveillance':
-                        if update or not Camera.objects.filter(id=elem.id).exists():
-                            self.create_camera(elem)
-                            imported += 1
-                        else:
-                            if self.verbose:
-                                self.stdout.write(f"Camera #{elem.id} already exists. Skipped.")
-                            skipped += 1
+            for elem in osmium.FileProcessor(filename, osmium.osm.NODE).with_filter(osmium.filter.TagFilter(('man_made', 'surveillance'))):
+                if update or not Camera.objects.filter(id=elem.id).exists():
+                    self.create_camera(elem)
+                    imported += 1
+                else:
+                    if self.verbose:
+                        self.stdout.write(f"Camera #{elem.id} already exists. Skipped.")
+                    skipped += 1
         except Exception:
             raise
 
         self.stdout.write(f"--- Summary ---\n{imported} new cameras imported or updated\n{skipped} cameras skipped (already existing)")
-
+        end = timer()
+        self.stdout.write(f'Time to execute {timedelta(seconds=end-start)}')
     
     def compute_direction(self, tags, camera):
         direction = None
@@ -78,10 +79,15 @@ class Command(BaseCommand):
         return direction
 
     def create_camera(self, camera_osm):
-        camera, created = Camera.objects.get_or_create(
-            id=camera_osm.id,
-            location = Point([camera_osm.lon, camera_osm.lat], srid=4326)
-        )
+        location = Point([camera_osm.lon, camera_osm.lat], srid=4326)
+        try:
+            camera = Camera.objects.get(id=camera_osm.id)
+            camera.location = location
+        except Camera.DoesNotExist:
+            camera, created = Camera.objects.get_or_create(
+                id = camera_osm.id,
+                location = location
+            )
         tags = camera_osm.tags
         if 'description' in tags:
             camera.description = tags['description']

@@ -32,7 +32,7 @@ local buildings = osm2pgsql.define_table({
 })
 
 function osm2pgsql.process_way(object)
-    if object.is_closed and object.tags.building then
+    if object.is_closed and object.tags.building and object.tags.building ~= 'roof' then
         buildings:insert({
             geom = object:as_polygon()
         })

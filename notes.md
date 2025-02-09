@@ -22,3 +22,11 @@ docker compose down
 docker volume rm test_postgis_data
 
 docker compose run osm2pgsql -d justsmile -U postgres -H postgis -P 5432 -O flex -S /data/buildings.lua /data/osm-data/sample-data.osm.pbf
+
+## Replication / Changes
+
+Get state of first imported file :
+
+pyosmium-get-changes -O back-end/osm-data/midi-pyrenees-latest.osm.pbf -f sequence.state -v
+
+Download from : https://download.openstreetmap.fr/extracts/europe/

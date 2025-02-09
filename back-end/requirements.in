@@ -1,0 +1,9 @@
+django
+djangorestframework
+overpy
+osmium
+djangorestframework-gis
+django-cors-headers
+gunicorn
+psycopg2-binary
+# GDAL==3.6.2

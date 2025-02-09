@@ -20,7 +20,7 @@
 # Re-dessiner champ de vision caméra selon murs batiments
 
 - [ ] Ne pas compter les caméras marquée comme "indoor" > Géré ? A Vérifier mais normalement c'est bon
-- [ ] Intégrer dans la base les multi-polygones ("relation" osm) car actuellement cela fait des vides
+- [x] Intégrer dans la base les multi-polygones ("relation" osm) car actuellement cela fait des vides
 - [x] Prise en compte du tag "roof" pour certains batiments pour permettre de voir à travers (exemple péages) https://wiki.openstreetmap.org/wiki/FR:Tag:building=roof?uselang=fr
 
 # Improve field of view for cameras
@@ -44,7 +44,7 @@ Ressources :
 ## Performances d'import des données ??!!
 
 - [ ] Comment importer un grand volume de données ? Buffer lors de l'import ou tout en base ?
-- [ ] Comment tenir à jour la donnée ? Fréquence et procédure ?
+- [ ] Comment tenir à jour la donnée ? Fréquence et procédure ? Piste : Utiliser le mécanisme de diff pour générer un fichier de diff via une commande et l'appliquer sur la base ? https://docs.osmcode.org/pyosmium/latest/reference/Replication/#osmium.replication.ReplicationServer.collect_diffs
 
 ## Performances front-end
 
