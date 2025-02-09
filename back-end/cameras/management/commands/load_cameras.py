@@ -83,6 +83,7 @@ class Command(BaseCommand):
         try:
             camera = Camera.objects.get(id=camera_osm.id)
             camera.location = location
+            created = False
         except Camera.DoesNotExist:
             camera, created = Camera.objects.get_or_create(
                 id = camera_osm.id,

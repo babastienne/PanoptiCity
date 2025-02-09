@@ -39,7 +39,7 @@ class Command(BaseCommand):
                             self.create_building(elem.id, elem.nodes, total, imported)
                         elif update:  # Else if it exists but the command is an update
                             self.update_building(elem.id, elem.nodes, total, imported)
-                        else: 
+                        else:
                             if self.verbose:
                                 self.stdout.write(f"Building #{elem.id} already exists. Skipped.")
                             skipped += 1
