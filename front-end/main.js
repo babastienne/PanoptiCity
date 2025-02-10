@@ -73,7 +73,7 @@ function initMap() {
   map.zoomControl.setPosition("topleft");
 
   // Create overlay layer with cameras
-  const tiles_cams = new L.dataTileLayerCamera(
+  const tilesCams = new L.dataTileLayerCamera(
     `${BASE_URL_API}/cameras.json?tile={z}/{x}/{y}`,
     {
       minZoom: 4,
@@ -81,9 +81,9 @@ function initMap() {
     }
   );
   // const overlayMaps = {
-  //   Cameras: tiles_cams,
+  //   Cameras: tilesCams,
   // };
-  map.addLayer(tiles_cams); // Add this layer after initialization because it need to know map to init itself
+  map.addLayer(tilesCams); // Add this layer after initialization because it need to know map to init itself
 
   // Leaflet locate button
   L.control.locate().addTo(map);

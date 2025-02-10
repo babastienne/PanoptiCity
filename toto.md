@@ -10,6 +10,7 @@
 - [x] Gérer support de la pagination des résultats côté front-end.
 - [x] Gérer requêtes tuilées côté front-end
 - [ ] Mettre en place cache côté serveur + mécanisme invalidation du cache lors des mises à jours
+- [ ] Cache nginx + compression gzip/brotli
 
 # Calculateur d'itinéraire
 
@@ -25,7 +26,8 @@
 
 # Improve field of view for cameras
 
-Compute focus depending on the lens / type of camera.
+- [ ] Do something with panning cameras
+- [ ] Compute focus depending on the lens / type of camera.
 
 - Wide-Angle Camera : Lens 2.8mm. Angle 110°. Distance 10m.
 - Standard Camera : Lens 3.6mm. Angle 80°. Distance 15m.
@@ -41,17 +43,20 @@ Ressources :
 
 # Données
 
-## Performances d'import des données ??!!
+- [ ] Importer tous les tags des objets "brut" (pour permettre l'édition)
+- [ ] Gérer le cas des noeuds qui comportent plusieurs caméras (séparées par : ou ;)
 
-- [ ] Comment importer un grand volume de données ? Buffer lors de l'import ou tout en base ?
-- [ ] Comment tenir à jour la donnée ? Fréquence et procédure ? Piste : Utiliser le mécanisme de diff pour générer un fichier de diff via une commande et l'appliquer sur la base ? https://docs.osmcode.org/pyosmium/latest/reference/Replication/#osmium.replication.ReplicationServer.collect_diffs
+## Performances d'import des données
+
+- [x] Comment importer un grand volume de données ? Buffer lors de l'import ou tout en base ?
+- [x] Comment tenir à jour la donnée ? Fréquence et procédure ? Piste : Utiliser le mécanisme de diff pour générer un fichier de diff via une commande et l'appliquer sur la base ? https://docs.osmcode.org/pyosmium/latest/reference/Replication/#osmium.replication.ReplicationServer.collect_diffs
 
 ## Performances front-end
 
 - [ ] Invalider les requêtes en cours avant pour gérer le cas de mouvements sur la carte
 - [ ] Limite de stockage / Size of localStorage
 
-### NOTES
+## Divers performance
 
 - Optim front : Debounce : https://www.freecodecamp.org/news/javascript-debounce-example/
 - [x] Optimize localstorage : do not store everything
@@ -59,4 +64,4 @@ Ressources :
 - [x] Never send attributes except on click
 - [x] Réduire la précision des geoms
 
-( Back : d_within)
+( Back : d_within) > Non concluant

@@ -53,7 +53,7 @@ We will refer at your downloaded pbf file as `<my-pbf-file>` and in the next com
 
 1. Download both your desired pbf and state files and put them in the `osm-data` folder. (_If you want to use sample data you can skip this step_)
 
-2. Import the buildings in the database (can take some time depending of your area) by running the following command:
+2. Import the buildings in the database (can take some time depending of your area. For loading entire France it took 12 minutes) by running the following command:
 
 ```
    docker compose run osm2pgsql -O flex -S /data/buildings.lua /data/osm-data/<my-pbf-file>
