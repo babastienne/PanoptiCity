@@ -46,7 +46,6 @@ const themeSwitcher = {
       this._scheme = scheme;
     }
     if (scheme == "dark") {
-      console.log("switch to light");
       layerSwitcherDark.options.basemaps.forEach((e) => {
         map.removeLayer(e);
       });
@@ -54,7 +53,6 @@ const themeSwitcher = {
       map.addControl(layerSwitcherLight);
       this.button.classList.remove("theme-toggle--toggled");
     } else {
-      console.log("switch to dark");
       layerSwitcherLight.options.basemaps.forEach((e) => {
         map.removeLayer(e);
       });

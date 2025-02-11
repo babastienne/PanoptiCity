@@ -4,6 +4,7 @@
 - [x] Attributions OSM
 - [ ] Style mobile / RWD
 - [ ] Déplacer code front dans app django ?
+- [ ] Retirer popup front-end map "zoom min" ?
 
 # Performances utilisation
 
@@ -58,10 +59,19 @@ Ressources :
 
 ## Divers performance
 
-- Optim front : Debounce : https://www.freecodecamp.org/news/javascript-debounce-example/
+- [ ] Optim front : Debounce : https://www.freecodecamp.org/news/javascript-debounce-example/
 - [x] Optimize localstorage : do not store everything
 - [x] When Z < 16 : don't send focus
 - [x] Never send attributes except on click
 - [x] Réduire la précision des geoms
 
 ( Back : d_within) > Non concluant
+
+## Style
+
+- [ ] Improve dark mode map (https://github.com/openstreetmap/openstreetmap-website/issues/2332#issuecomment-867821340 // https://github.com/openstreetmap/openstreetmap-website/issues/2332#issuecomment-727266980)
+
+## Create better configuration
+
+- [ ] Zoom initial de la carte et emplacement de départ
+- [ ]
