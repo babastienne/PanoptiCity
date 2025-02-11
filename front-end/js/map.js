@@ -1,40 +1,39 @@
 var map;
-const BASE_URL_API = "http://localhost:8000/api";
+var layerSwitcherLight;
+var layerSwitcherDark;
 
 // Draw the map for the first time.
 function initMap() {
-  // osmTiles = new L.TileLayer(
-  //   "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-  //   {
-  //     minZoom: 4,
-  //     maxNativeZoom: 19,
-  //     maxZoom: 21,
-  //     attribution:
-  //       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
-  //     label: "OpenStreetMap",
-  //   }
-  // );
+  // osmTiles = new L.TileLayer("//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  //   minZoom: 4,
+  //   maxNativeZoom: 19,
+  //   maxZoom: 21,
+  //   attribution:
+  //     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
+  //   label: "OpenStreetMap",
+  // });
 
-  var alidaeTiles = L.tileLayer(
-    "//tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.jpg",
+  var esriTiles = L.tileLayer(
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     {
       maxNativeZoom: 19,
       maxZoom: 21,
       attribution:
-        '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
+        'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
       label: "Satellite",
     }
   );
 
-  // var osmBrightTiles = L.tileLayer(
-  //   "//tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.jpg",
-  //   {
-  //     maxNativeZoom: 19,
-  //     maxZoom: 21,
-  //     attribution:
-  //       '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
-  //   }
-  // );
+  var CartoDB_DarkMatter = L.tileLayer(
+    "//{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+    {
+      maxNativeZoom: 19,
+      maxZoom: 21,
+      subdomains: "abcd",
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
+    }
+  );
 
   var CartoDB_Voyager = L.tileLayer(
     "//{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
@@ -47,12 +46,25 @@ function initMap() {
     }
   );
 
-  var baseMaps = [
-    CartoDB_Voyager,
-    alidaeTiles,
-    // osmTiles,
-    // osmBrightTiles: osmBrightTiles,
-  ];
+  // Define dark map theme
+  var baseDarkMaps = [CartoDB_DarkMatter, esriTiles];
+  layerSwitcherLight = L.control.basemaps({
+    basemaps: baseDarkMaps,
+    tileX: 15,
+    tileY: 10,
+    tileZ: 5,
+  });
+  layerSwitcherLight.setPosition("bottomright");
+
+  // Define light map theme
+  var baseLightMaps = [CartoDB_Voyager, esriTiles];
+  layerSwitcherDark = L.control.basemaps({
+    basemaps: baseLightMaps,
+    tileX: 15,
+    tileY: 10,
+    tileZ: 5,
+  });
+  layerSwitcherDark.setPosition("bottomright");
 
   // Set up the map.
   map = new L.map("map", {
@@ -62,15 +74,9 @@ function initMap() {
   });
   map.attributionControl.setPosition("bottomright");
   map.attributionControl.setPrefix(false);
-  var layerSwitcher = L.control.basemaps({
-    basemaps: baseMaps,
-    tileX: 15,
-    tileY: 10,
-    tileZ: 5,
-  });
-  layerSwitcher.setPosition("bottomright");
-  map.addControl(layerSwitcher);
-  map.zoomControl.setPosition("topleft");
+
+  // By default add light switcher (override after by themeSwitcher)
+  map.addControl(layerSwitcherLight);
 
   // Create overlay layer with cameras
   const tilesCams = new L.dataTileLayerCamera(

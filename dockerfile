@@ -38,4 +38,4 @@ CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
 
 # -- FOR PRODUCTION -- (FIXME Static files)
-# CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "justsmile.wsgi:application"]
+# CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "panopticity.wsgi:application"]

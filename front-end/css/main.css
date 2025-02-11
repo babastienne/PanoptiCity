@@ -2,8 +2,16 @@ body {
   margin: 0;
 }
 
+#logo-img {
+  margin-right: 1rem;
+}
+
 #map {
-  height: 100vh;
+  height: 80vh;
+}
+
+header {
+  padding: 0 1rem 0 1rem;
 }
 
 #minZoomRequired {
