@@ -1,3 +1,40 @@
+# PanoptiCity
+
+![PanoptiCity logo](front-end/android-chrome-192x192.png)
+
+- [PanoptiCity](#panopticity)
+  - [Introduction](#introduction)
+  - [Installation](#installation)
+    - [Download the project and requirements](#download-the-project-and-requirements)
+    - [Initialize database](#initialize-database)
+    - [Import initial data and update](#import-initial-data-and-update)
+      - [Steps to import data](#steps-to-import-data)
+      - [Steps to update the cameras](#steps-to-update-the-cameras)
+      - [Steps to update the buildings](#steps-to-update-the-buildings)
+  - [More information](#more-information)
+    - [Create or tag multiple cameras on same location](#create-or-tag-multiple-cameras-on-same-location)
+    - [Complementary resources](#complementary-resources)
+      - [CCTV Effectiveness](#cctv-effectiveness)
+      - [Websites about mass surveillance](#websites-about-mass-surveillance)
+      - [Fight back](#fight-back)
+  - [Legal information for nerds](#legal-information-for-nerds)
+    - [Attribution](#attribution)
+      - [Cartography](#cartography)
+      - [OpenStreetMap](#openstreetmap)
+      - [Backend](#backend)
+      - [Frontend](#frontend)
+    - [License](#license)
+
+## Introduction
+
+Welcome to PanoptiCity !
+
+This project's purpose is to help display information about CCTV, cameras, to easily map where they are, waht they can see, and get data about their usage in cities. The website also give users an easy way to contribute into the OpenStreetMap database if they want to add cameras when they see some that are not already known or improve the attributes of existing ones.
+
+PanoptiCity is my way to act and try to raise awareness about mass surveillance in all cities, to make people realize the amount of cameras around us that they usually not even see. In a time were artifical intelligence is generalizing, it is more than ever the moment to ask ourselves, is it really the model of society we want to build collectively ?
+
+One major inspiration for this project has been the website [SunderS](https://sunders.uber.space/). It gave me the idea of improving the project with new features and therefore obviously needs to be cited. Information used is from the awesome [OpenStreetMap](https://www.openstreetmap.org/) database. Other attributions and projects used for this application can be found later on this page.
+
 ## Installation
 
 Thank you for your interest in this project. This section will guide you to facilitate the installation, configuration and run of the project on your server.
@@ -102,3 +139,91 @@ We will refer at your downloaded pbf file as `<my-pbf-file>` and in the next com
 ```
 
 We don't recommand to automatize this operation.
+
+## More information
+
+Wow, you're still there ? I guess you're really interested in this project. Here is some usefull information and resources.
+
+### Create or tag multiple cameras on same location
+
+If you see multiple cameras at the same location (for example on the same pole), it is advised to create one entry for each camera and set the location the closest as possible. This way it will ensure the logic "one node in OSM = one object in real life".
+
+This way of representing objects has been discussed in the community and seems to be the recommanded way:
+
+- See [this discussion](https://community.openstreetmap.org/t/how-to-tag-multiple-cameras-on-one-supporting-pole/2070) (in english)
+- Or [almost the same](https://forum.openstreetmap.fr/t/marquer-plusieurs-cameras-sur-un-meme-mat/13427) (in french)
+
+### Complementary resources
+
+One inspiration for this project has been the SunderS project. Lot of resources can already be [found on their website](https://sunders.uber.space/#where).
+
+#### CCTV Effectiveness
+
+[Multiple studies](https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q=cctv+effectiveness&btnG=&oq=cctv) has been conducted to measure effectiveness of CCTV in public areas. It usually shows relative effectiveness but not in the spots we could imagine: in car parkings and residential areas ... so not really in public spaces and city centers.
+
+Also, [field studies](https://academicworks.cuny.edu/cgi/viewcontent.cgi?article=1275&context=jj_pubs) in cities have shown that video surveillance does not significantly help to solve investigations, nor does it reduce the number of violent crimes, drug-related offences or public order disturbances in cities. There are a number of reasons for this ineffectiveness: lack of coordination between security forces (private, state, municipal), poor quality images, misdirected or dirty cameras, etc. But the major problem is the staggering number of video streams compared with the small number of officers who are supposed to be using them.
+
+Moreover, few studies really compare CCTV costs in comparison with human investments, wich could be interesting.
+
+Finally, in a rising AI age, this really asks more about what we want to do collectively as society and where we want to go. Does little effectiveness justify global surveillance and death of anonymity ?
+
+#### Websites about mass surveillance
+
+- [TechnoPolice](https://technopolice.fr/) by La Quadrature Du Net (french)
+- [Big Brother Watch](https://bigbrotherwatch.org.uk/)
+- [Outperforming activism: reflections on the demise of the surveillance camera players](https://www.tandfonline.com/doi/full/10.1080/14794713.2015.1084797#d1e98)
+
+#### Fight back
+
+- Anonymize yourself with IR LEDs:
+  - [The camera Shy Hoodie](https://www.macpierce.com/the-camera-shy-hoodie)
+  - [Miss my face](https://urbanarmor.org/portfolio/miss-my-face/)
+- Anti-recognition systems:
+  - [Meet the activists perfecting the craft of anti-surveillance](https://www.ft.com/content/a0f8d8c5-ee5c-4618-bfbd-6bfb383b803e)
+  - [Anti-Surveillance Makeup](https://www.nylon.com/beauty/on-anti-surveillance-makeup-and-just-how-effective-it-really-is)
+  - [Clothes, masks, makeup and more](https://yr.media/tech/guide-to-anti-surveillance-fashion/)
+- Disable cameras:
+  - [With lasers](http://www.naimark.net/projects/zap/howto.html)
+  - Or physicaly (paint, stickers, rocks ... be creative)
+
+... and **add cameras that you spot in your daily life on OpenStreetMap !** The best way to fight back is to know your enemy, so help us map all the existing cameras so we can at least know where they are and try to avoid them (when possible).
+
+## Legal information for nerds
+
+### Attribution
+
+This project is here thanks to the work of others. To create this website I've mainly used those following dependencies.
+
+If you notice that I've used your project but don't see it in this list feel free to open an [issue](https://github.com/babastienne/PanoptiCity/issues/new) or a [pull request](https://github.com/babastienne/PanoptiCity/compare) so it can be added.
+
+#### Cartography
+
+- [Leaflet v1.9.4](https://github.com/Leaflet/Leaflet/releases/tag/v1.9.4) - _BSD 2-Clause License_
+- [Leaflet.SimpleLocate v1.0.4](https://github.com/mfhsieh/leaflet-simple-locate) - _MIT license_
+- [Leaflet.Basemaps v0.2.1](https://github.com/consbio/Leaflet.Basemaps/releases/tag/0.2.1) - _ISC license_ (used a [forked version](https://github.com/consbio/Leaflet.Basemaps/pull/28))
+- [Leaflet.markercluster v1.5.3](https://github.com/Leaflet/Leaflet.markercluster) - _MIT license_
+- Map background attributions can be seen directly on map on the website
+
+#### OpenStreetMap
+
+- [OpenStreetMap](https://osmfoundation.org/) - _OBdL-1.0 license_
+- [pyosmium v4.0.2](https://github.com/osmcode/pyosmium) - _BSD 2-Clause License_
+- [osm2pgsql v2.0.1](https://github.com/osm2pgsql-dev/osm2pgsql) - _GPL-2.0 License_
+- [osm-api-js v2.4.0](https://github.com/k-yle/osm-api-js/) - _MIT license_
+ 
+#### Backend
+
+- [Django v5.1](https://github.com/django/django) - _BSD-3-Clause license_
+- [django-rest-framework-gis v1.1.0](https://github.com/openwisp/django-rest-framework-gis) - _MIT license_
+- [django-rest-framework v3.15.2](https://github.com/encode/django-rest-framework) - _[license](https://github.com/encode/django-rest-framework/blob/master/LICENSE.md)_
+
+#### Frontend
+
+- [Pico CSS v2.0.6](https://github.com/picocss/pico) - _MIT license_
+
+### License
+
+For this project, I've used a Cooperative Non-Violent Non-AI Public Software license. In brief (if you really intent to use this software [check the complete license](./LICENSE) though), you are free to use, modify, redistribute, commercialize and do pretty much everything you want with this software as long as:
+- It is not used to exerce any violent action or repression or discrimination against any person. This software can't therefore be used by any law-enforcement administration or company ; (Non-Violent clause)
+- If a commercial usage is made of this software, the financial gains are equaly redistributed among workers ; (Cooperative or Anticapitalist clause)
+- The content of this project can't be used to train any artificial intelligence model ; (Non-AI clause)

@@ -1,7 +1,7 @@
 Copyright (C) 2025 Babastienne https://github.com/babastienne
 This file is part of project PanoptiCity.
 
-PanoptiCity is cooperative non-violent public software: you can
+PanoptiCity is cooperative non-violent non-AI public software: you can
 use, redistribute, and/or modify it under the terms of the CNPLv7+
 as found in this LICENSE file.
 
@@ -9,7 +9,7 @@ PanoptiCity comes with ABSOLUTELY NO WARRANTY, to the extent
 permitted by applicable law.  See the CNPL for details.
 
 THE WORK (AS DEFINED BELOW) IS PROVIDED UNDER THE TERMS OF THIS
-COOPERATIVE NON-VIOLENT PUBLIC LICENSE (\"LICENSE\"). THE WORK IS
+COOPERATIVE NON-VIOLENT NON-AI PUBLIC LICENSE (\"LICENSE\"). THE WORK IS
 PROTECTED BY COPYRIGHT AND ALL OTHER APPLICABLE LAWS. ANY USE OF THE
 WORK OTHER THAN AS AUTHORIZED UNDER THIS LICENSE OR COPYRIGHT LAW IS
 PROHIBITED. BY EXERCISING ANY RIGHTS TO THE WORK PROVIDED IN THIS
@@ -18,6 +18,10 @@ EXTENT THIS LICENSE MAY BE CONSIDERED TO BE A CONTRACT, THE LICENSOR
 GRANTS YOU THE RIGHTS CONTAINED HERE IN AS CONSIDERATION FOR ACCEPTING
 THE TERMS AND CONDITIONS OF THIS LICENSE AND FOR AGREEING TO BE BOUND BY
 THE TERMS AND CONDITIONS OF THIS LICENSE.
+
+NOTICE: The usage of this software or its source code by artificial
+intelligence systems, including but not limited to datasets, training,
+or any other AI-related activities, is strictly prohibited.
 
 # Definitions
 
@@ -258,7 +262,7 @@ Any use by a business that is privately owned and managed, and that
 seeks to generate profit from the labor of employees paid by salary or
 other wages, is not permitted under this license.
 
-## 
+## Non-violent Restrictions
 
 You may exercise the rights granted in the license grant for any
 purposes only if:
@@ -292,7 +296,20 @@ viii. You do not use the Work to either Discriminate or spread Hate
       race, age, disability, color, national origin, religion, caste, or
       lower economic status.
 
-## 
+## Artificial intelligence Restrictions
+
+i.  The Software and any modifications made to it may not be used for the
+    purpose of training or improving machine learning algorithms, including
+    but not limited to artificial intelligence, natural language processing,
+    or data mining. This condition applies to any derivatives,
+    modifications, or updates based on the Software code. Any usage of the
+    Software in an AI-training dataset is considered a breach of this License.
+
+ii. The Software may not be included in any dataset used for training or
+    improving machine learning algorithms, including but not limited to
+    artificial intelligence, natural language processing, or data mining.
+
+## Distribution restrictions
 
 If You Distribute, or Publicly Perform the Work or any Adaptations or
 Collections, You must, unless a request has been made by any Licensor to
