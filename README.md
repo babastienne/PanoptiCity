@@ -56,7 +56,7 @@ We will refer at your downloaded pbf file as `<my-pbf-file>` and in the next com
 2. Import the buildings in the database (can take some time depending of your area. For loading entire France it took 12 minutes) by running the following command:
 
 ```
-   docker compose run osm2pgsql -O flex -S /data/buildings.lua /data/osm-data/<my-pbf-file>
+   docker compose run osm2pgsql -O flex -S /data/buildings.lua /osm-data/<my-pbf-file>
 ```
 
 3. Load cameras (usually takes more time than the previous command):
@@ -86,7 +86,7 @@ We will refer at your downloaded pbf file as `<my-pbf-file>` and in the next com
 > To update your building database without having to completely re-download your data, you need to keep on your server your original data file. This file well be updated by the process.
 
 1. `docker compose run --rm web pyosmium-up-to-date /osm-data/<my-pbf-file>` > This command will fetch the diffs since the last version of your file and apply them to your data file. This command can take some time depending of the last time you did the operation.
-2. Re-create the building database : `docker compose run osm2pgsql -O flex -S /data/buildings.lua /data/osm-data/<my-pbf-file>`
+2. Re-create the building database : `docker compose run osm2pgsql -O flex -S /data/buildings.lua /osm-data/<my-pbf-file>`
 3. (Option) Re-compute camera field of views (can be long) :
 
 ```

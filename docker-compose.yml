@@ -24,7 +24,7 @@ services:
       PGHOST: postgis
     volumes:
       - ./back-end:/data
-      - ./osm-data:/data/osm-data
+      - ./osm-data:/osm-data
 
   web:
     build: .
@@ -35,6 +35,7 @@ services:
       - postgis
     volumes:
       - ./osm-data:/osm-data
+      # - ./back-end:/app
     environment:
       DJANGO_SECRET_KEY: ${SECRET_KEY}
       DEBUG: ${DEBUG}
