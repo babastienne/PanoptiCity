@@ -12,19 +12,38 @@
     <link rel="stylesheet" href="css/theme-switcher.css" />
     <link rel="stylesheet" href="css/burger.css" />
     <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/modal.css" />
   </head>
   <body>
     <header>
       <div class="pico">
         <nav>
           <ul>
-            <li class="hide-before-sm secondary">
-              <label class="burger" for="burger">
-                <input type="checkbox" id="burger" />
-                <span></span>
-                <span></span>
-                <span></span>
-              </label>
+            <li class="secondary">
+              <span></span>
+            </li>
+            <li>
+              <div class="hamburger-menu">
+                <input id="menu__toggle" type="checkbox" />
+                <label class="menu__btn" for="menu__toggle">
+                  <span class="menu__left"></span>
+                </label>
+
+                <ul class="menu__box">
+                  <li class="menu__li">
+                    <a class="menu__item" href="#">Home</a>
+                  </li>
+                  <li class="menu__li">
+                    <a class="menu__item" href="#">Team</a>
+                  </li>
+                  <li class="menu__li">
+                    <a class="menu__item" href="#">About</a>
+                  </li>
+                  <li class="menu__li">
+                    <a class="menu__item" href="#">Contact</a>
+                  </li>
+                </ul>
+              </div>
             </li>
           </ul>
           <ul>
@@ -48,8 +67,8 @@
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  height="24"
-                  width="24.25"
+                  height="25"
+                  width="25"
                   viewBox="0 0 496 512"
                   class="icon-github"
                 >
@@ -69,8 +88,8 @@
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   aria-hidden="true"
-                  width="1em"
-                  height="1em"
+                  width="25"
+                  height="25"
                   fill="currentColor"
                   class="theme-toggle__expand"
                   viewBox="0 0 32 32"
@@ -92,15 +111,25 @@
       </div>
     </header>
 
-    <h3 class="pico">
+    <!-- <h3 class="pico">
       <a onclick="fetchOSMNode()" href="#"
         >Fetch an object (no need to be connected)</a
       >
     </h3>
 
-    <h3 class="pico"><a onclick="OSMLogin()" href="#">Login to OSM</a></h3>
+    <h3 class="pico"><a onclick="OSMLogin()" href="#">Login to OSM</a></h3> -->
 
     <div id="map"></div>
+
+    <div class="bottom-sheet">
+      <div class="sheet-overlay"></div>
+      <div class="content">
+        <div class="header">
+          <div class="drag-icon"><span></span></div>
+        </div>
+        <div class="body-modal"></div>
+      </div>
+    </div>
 
     <!-- ** Load external libs ** -->
     <!-- Leaflet -->
@@ -120,7 +149,7 @@
       rel="stylesheet"
       href="libs/Leaflet.Basemaps/L.Control.Basemaps.css"
     />
-    <!-- Using this local version, modified on L until https://github.com/consbio/Leaflet.Basemaps/pull/28 is merged and released -->
+    <!-- Using this local version, modified on L45 until https://github.com/consbio/Leaflet.Basemaps/pull/28 is merged and released -->
     <script
       src="libs/Leaflet.Basemaps/L.Control.Basemaps.js"
       charset="utf-8"
@@ -147,8 +176,9 @@
     <script src="js/leaflet.data.tilelayer.js"></script>
     <script src="js/leafletembed_icons.js"></script>
     <script src="js/map.js"></script>
-    <!-- Theme swither -->
+    <!-- UI animation -->
     <script src="js/theme-switcher.js"></script>
+    <script src="js/bottomModal.js"></script>
     <!-- OSM Api -->
     <script src="js/osm.js"></script>
   </body>
