@@ -9,36 +9,123 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Building',
+            name="Building",
             fields=[
-                ('id', models.BigIntegerField(primary_key=True, serialize=False)),
-                ('osm_id', models.BigIntegerField()),
-                ('geom', django.contrib.gis.db.models.fields.PolygonField(srid=4326)),
+                ("id", models.BigIntegerField(primary_key=True, serialize=False)),
+                ("osm_id", models.BigIntegerField()),
+                ("geom", django.contrib.gis.db.models.fields.PolygonField(srid=4326)),
             ],
         ),
         migrations.CreateModel(
-            name='Camera',
+            name="Camera",
             fields=[
-                ('id', models.BigIntegerField(primary_key=True, serialize=False)),
-                ('location', django.contrib.gis.db.models.fields.PointField(srid=4326)),
-                ('mount', models.CharField(blank=True, choices=[('wall', 'wall'), ('pole', 'pole'), ('ceiling', 'ceiling'), ('street_lamp', 'street_lamp'), ('building', 'building'), ('traffic_signal', 'traffic_signal')])),
-                ('surveillance_type', models.CharField(blank=True, choices=[('camera', 'camera'), ('guard', 'guard'), ('ALPR', 'ALPR'), ('gunshot_detector', 'gunshot_detector')], default='camera')),
-                ('surveillance', models.CharField(blank=True, choices=[('indoor', 'indoor'), ('outdoor', 'outdoor'), ('public', 'public'), ('transportation', 'transportation'), ('traffic', 'traffic')])),
-                ('camera_type', models.CharField(blank=True, choices=[('fixed', 'fixed'), ('panning', 'panning'), ('dom', 'dom')])),
-                ('zone', models.CharField(blank=True, choices=[('town', 'town'), ('parking', 'parking'), ('atm', 'atm'), ('traffic', 'traffic'), ('shop', 'shop'), ('bank', 'bank'), ('building', 'building'), ('entrance', 'entrance'), ('street', 'street')])),
-                ('height', models.FloatField(blank=True, null=True)),
-                ('direction', models.IntegerField(blank=True, null=True, validators=[django.core.validators.MaxValueValidator(360), django.core.validators.MinValueValidator(0)])),
-                ('angle', models.IntegerField(blank=True, null=True, validators=[django.core.validators.MaxValueValidator(360), django.core.validators.MinValueValidator(0)])),
-                ('focus', django.contrib.gis.db.models.fields.PolygonField(null=True, srid=4326)),
+                ("id", models.BigIntegerField(primary_key=True, serialize=False)),
+                ("location", django.contrib.gis.db.models.fields.PointField(srid=4326)),
+                (
+                    "mount",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("wall", "wall"),
+                            ("pole", "pole"),
+                            ("ceiling", "ceiling"),
+                            ("street_lamp", "street_lamp"),
+                            ("building", "building"),
+                            ("traffic_signal", "traffic_signal"),
+                        ],
+                    ),
+                ),
+                (
+                    "surveillance_type",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("camera", "camera"),
+                            ("guard", "guard"),
+                            ("ALPR", "ALPR"),
+                            ("gunshot_detector", "gunshot_detector"),
+                        ],
+                        default="camera",
+                    ),
+                ),
+                (
+                    "surveillance",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("indoor", "indoor"),
+                            ("outdoor", "outdoor"),
+                            ("public", "public"),
+                            ("transportation", "transportation"),
+                            ("traffic", "traffic"),
+                        ],
+                    ),
+                ),
+                (
+                    "camera_type",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("fixed", "fixed"),
+                            ("panning", "panning"),
+                            ("dom", "dom"),
+                        ],
+                    ),
+                ),
+                (
+                    "zone",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("town", "town"),
+                            ("parking", "parking"),
+                            ("atm", "atm"),
+                            ("traffic", "traffic"),
+                            ("shop", "shop"),
+                            ("bank", "bank"),
+                            ("building", "building"),
+                            ("entrance", "entrance"),
+                            ("street", "street"),
+                        ],
+                    ),
+                ),
+                ("height", models.FloatField(blank=True, null=True)),
+                (
+                    "direction",
+                    models.IntegerField(
+                        blank=True,
+                        null=True,
+                        validators=[
+                            django.core.validators.MaxValueValidator(360),
+                            django.core.validators.MinValueValidator(0),
+                        ],
+                    ),
+                ),
+                (
+                    "angle",
+                    models.IntegerField(
+                        blank=True,
+                        null=True,
+                        validators=[
+                            django.core.validators.MaxValueValidator(360),
+                            django.core.validators.MinValueValidator(0),
+                        ],
+                    ),
+                ),
+                (
+                    "focus",
+                    django.contrib.gis.db.models.fields.PolygonField(
+                        null=True, srid=4326
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Camera',
-                'verbose_name_plural': 'Cameras',
+                "verbose_name": "Camera",
+                "verbose_name_plural": "Cameras",
             },
         ),
     ]

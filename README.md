@@ -23,6 +23,7 @@
       - [OpenStreetMap](#openstreetmap)
       - [Backend](#backend)
       - [Frontend](#frontend)
+      - [Images](#images)
     - [License](#license)
 
 ## Introduction
@@ -210,7 +211,7 @@ If you notice that I've used your project but don't see it in this list feel fre
 - [pyosmium v4.0.2](https://github.com/osmcode/pyosmium) - _BSD 2-Clause License_
 - [osm2pgsql v2.0.1](https://github.com/osm2pgsql-dev/osm2pgsql) - _GPL-2.0 License_
 - [osm-api-js v2.4.0](https://github.com/k-yle/osm-api-js/) - _MIT license_
- 
+
 #### Backend
 
 - [Django v5.1](https://github.com/django/django) - _BSD-3-Clause license_
@@ -220,6 +221,11 @@ If you notice that I've used your project but don't see it in this list feel fre
 #### Frontend
 
 - [Pico CSS v2.0.6](https://github.com/picocss/pico) - _MIT license_
+
+#### Images
+
+- Logo: https://design-kink.com/hal-9000-2001-space-odyssey-free-vector-art/
+- Pictograms for cameras: SunderS
 
 ### License
 

@@ -9,11 +9,11 @@ from rest_framework import routers
 from cameras.viewsets import CameraViewSet
 
 router = routers.DefaultRouter()
-router.register(r'cameras', CameraViewSet)
+router.register(r"cameras", CameraViewSet)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
+    path("admin/", admin.site.urls),
+    path("api/", include(router.urls)),
 ]
 
 # urlpatterns = urlpatterns + debug_toolbar_urls()  # FIXME : Remove for production
