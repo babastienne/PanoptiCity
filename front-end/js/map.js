@@ -9,7 +9,7 @@ function initMap() {
       maxNativeZoom: 19,
       maxZoom: 21,
       attribution:
-        'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
+        "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
       label: "Satellite",
     }
   );
@@ -21,7 +21,7 @@ function initMap() {
       maxZoom: 21,
       subdomains: "abcd",
       attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | &copy; <a href="https://carto.com/attributions">CARTO</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | &copy; <a href="https://carto.com/attributions">CARTO</a>',
       className: "dark-map-tiles",
       label: "Map",
     }
@@ -31,7 +31,7 @@ function initMap() {
     "//{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
     {
       attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | &copy; <a href="https://carto.com/attributions">CARTO</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: "abcd",
       maxNativeZoom: 20,
       maxZoom: 21,
@@ -64,11 +64,22 @@ function initMap() {
     zoom: MAP_INITIAL_ZOOM,
     minZoom: MAP_MIN_ZOOM,
     maxBounds: MAP_MAX_BBOX,
+    zoomControl: false,
   });
+  // Handle zoom buttons (translate the buttons)
+  let zoomControl = L.control.zoom({
+    zoomOutTitle: TEXTS.mapZoomOut,
+    zoomInTitle: TEXTS.mapZoomIn,
+  });
+  map.addControl(zoomControl);
+  // Handle position of map after init
   map.fitBounds(getInitialBBox());
   map.on("moveend", updateBBox);
+  // Manage attributions
   map.attributionControl.setPosition("bottomright");
-  map.attributionControl.setPrefix(false);
+  map.attributionControl.setPrefix(
+    '<a href="https://github.com/babastienne" target="_blank">Babastienne</a>'
+  );
 
   // By default add light switcher (override after by themeSwitcher)
   map.addControl(layerSwitcherLight);
@@ -87,7 +98,13 @@ function initMap() {
   map.addLayer(tilesCams); // Add this layer after initialization because it need to know map to init itself
 
   // Leaflet locate button
-  L.control.locate().addTo(map);
+  L.control
+    .locate({
+      strings: {
+        title: TEXTS.mapLocateButton,
+      },
+    })
+    .addTo(map);
 }
 
 // this function check if there is a BBox in local storage (= user already visit the site)

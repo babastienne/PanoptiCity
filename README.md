@@ -200,7 +200,7 @@ If you notice that I've used your project but don't see it in this list feel fre
 #### Cartography
 
 - [Leaflet v1.9.4](https://github.com/Leaflet/Leaflet/releases/tag/v1.9.4) - _BSD 2-Clause License_
-- [Leaflet.SimpleLocate v1.0.4](https://github.com/mfhsieh/leaflet-simple-locate) - _MIT license_
+- [Leaflet.Locate v0.83.1](https://github.com/domoritz/leaflet-locatecontrol) - _MIT license_
 - [Leaflet.Basemaps v0.2.1](https://github.com/consbio/Leaflet.Basemaps/releases/tag/0.2.1) - _ISC license_ (used a [forked version](https://github.com/consbio/Leaflet.Basemaps/pull/28))
 - [Leaflet.markercluster v1.5.3](https://github.com/Leaflet/Leaflet.markercluster) - _MIT license_
 - Map background attributions can be seen directly on map on the website
@@ -230,6 +230,7 @@ If you notice that I've used your project but don't see it in this list feel fre
 ### License
 
 For this project, I've used a Cooperative Non-Violent Non-AI Public Software license. In brief (if you really intent to use this software [check the complete license](./LICENSE) though), you are free to use, modify, redistribute, commercialize and do pretty much everything you want with this software as long as:
+
 - It is not used to exerce any violent action or repression or discrimination against any person. This software can't therefore be used by any law-enforcement administration or company ; (Non-Violent clause)
 - If a commercial usage is made of this software, the financial gains are equaly redistributed among workers ; (Cooperative or Anticapitalist clause)
 - The content of this project can't be used to train any artificial intelligence model ; (Non-AI clause)
