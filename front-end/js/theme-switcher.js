@@ -45,7 +45,7 @@ const themeSwitcher = {
     } else if (scheme == "dark" || scheme == "light") {
       this._scheme = scheme;
     }
-    if (scheme == "dark") {
+    if (this._scheme == "dark") {
       layerSwitcherDark.options.basemaps.forEach((e) => {
         map.removeLayer(e);
       });
