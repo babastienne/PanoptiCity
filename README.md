@@ -6,6 +6,7 @@
   - [Introduction](#introduction)
   - [Installation](#installation)
     - [Download the project and requirements](#download-the-project-and-requirements)
+    - [Set project environement](#set-project-environement)
     - [Initialize database](#initialize-database)
     - [Import initial data and update](#import-initial-data-and-update)
       - [Steps to import data](#steps-to-import-data)
@@ -47,15 +48,20 @@ If you encounter any problem feel free to [open an issue](http://TODO.org) to as
 To run this application you'll need docker.
 
 1. If not done already, [install docker](https://docs.docker.com/engine/install/) on the server.
-2. Download this project : `git clone https://github.com/babastienne/TODO`
-3. Go to the downloaded folder : `cd TODO`
+2. Download this project : `git clone https://github.com/babastienne/panopticity`
+3. Go to the downloaded folder : `cd panopticity`
 
-### Initialize database
+### Set project environement
 
 Define some variables used by the application by editing environment variables :
 
 - `cp .env.dist .env`
 - Then edit the `.env` file and replace the variables values by the ones you want to use.
+- Edit the configuration file for the front-end `front-end/CONFIG.js` and override with your parameters.
+
+> _Optional_: You can override translations of the front-end interface or add new languages by editing the file `front-end/translations.js`.
+
+### Initialize database
 
 It is now time to launch the project for the first time :
 
