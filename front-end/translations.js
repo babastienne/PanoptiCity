@@ -8,6 +8,11 @@ let translatedTexts = {
     mapZoomIn: "Zoom in",
     mapZoomOut: "Zoom out",
     mapLocateButton: "Show me where I am",
+    loginButtonName: "Login with OSM",
+    loginButtonTitle: "Login with your OpenStreetMap account",
+    inProgressLabel: "In progress",
+    logoutButtonName: "Logout",
+    logoutButtonTitle: "Disconnect my OpenStreetMap account from this site",
   },
   fr: {
     titleApp: "PanoptiCité",
@@ -18,5 +23,10 @@ let translatedTexts = {
     mapZoomIn: "Zoomer",
     mapZoomOut: "Dézoomer",
     mapLocateButton: "Montrer ma position sur la carte",
+    loginButtonName: "Se connecter",
+    loginButtonTitle: "Connectez-vous avec votre compte OpenStreetMap",
+    inProgressLabel: "En cours",
+    logoutButtonName: "Se déconnecter",
+    logoutButtonTitle: "Déconnecter mon compte OpenStreetMap de ce site",
   },
 };

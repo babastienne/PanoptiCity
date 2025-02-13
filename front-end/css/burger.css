@@ -67,10 +67,11 @@
   width: 300px;
   height: 100%;
   margin: 0;
-  padding: 80px 0 !important;
+  padding: 50px 0 !important;
   align-items: unset !important;
   list-style: none;
   transition-duration: 0.25s;
+  overflow: auto;
 }
 [data-theme="dark"] .menu__box {
   box-shadow: 2px 2px 6px rgba(255, 255, 255, 0.4);
@@ -110,4 +111,22 @@
 .menu__left {
   width: 30px;
   display: block;
+}
+.menu__connection {
+  position: absolute;
+  top: 10px;
+  right: 30px;
+}
+.menu__connection.danger {
+  --pico-color: #d93526 !important;
+  --pico-border-color: #d93526 !important;
+  --pico-primary-focus: rgba(241, 121, 97, 0.375) !important;
+}
+[data-theme="dark"] .menu__hr {
+  border-top: 1px solid white;
+  box-shadow: 2px 2px 6px rgba(255, 255, 255, 0.4);
+}
+[data-theme="light"] .menu__hr {
+  border-top: 1px solid black;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
 }
