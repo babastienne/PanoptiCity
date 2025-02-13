@@ -30,3 +30,8 @@ header {
   height: 200px;
   border-radius: 12px;
 }
+
+.dark-map-tiles {
+  filter: brightness(0.6) invert(1) contrast(4) hue-rotate(200deg) saturate(0.4)
+    brightness(0.7);
+}

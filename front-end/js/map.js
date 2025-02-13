@@ -14,14 +14,16 @@ function initMap() {
     }
   );
 
-  var CartoDB_DarkMatter = L.tileLayer(
-    "//{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+  var CartoDB_DarkVoyage = L.tileLayer(
+    "//{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
     {
-      maxNativeZoom: 19,
+      maxNativeZoom: 20,
       maxZoom: 21,
       subdomains: "abcd",
       attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | &copy; <a href="https://carto.com/attributions">CARTO</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
+      className: "dark-map-tiles",
+      label: "Map",
     }
   );
 
@@ -31,13 +33,14 @@ function initMap() {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | &copy; <a href="https://carto.com/attributions">CARTO</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
       subdomains: "abcd",
-      maxZoom: 20,
+      maxNativeZoom: 20,
+      maxZoom: 21,
       label: "Map",
     }
   );
 
   // Define dark map theme
-  var baseDarkMaps = [CartoDB_DarkMatter, esriTiles];
+  var baseDarkMaps = [CartoDB_DarkVoyage, esriTiles];
   layerSwitcherLight = L.control.basemaps({
     basemaps: baseDarkMaps,
     tileX: 15,
