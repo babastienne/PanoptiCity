@@ -88,10 +88,3 @@
 .bottom-sheet .body-modal::-webkit-scrollbar {
   width: 0;
 }
-.bottom-sheet .body-modal h2 {
-  font-size: 1.8rem;
-}
-.bottom-sheet .body-modal p {
-  margin-top: 20px;
-  font-size: 1.05rem;
-}

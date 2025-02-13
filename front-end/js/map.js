@@ -2,17 +2,7 @@ var map;
 var layerSwitcherLight;
 var layerSwitcherDark;
 
-// Draw the map for the first time.
 function initMap() {
-  // osmTiles = new L.TileLayer("//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  //   minZoom: 4,
-  //   maxNativeZoom: 19,
-  //   maxZoom: 21,
-  //   attribution:
-  //     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> | <a href="https://github.com/babastienne" target="_blank">Babastienne</a>',
-  //   label: "OpenStreetMap",
-  // });
-
   var esriTiles = L.tileLayer(
     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     {
@@ -68,10 +58,12 @@ function initMap() {
 
   // Set up the map.
   map = new L.map("map", {
-    center: [43.60139, 1.440207],
-    zoom: 16,
-    minZoom: 4,
+    zoom: MAP_INITIAL_ZOOM,
+    minZoom: MAP_MIN_ZOOM,
+    maxBounds: MAP_MAX_BBOX,
   });
+  map.fitBounds(getInitialBBox());
+  map.on("moveend", updateBBox);
   map.attributionControl.setPosition("bottomright");
   map.attributionControl.setPrefix(false);
 
@@ -82,7 +74,7 @@ function initMap() {
   const tilesCams = new L.dataTileLayerCamera(
     `${BASE_URL_API}/cameras.json?tile={z}/{x}/{y}`,
     {
-      minZoom: 4,
+      // minZoom: 4,
       display: true,
     }
   );
@@ -95,52 +87,30 @@ function initMap() {
   L.control.locate().addTo(map);
 }
 
-async function getCameraDetails(idCamera) {
-  const url = `${BASE_URL_API}/cameras/${idCamera}.json`;
-  try {
-    let response = await fetch(url);
-    return await response.json();
-  } catch (error) {
-    console.error(error.message);
+// this function check if there is a BBox in local storage (= user already visit the site)
+// and if so we retrieve it so the user can see the map as he left it previously
+// If there is a hash in url with BBox it is considered prioritary
+function getInitialBBox() {
+  if (window.location.hash.includes("mapBBox")) {
+    let regexBBox = /\[\[\d*.\d+,\d*.\d+\],\[\d*.\d+,\d*.\d+\]\]/g;
+    return JSON.parse(window.location.hash.match(regexBBox)[0]);
+  } else if (localStorage.getItem("map-bbox")) {
+    return JSON.parse(localStorage.getItem("map-bbox"));
+  } else {
+    return MAP_INITIAL_BBOX;
   }
 }
 
-async function displayCameraDetails(e) {
-  // Function called onClick on a camera Marker
-  idCamera = e.target.options.id;
-  let cameraDetails = await getCameraDetails(idCamera);
-  addCameraDetailsData(e.target, cameraDetails);
-}
-
-// Add camera popup to camera marker.
-function addCameraDetailsData(plotMarker, plot) {
-  let { lat, lng } = plotMarker.getLatLng();
-  popupDataTable =
-    `<table class="pico"><tr><td>id</td><td>` +
-    `<a target="blank" href="https://www.openstreetmap.org/node/${plot.id}">${plot.id}</a>` +
-    `</td></tr>` +
-    `<tr><td>latitude</td><td>${lat}</td></tr>` +
-    `<tr><td>longitude</td><td>${lng}</td></tr>`;
-  for (x in plot) {
-    if (!["", "null"].includes(String(plot[x])) && !["id"].includes(x)) {
-      popupDataTable = popupDataTable + "<tr><td>" + x + "</td><td>";
-      var descr = String(plot[x]);
-      if (descr.substring(0, 4) == "http") {
-        var suffix = descr.slice(-3).toLowerCase();
-        if (suffix == "jpg" || suffix == "gif" || suffix == "png") {
-          popupDataTable = `${popupDataTable}<a href="${descr}"><img alt="Link" src="${descr}" width="200"/></a>`;
-        } else {
-          popupDataTable = `${popupDataTable}<a href="${descr}">Link</a>`;
-        }
-      } else {
-        popupDataTable = popupDataTable + plot[x];
-      }
-      popupDataTable = popupDataTable + "</td></tr>";
-    }
-  }
-  popupDataTable = popupDataTable + "</table>";
-  updateBottomModalContent(popupDataTable);
-  showBottomModal();
+// Function called when user move the map: it updates the local storage with current BBox
+function updateBBox() {
+  let currentBounds = map.getBounds();
+  let stringBBox = `[[${currentBounds.getSouthWest().lat},${
+    currentBounds.getSouthWest().lng
+  }],[${currentBounds.getNorthEast().lat},${
+    currentBounds.getNorthEast().lng
+  }]]`;
+  localStorage.setItem("map-bbox", stringBBox);
+  window.location.hash = `mapBBox=${stringBBox}`;
 }
 
 initMap();
