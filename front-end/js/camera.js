@@ -19,14 +19,15 @@ async function displayCameraDetails(e) {
 function addCameraDetailsData(plotMarker, plot) {
   let { lat, lng } = plotMarker.getLatLng();
   popupDataTable = `<table class="pico">
+      <thead>
         <tr>
-          <td><h2 class="pico">Camera id</h2></td>
-          <td>
-            <h2 class="pico">
+          <th>Camera id</th>
+          <th>
               <a target="blank" href="https://www.openstreetmap.org/node/${plot.id}">${plot.id}</a>
-            </h2>
-          </td>
+          </th>
         </tr>
+      </thead>
+      <tbody>
         <tr>
           <td>latitude</td><td>${lat}</td>
         </tr>
@@ -50,7 +51,7 @@ function addCameraDetailsData(plotMarker, plot) {
       popupDataTable = popupDataTable + "</td></tr>";
     }
   }
-  popupDataTable = popupDataTable + "</table>";
+  popupDataTable = popupDataTable + "</tbody></table>";
   updateBottomModalContent(popupDataTable);
   showBottomModal();
 }

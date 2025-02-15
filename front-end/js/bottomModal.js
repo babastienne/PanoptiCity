@@ -1,3 +1,20 @@
+const computeRenderedImageWidth = (minWidth, gap, numberImages, maxWidth) => {
+  let widthModal = window.screen.width - 40; // 40 = padding for modal
+  let numberOfDisaplyedImagesByRow = Math.floor(widthModal / (minWidth + gap));
+  if (numberOfDisaplyedImagesByRow > numberImages) {
+    numberOfDisaplyedImagesByRow = numberImages;
+  }
+  let widthModalWithoutGaps =
+    widthModal - (numberOfDisaplyedImagesByRow - 1) * gap;
+  let widthImage = Math.floor(
+    widthModalWithoutGaps / numberOfDisaplyedImagesByRow
+  );
+  if (maxWidth < widthImage) {
+    return maxWidth;
+  }
+  return Math.ceil(numberImages / numberOfDisaplyedImagesByRow) * widthImage;
+};
+
 const bottomSheet = document.querySelector(".bottom-sheet");
 const sheetOverlay = bottomSheet.querySelector(".sheet-overlay");
 const sheetContent = bottomSheet.querySelector(".content");
@@ -49,8 +66,13 @@ const dragStop = () => {
     : updateSheetHeight(sheetHeight);
 };
 
-const updateBottomModalContent = (content) => {
+const updateBottomModalContent = (content, heightAdd = 0) => {
   bodyModal.innerHTML = content;
+  let maxHeightModal = bodyModal.children[0].scrollHeight + 120 + heightAdd;
+  if (maxHeightModal > window.screen.height) {
+    maxHeightModal = window.screen.height * 0.9;
+  }
+  sheetContent.style.maxHeight = `${maxHeightModal}px`;
 };
 
 dragIcon.addEventListener("mousedown", dragStart);
