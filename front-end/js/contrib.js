@@ -111,8 +111,37 @@ choicesCameraZone = {
   },
 };
 
+choicesCameraHeight = {
+  title: TEXTS.cameraHeightQuestion,
+  tagName: "height",
+  defaultValue: 4,
+  minValue: 1,
+  maxValue: 16,
+  step: 0.5,
+};
+
+choicesCameraDirection = {
+  title: TEXTS.cameraDirectionQuestion,
+  tagName: "camera:direction",
+  additionalTransform: 0,
+  defaultValue: 0,
+  minValue: 0,
+  maxValue: 355,
+  step: 5,
+};
+
+choicesCameraAngle = {
+  title: TEXTS.cameraAngleQuestion,
+  tagName: "camera:angle",
+  additionalTransform: 90,
+  defaultValue: 15,
+  minValue: 0,
+  maxValue: 90,
+  step: 5,
+};
+
 // -- Functions to display forms / ask user information --
-displayChoicesForUser = (choices) => {
+displaySelectChoicesForUser = (choices) => {
   let modalContent = `
         <div class="pico modal-div">
             <h4 class="modal-title">${choices.title}</h4>
@@ -143,6 +172,81 @@ displayChoicesForUser = (choices) => {
   showBottomModal();
 };
 
+updateSliderDistanceValue = (value) => {
+  document.getElementById("sliderValue").innerHTML =
+    value <= 1
+      ? `${value} ${TEXTS.distanceUnit}`
+      : `${value} ${TEXTS.distanceUnitPlural}`;
+};
+
+displaySliderForUser = (choices) => {
+  let modalContent = `
+        <div class="pico modal-div">
+          <h4 class="modal-title">${choices.title}</h4>
+          <input 
+              class="modal-slider-input"
+              type="range"
+              value="${choices.defaultValue}"
+              min="${choices.minValue}"
+              max="${choices.maxValue}"
+              step="${choices.step}"
+              oninput="updateSliderDistanceValue(this.value)" />
+          <div id="sliderValue">${choices.defaultValue} ${TEXTS.distanceUnitPlural}</div>
+          <div class="modal-flex-buttons">
+            <button
+                class="outline secondary modal-button"
+                onclick="nextStep()"
+            >${TEXTS.iDontKnowButton}</button>
+            <button
+                class="outline primary modal-button"
+                onclick="nextStep()"
+            >${TEXTS.confirmButton}</button>
+          </div>
+        </div>
+    `;
+  updateBottomModalContent(modalContent);
+  showBottomModal();
+};
+
+rotateArrowForDirection = (value, optionnalTransformation = 0) => {
+  let arrow = document.getElementById("modal-arrow-direction");
+  arrow.style.transform = `rotate(${
+    Number(value) + optionnalTransformation
+  }deg)`;
+  document.getElementById("sliderValue").innerHTML = `${value}°`;
+};
+
+displayDirectionFormForUser = (choices) => {
+  let modalContent = `
+  <div class="pico modal-div">
+    <h4 class="modal-title">${choices.title}</h4>
+    <input 
+      type="range"
+      class="modal-slider-input"
+      value="${choices.defaultValue}"
+      min="${choices.minValue}"
+      max="${choices.maxValue}"
+      step="${choices.step}"
+      oninput="rotateArrowForDirection(this.value, ${choices.additionalTransform})" />
+    <div id="sliderValue">${choices.defaultValue}°</div>
+    <img id="modal-arrow-direction" src="/images/contrib/arrow.svg" />
+    <div class="modal-flex-buttons">
+      <button
+          class="outline secondary modal-button"
+          onclick="nextStep()"
+      >${TEXTS.iDontKnowButton}</button>
+      <button
+          class="outline primary modal-button"
+          onclick="nextStep()"
+      >${TEXTS.confirmButton}</button>
+    </div>
+  </div>
+`;
+  updateBottomModalContent(modalContent);
+  rotateArrowForDirection(choices.defaultValue, choices.additionalTransform);
+  showBottomModal();
+};
+
 // -- Functions to get location of point from user --
 addCreationMarkerOnMap = () => {
   currentPositionMarker.setLatLng(map.getCenter());
@@ -165,4 +269,4 @@ nextStep = () => {
   console.log("TODO BPO");
 };
 
-// displayChoicesForUser(choicesCameraType);
+displayDirectionFormForUser(choicesCameraDirection);

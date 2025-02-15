@@ -28,7 +28,7 @@ let isDragging = false,
 const showBottomModal = () => {
   bottomSheet.classList.add("show");
   document.body.style.overflowY = "hidden";
-  updateSheetHeight(50);
+  updateSheetHeight(80);
 };
 
 const updateSheetHeight = (height) => {
