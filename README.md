@@ -41,7 +41,7 @@ One major inspiration for this project has been the website [SunderS](https://su
 
 Thank you for your interest in this project. This section will guide you to facilitate the installation, configuration and run of the project on your server.
 
-If you encounter any problem feel free to [open an issue](http://TODO.org) to ask for support.
+If you encounter any problem feel free to [open an issue](https://github.com/babastienne/PanoptiCity/issues/new) to ask for support.
 
 ### Download the project and requirements
 

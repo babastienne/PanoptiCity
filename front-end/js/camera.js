@@ -18,7 +18,9 @@ async function displayCameraDetails(e) {
 // Add camera popup to camera marker.
 function addCameraDetailsData(plotMarker, plot) {
   let { lat, lng } = plotMarker.getLatLng();
-  popupDataTable = `<table class="pico">
+  let listAttributes = [];
+  popupDataTable = `<div class="pico modal-div">
+  <table class="pico modal-table">
       <thead>
         <tr>
           <th>Camera id</th>
@@ -49,9 +51,27 @@ function addCameraDetailsData(plotMarker, plot) {
         popupDataTable = popupDataTable + plot[x];
       }
       popupDataTable = popupDataTable + "</td></tr>";
+      listAttributes.push(x);
     }
   }
   popupDataTable = popupDataTable + "</tbody></table>";
+  if (
+    listAttributes.length < 6 ||
+    (["fixed", "panning"].includes(plot["camera_type"]) && listAttributes < 8)
+  ) {
+    popupDataTable =
+      popupDataTable +
+      `
+      <div class="modal-flex-buttons">
+        <button
+            class="outline primary modal-button"
+            onclick="completeExistingCameraMissingAttributes(${plot.id})"
+        >${TEXTS.completeCameraButton}</button>
+      </div>
+    `;
+  }
+
+  popupDataTable = popupDataTable + "</div>";
   cancelCameraCreation();
   updateBottomModalContent(popupDataTable);
   showBottomModal();

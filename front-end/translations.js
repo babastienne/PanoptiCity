@@ -17,6 +17,7 @@ let translatedTexts = {
     confirmButton: "Confirm",
     cancelButton: "Cancel",
     addCameraButton: "Add a new camera",
+    completeCameraButton: "Complete missing information",
     cameraLocationQuestion: "Move the map to choose the position of the camera",
     cameraLocationQuestion: "Move the map to choose the position of the camera",
     cameraSurveillanceQuestion: "What type of surveillance is it ?",
@@ -73,6 +74,7 @@ let translatedTexts = {
     confirmButton: "Valider",
     cancelButton: "Cancel",
     addCameraButton: "Ajouter une nouvelle caméra",
+    completeCameraButton: "Compléter les informations manquantes",
     cameraLocationQuestion:
       "Déplacez la carte pour choisir la position de la caméra",
     cameraSurveillanceQuestion: "Quel est le type de surveillance ?",

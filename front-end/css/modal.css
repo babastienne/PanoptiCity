@@ -169,3 +169,8 @@
 [data-theme="dark"] #modal-arrow-direction {
   filter: invert(20%);
 }
+.modal-table {
+  max-width: 600px;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}

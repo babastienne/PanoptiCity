@@ -17,9 +17,22 @@
 
 - [ ] Routing avec zones d'exlusion (chercher de ce côté ? https://www.liedman.net/leaflet-routing-machine/tutorials/alternative-routers/) https://skedgo.github.io/tripkit-leaflet/
 
-# Pouvoir contribuer à OSM / StreetComplete
+# Pouvoir contribuer à OSM
 
-# Re-dessiner champ de vision caméra selon murs batiments
+## Formulaire de création
+
+- [ ] Direction: dessiner la flèche directement sur la carte et se passer du slider (avoir un rendu similaire à everydoor)
+- [ ] Trouver de meilleures images / illustrations
+- [ ] Adapter les illustrations en fonction des réponses précédentes (si on choisi un caméra dome on a ensuite que des images de caméras dôme)
+
+## Communication avec OSM / Affichage des données
+
+- [ ] Après création et tant que objet pas synchronisé avec le back afficher un point temporaire sur la carte
+- [ ] Si pas de connexion garder dans localStorage données pour synchro ultérieure
+
+# Calcul champ de vision
+
+## Re-dessiner champ de vision caméra selon murs batiments
 
 - [ ] Ne pas compter les caméras marquée comme "indoor" > Géré ? A Vérifier mais normalement c'est bon
 - [x] Intégrer dans la base les multi-polygones ("relation" osm) car actuellement cela fait des vides
@@ -55,7 +68,7 @@ Ressources :
 ## Performances front-end
 
 - [ ] Invalider les requêtes en cours avant pour gérer le cas de mouvements sur la carte
-- [ ] Limite de stockage / Size of localStorage
+- [ ] Limite de stockage / Size of localStorage > stocker via indexDb les données
 
 ## Divers performance
 
@@ -69,9 +82,9 @@ Ressources :
 
 ## Style
 
-- [ ] Improve dark mode map (https://github.com/openstreetmap/openstreetmap-website/issues/2332#issuecomment-867821340 // https://github.com/openstreetmap/openstreetmap-website/issues/2332#issuecomment-727266980)
+- [x] Improve dark mode map (https://github.com/openstreetmap/openstreetmap-website/issues/2332#issuecomment-867821340 // https://github.com/openstreetmap/openstreetmap-website/issues/2332#issuecomment-727266980)
 
 ## Create better configuration
 
-- [ ] Zoom initial de la carte et emplacement de départ
+- [x] Zoom initial de la carte et emplacement de départ
 - [ ]
