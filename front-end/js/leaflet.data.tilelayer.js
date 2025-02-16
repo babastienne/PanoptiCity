@@ -5,7 +5,6 @@
     url: null,
     displayedFocusList: null,
     displayedCamerasList: null,
-    infoPopup: null,
     displayCameras: null,
     displayCamerasFocus: null,
     MIN_ZOOM_TO_DISPLAY_FOCUS: null,
@@ -19,7 +18,6 @@
       this.displayedCamerasList = [];
       this.displayCameras = false;
       this.displayCamerasFocus = false;
-      this.infoPopup = this._createInfoPopup();
       L.GridLayer.prototype.initialize.call(this, options);
       this.markersCluster = L.markerClusterGroup({
         disableClusteringAtZoom: 15,
@@ -74,26 +72,6 @@
     },
 
     // INTERNAL METHODS
-    _createInfoPopup: function () {
-      // Function called only call during initialization
-      // Create a popup to display text to user of zoom too low
-      L.Control.textbox = L.Control.extend({
-        onAdd: function (map) {
-          var text = L.DomUtil.create("div");
-          text.id = "minZoomRequired";
-          text.innerHTML = "Trop éloigné ! Zoomer pour afficher le contenu";
-          return text;
-        },
-        onRemove: function (map) {
-          // Nothing to do here
-        },
-      });
-      L.control.textbox = function (opts) {
-        return new L.Control.textbox(opts);
-      };
-      return L.control.textbox({ position: "bottomleft" });
-    },
-
     _ajaxRequest: function (method, url, callback) {
       // Function handling api requests. Called by createTile method.
       let request = new XMLHttpRequest();
@@ -232,11 +210,9 @@
           map.removeLayer(this.displayedFocusList[i]); // And we also remove their focus
         }
         this.displayedFocusList = []; // We re-init the displayed focus list
-        this.infoPopup.addTo(map); // We add popup to alert user that he need to change zoom to see content
         this.displayCameras = false;
         this.displayCamerasFocus = false;
       } else {
-        this.infoPopup.remove(); // We remove the popup with message for user
         if (!this.displayCameras && localStorage.length) {
           // If there is nothing currently displayed on map and something in local storage
           map.addLayer(this.markersCluster); // Then we display the cameras / cluster

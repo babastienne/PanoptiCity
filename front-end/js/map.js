@@ -88,7 +88,6 @@ function initMap() {
   const tilesCams = new L.dataTileLayerCamera(
     `${BASE_URL_API}/cameras.json?tile={z}/{x}/{y}`,
     {
-      // minZoom: 4,
       display: true,
     }
   );
