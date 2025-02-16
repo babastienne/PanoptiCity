@@ -25,15 +25,15 @@ choicesSurveillanceType = {
   options: {
     public: {
       name: TEXTS.cameraSurveillancePublic,
-      picture: "images/contrib/type-dome.svg",
+      picture: "images/contrib/type-public.svg",
     },
     outdoor: {
       name: TEXTS.cameraSurveillanceOutdoor,
-      picture: "images/contrib/type-fixed.svg",
+      picture: "images/contrib/type-outdoor.svg",
     },
     indoor: {
       name: TEXTS.cameraSurveillanceIndoor,
-      picture: "images/contrib/type-fixed.svg",
+      picture: "images/contrib/type-indoor.svg",
     },
   },
 };
@@ -44,23 +44,23 @@ choicesCameraMount = {
   options: {
     wall: {
       name: TEXTS.cameraMountWall,
-      picture: "images/contrib/type-dome.svg",
+      picture: "images/contrib/mount-wall.jpg",
     },
     pole: {
       name: TEXTS.cameraMountPole,
-      picture: "images/contrib/type-fixed.svg",
+      picture: "images/contrib/mount-pole.jpg",
     },
     ceiling: {
       name: TEXTS.cameraMountCeiling,
-      picture: "images/contrib/type-fixed.svg",
+      picture: "images/contrib/mount-ceiling.jpg",
     },
     street_lamp: {
       name: TEXTS.cameraMountStreetLamp,
-      picture: "images/contrib/type-dome.svg",
+      picture: "images/contrib/mount-streetlamp.jpg",
     },
     traffic_signals: {
       name: TEXTS.cameraMountTrafficSignal,
-      picture: "images/contrib/type-fixed.svg",
+      picture: "images/contrib/mount-trafficlights.jpg",
     },
     doorbell: {
       name: TEXTS.cameraMountDoorbell,
@@ -79,35 +79,35 @@ choicesCameraZone = {
   options: {
     traffic: {
       name: TEXTS.cameraZoneTraffic,
-      picture: "images/contrib/type-dome.svg",
+      picture: "images/contrib/zone-traffic.svg",
     },
     town: {
       name: TEXTS.cameraZoneTown,
-      picture: "images/contrib/type-fixed.svg",
+      picture: "images/contrib/zone-city.jpg",
     },
     entrance: {
       name: TEXTS.cameraZoneEntrance,
-      picture: "images/contrib/type-fixed.svg",
+      picture: "images/contrib/zone-entrance.png",
     },
     shop: {
       name: TEXTS.cameraZoneShop,
-      picture: "images/contrib/type-dome.svg",
+      picture: "images/contrib/zone-store.jpg",
     },
     bank: {
       name: TEXTS.cameraZoneBank,
-      picture: "images/contrib/type-fixed.svg",
+      picture: "images/contrib/zone-bank2.svg",
     },
     building: {
       name: TEXTS.cameraZoneBuilding,
-      picture: "images/contrib/type-fixed.svg",
+      picture: "images/contrib/zone-building.svg",
     },
     parking: {
       name: TEXTS.cameraZoneParking,
-      picture: "images/contrib/type-fixed.svg",
+      picture: "images/contrib/zone-parking.svg",
     },
     public_transport_platform: {
       name: TEXTS.cameraZonePublicTransportPlatform,
-      picture: "images/contrib/type-fixed.svg",
+      picture: "images/contrib/zone-transport.jpg",
     },
   },
 };
@@ -299,55 +299,73 @@ removeCreationMarkerFromMap = () => {
 };
 
 // -- Functions to handle creation workflow --
-nextStep = (tagName, value = null) => {
-  console.log(tagName);
-  console.log(value);
-  hideBottomSheet();
+saveChoosenValue = (tagName, value = null) => {
   if (tagName == choicesCameraLocation.tagName) {
     position = removeCreationMarkerFromMap();
     currentCamera.lat = position.lat;
     currentCamera.lon = position.lng;
     displaySelectChoicesForUser(choicesCameraType);
-  } else if (tagName == choicesCameraType.tagName) {
+  } else if (
+    tagName == choicesCameraDirection.tagName ||
+    tagName == choicesCameraAngle.tagName
+  ) {
     if (value != null) {
-      currentCamera.tags[tagName] = value;
-      if (value == "fixed" || value == "panning") {
-        displayDirectionFormForUser(choicesCameraDirection);
-      } else {
-        displaySelectChoicesForUser(choicesSurveillanceType);
-      }
+      currentCamera.tags[tagName] = sliderValue;
     } else {
-      displaySelectChoicesForUser(choicesSurveillanceType);
+      currentCamera.tags[tagName] = null;
     }
-  } else if (tagName == choicesCameraDirection.tagName) {
-    if (value != null) {
-      currentCamera.tags[tagName] = sliderValue;
-    }
-    displayDirectionFormForUser(choicesCameraAngle);
-  } else if (tagName == choicesCameraAngle.tagName) {
-    if (value != null) {
-      currentCamera.tags[tagName] = sliderValue;
-    }
-    displaySelectChoicesForUser(choicesSurveillanceType);
-  } else if (tagName == choicesSurveillanceType.tagName) {
-    if (value != null) {
-      currentCamera.tags[tagName] = value;
-    }
-    displaySelectChoicesForUser(choicesCameraMount);
-  } else if (tagName == choicesCameraMount.tagName) {
-    if (value != null) {
-      currentCamera.tags[tagName] = value;
-    }
-    displaySelectChoicesForUser(choicesCameraZone);
-  } else if (tagName == choicesCameraZone.tagName) {
-    if (value != null) {
-      currentCamera.tags[tagName] = value;
-    }
-    displaySliderForUser(choicesCameraHeight);
+    console.log(currentCamera.tags[tagName]);
   } else {
+    currentCamera.tags[tagName] = value;
+  }
+};
+
+chooseNextStep = () => {
+  let existingCameraFields = Object.keys(currentCamera);
+  let existingCameraTags = Object.keys(currentCamera.tags);
+  if (!existingCameraFields.includes("lat")) {
+    addCreationMarkerOnMap();
+    displayMapFormForUser(choicesCameraLocation);
+  } else if (!existingCameraTags.includes(choicesCameraType.tagName)) {
+    displaySelectChoicesForUser(choicesCameraType);
+  } else if (
+    existingCameraTags.includes(choicesCameraType.tagName) &&
+    ["fixed", "panning"].includes(
+      currentCamera.tags[choicesCameraType.tagName]
+    ) &&
+    !existingCameraTags.includes(choicesCameraDirection.tagName)
+  ) {
+    displayDirectionFormForUser(choicesCameraDirection);
+  } else if (
+    existingCameraTags.includes(choicesCameraDirection.tagName) &&
+    !existingCameraTags.includes(choicesCameraAngle.tagName)
+  ) {
+    displayDirectionFormForUser(choicesCameraAngle);
+  } else if (!existingCameraTags.includes(choicesSurveillanceType.tagName)) {
+    displaySelectChoicesForUser(choicesSurveillanceType);
+  } else if (!existingCameraTags.includes(choicesCameraMount.tagName)) {
+    displaySelectChoicesForUser(choicesCameraMount);
+  } else if (!existingCameraTags.includes(choicesCameraZone.tagName)) {
+    displaySelectChoicesForUser(choicesCameraZone);
+  } else if (!existingCameraTags.includes(choicesCameraHeight.tagName)) {
+    displaySliderForUser(choicesCameraHeight);
+  } else if (!existingCameraFields.includes("id")) {
+    // Current does not have id, it is then a creation
     createCamera(currentCamera);
     cancelCameraCreation();
+    displaySnackbar(TEXTS.successCreationCameraMsg);
+  } else {
+    // The camera is being updating (already exists)
+    updateCamera(currentCamera);
+    cancelCameraCreation();
+    displaySnackbar(TEXTS.successUpdateCameraMsg);
   }
+};
+
+nextStep = (tagName, value = null) => {
+  hideBottomSheet();
+  saveChoosenValue(tagName, value);
+  chooseNextStep();
 };
 
 startCameraCreation = () => {
@@ -359,8 +377,13 @@ startCameraCreation = () => {
       "surveillance:type": "camera",
     },
   };
-  addCreationMarkerOnMap();
-  displayMapFormForUser(choicesCameraLocation);
+  chooseNextStep();
+};
+
+completeExistingCameraMissingAttributes = async (cameraId) => {
+  document.getElementById("latteralButtons").innerHTML = ""; // We remove the creation button of the interface
+  currentCamera = await getCamera(cameraId);
+  chooseNextStep();
 };
 
 cancelCameraCreation = () => {

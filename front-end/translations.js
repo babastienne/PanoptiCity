@@ -50,6 +50,10 @@ let translatedTexts = {
     distanceUnit: "meter",
     distanceUnitPlural: "meters",
     cameraAngleQuestion: "What is the tilt angle of the camera ?",
+    successCreationCameraMsg:
+      "Camera sucessfully created. It will appears on the map in few minutes ...",
+    successUpdateCameraMsg:
+      "Camera sucessfully updated. Map will be updated soon. Thanks for your help.",
   },
   fr: {
     titleApp: "PanoptiCité",
@@ -92,15 +96,19 @@ let translatedTexts = {
     cameraZoneQuestion: "Quelle est la zone surveillée ?",
     cameraZoneTraffic: "Traffic",
     cameraZoneTown: "Ville",
-    cameraZoneEntrance: "Entrée de batiment",
+    cameraZoneEntrance: "Entrée/porte",
     cameraZoneShop: "Magasin",
     cameraZoneBank: "Banque",
     cameraZoneBuilding: "Batiment",
     cameraZoneParking: "Parking",
-    cameraZonePublicTransportPlatform: "Plateforme de transport public",
+    cameraZonePublicTransportPlatform: "Station de transport",
     cameraHeightQuestion: "Quelle est la hauteur de la caméra ?",
     distanceUnit: "mètre",
     distanceUnitPlural: "mètres",
     cameraAngleQuestion: "Quel est l'inclinaison de la caméra ?",
+    successCreationCameraMsg:
+      "Camera créée. La carte sera mise à jour dans quelques minutes ...",
+    successUpdateCameraMsg:
+      "Camera mise à jour. La carte sera rafraichie bientôt. Merci pour votre aide.",
   },
 };

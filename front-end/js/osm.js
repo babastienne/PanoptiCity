@@ -56,6 +56,21 @@ checkIfUserConnected = () => {
   }
 };
 
+getCamera = async (id) => {
+  let [fetchedCamera] = await OSM.getFeature("node", id);
+  console.log(fetchedCamera);
+  return fetchedCamera;
+};
+
+cleanObject = (camera) => {
+  for (elem in camera.tags) {
+    if (camera.tags[elem] == null) {
+      delete camera.tags[elem];
+    }
+  }
+  return camera;
+};
+
 createCamera = async (camera) => {
   camera.type = "node";
   camera.id = -1; // Negative ID for new features
@@ -64,6 +79,7 @@ createCamera = async (camera) => {
   camera.timestamp = "";
   camera.user = "";
   camera.version = 0;
+  camera = cleanObject(camera);
 
   console.log(camera);
 
@@ -73,6 +89,15 @@ createCamera = async (camera) => {
   );
 
   console.log(p);
+};
+
+updateCamera = async (camera) => {
+  camera = cleanObject(camera);
+  console.log(camera);
+  await OSM.uploadChangeset(
+    { created_by: "PanoptiCity", comment: "Editing an existing camera" },
+    { create: [], modify: [camera], delete: [] }
+  );
 };
 
 checkIfUserConnected();

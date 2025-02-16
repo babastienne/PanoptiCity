@@ -52,6 +52,7 @@ function addCameraDetailsData(plotMarker, plot) {
     }
   }
   popupDataTable = popupDataTable + "</tbody></table>";
+  cancelCameraCreation();
   updateBottomModalContent(popupDataTable);
   showBottomModal();
 }

@@ -1,3 +1,12 @@
+function displaySnackbar(content = "") {
+  let elem = document.getElementById("snackbar");
+  elem.className = "show";
+  elem.innerHTML = content;
+  setTimeout(function () {
+    elem.className = elem.className.replace("show", "");
+  }, 2950);
+}
+
 let getUserLang = () => {
   let [userLang] = navigator.language.split("-");
   if (!Object.keys(translatedTexts).includes(userLang)) {
