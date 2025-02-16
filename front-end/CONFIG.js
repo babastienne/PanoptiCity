@@ -1,10 +1,10 @@
 // -- Back-end configuration --
-const BASE_URL_API = "http://localhost:8000/api";
+const BASE_URL_API = "https://panopticity.fr/api";
 
 // -- OpenStreetMap App configuration (for contributions) --
-const OSM_API_URL = "https://master.apis.dev.openstreetmap.org";
-const CLIENT_ID_OSM_APP = "qblrAs30ou9Ysh-p1VAZJVCpCHO-GJ6o0XwOlV7a1So";
-const DOMAIN_NAME = "http://127.0.0.1";
+const OSM_API_URL = "https://api.openstreetmap.org";
+const CLIENT_ID_OSM_APP = "JXdkNYv_vIMAMdFMW6sobS2gZI-aIw8mDdk6gwHmxWM";
+const DOMAIN_NAME = "https://panopticity.fr";
 
 // -- Map configuration --
 const MAP_INITIAL_BBOX = [
