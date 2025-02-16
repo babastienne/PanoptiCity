@@ -87,8 +87,6 @@ createCamera = async (camera) => {
     { created_by: "PanoptiCity", comment: "Adding a new camera" },
     { create: [camera], modify: [], delete: [] }
   );
-
-  console.log(p);
 };
 
 updateCamera = async (camera) => {

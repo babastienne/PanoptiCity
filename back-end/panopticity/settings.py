@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     "rest_framework_gis",
     "cameras",
     "gunicorn",
-    # 'debug_toolbar',  # FIXME: Remove for production
 ]
 
 MIDDLEWARE = [
@@ -52,7 +51,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',  # FIXME: Remove for production
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -140,7 +138,3 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
     ],
 }
-
-# INTERNAL_IPS = [  # FIXME: Remove for production
-#     "127.0.0.1",
-# ]

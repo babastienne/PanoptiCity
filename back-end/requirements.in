@@ -1,6 +1,5 @@
 django
 djangorestframework
-overpy
 osmium
 djangorestframework-gis
 django-cors-headers

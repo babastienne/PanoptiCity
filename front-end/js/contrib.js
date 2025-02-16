@@ -307,7 +307,8 @@ saveChoosenValue = (tagName, value = null) => {
     displaySelectChoicesForUser(choicesCameraType);
   } else if (
     tagName == choicesCameraDirection.tagName ||
-    tagName == choicesCameraAngle.tagName
+    tagName == choicesCameraAngle.tagName ||
+    tagName == choicesCameraHeight.tagName
   ) {
     if (value != null) {
       currentCamera.tags[tagName] = sliderValue;

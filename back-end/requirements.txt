@@ -34,8 +34,6 @@ idna==3.10
     # via requests
 osmium==4.0.2
     # via -r requirements.in
-overpy==0.7
-    # via -r requirements.in
 packaging==24.2
     # via gunicorn
 psycopg2-binary==2.9.10
