@@ -4,6 +4,8 @@
 
 - [PanoptiCity](#panopticity)
   - [Introduction](#introduction)
+    - [Screenshots](#screenshots)
+    - [Supported features](#supported-features)
   - [Installation](#installation)
     - [Download the project and requirements](#download-the-project-and-requirements)
     - [Set project environement](#set-project-environement)
@@ -12,6 +14,8 @@
       - [Steps to import data](#steps-to-import-data)
       - [Steps to update the cameras](#steps-to-update-the-cameras)
       - [Steps to update the buildings](#steps-to-update-the-buildings)
+    - [Run the website for production](#run-the-website-for-production)
+    - [Development](#development)
   - [More information](#more-information)
     - [Create or tag multiple cameras on same location](#create-or-tag-multiple-cameras-on-same-location)
     - [Complementary resources](#complementary-resources)
@@ -36,6 +40,21 @@ This project's purpose is to help display information about CCTV, cameras, to ea
 PanoptiCity is my way to act and try to raise awareness about mass surveillance in all cities, to make people realize the amount of cameras around us that they usually not even see. In a time were artifical intelligence is generalizing, it is more than ever the moment to ask ourselves, is it really the model of society we want to build collectively ?
 
 One major inspiration for this project has been the website [SunderS](https://sunders.uber.space/). It gave me the idea of improving the project with new features and therefore obviously needs to be cited. Information used is from the awesome [OpenStreetMap](https://www.openstreetmap.org/) database. Other attributions and projects used for this application can be found later on this page.
+
+### Screenshots
+
+| ![Home page](docs/images/home.png)                        | ![Details view](docs/images/camera-details.png)           |
+| --------------------------------------------------------- | --------------------------------------------------------- |
+| ![Creation camera type](docs/images/camera-add-mount.png) | ![Limits of camera vision](docs/images/camera-limits.png) |
+
+### Supported features
+
+- Get data from OpenStreetMap database
+- Compute field of vision of each camera, take in consideration surounding buildings
+- Connection with OpenStreetMap account
+- Edition of existing cameras
+- Creation form to contribute new cameras
+- Dark/light mode
 
 ## Installation
 
@@ -146,6 +165,15 @@ We will refer at your downloaded pbf file as `<my-pbf-file>` and in the next com
 ```
 
 We don't recommand to automatize this operation.
+
+### Run the website for production
+
+- To launch the back-end, you need to run `docker compose up -d`. The back-end will be running on localhost on port 8000. You need to configure your server as an http_proxy to this port. Anything behind then endpoint `/api` need to be available.
+- The front-end is a static html website so it can be served by any web server.
+
+### Development
+
+Pretty much the same as in production. If you want to contribute to this project there is some contribution ideas available on [todo.md](./todo.md). Don't hesitate to ask if you want to share ideas or need help to start.
 
 ## More information
 

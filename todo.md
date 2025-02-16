@@ -29,12 +29,14 @@
 
 - [ ] Après création et tant que objet pas synchronisé avec le back afficher un point temporaire sur la carte
 - [ ] Si pas de connexion garder dans localStorage données pour synchro ultérieure
+- [ ] Mettre en avant sur la carte les caméras qui ont besoin d'être complétées
+- [ ] Pouvoir "dupliquer" une caméra ?
 
 # Calcul champ de vision
 
 ## Re-dessiner champ de vision caméra selon murs batiments
 
-- [ ] Ne pas compter les caméras marquée comme "indoor" > Géré ? A Vérifier mais normalement c'est bon
+- [ ] Ne pas compter les caméras marquée comme "indoor" > Géré ? A Vérifier mais normalement c'est bon. Vérifier que le champ de vision ne sort pas du batîment.
 - [x] Intégrer dans la base les multi-polygones ("relation" osm) car actuellement cela fait des vides
 - [x] Prise en compte du tag "roof" pour certains batiments pour permettre de voir à travers (exemple péages) https://wiki.openstreetmap.org/wiki/FR:Tag:building=roof?uselang=fr
 
