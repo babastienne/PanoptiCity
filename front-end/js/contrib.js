@@ -1,4 +1,5 @@
 var currentPositionMarker = new L.marker(map.getCenter(), {});
+var sliderValue = 0;
 choicesCameraType = {
   title: TEXTS.cameraTypeQuestion,
   tagName: "camera:type",
@@ -140,6 +141,13 @@ choicesCameraAngle = {
   step: 5,
 };
 
+choicesCameraLocation = {
+  title: TEXTS.cameraLocationQuestion,
+  tagName: "camera:position",
+};
+
+var currentCamera = {};
+
 // -- Functions to display forms / ask user information --
 displaySelectChoicesForUser = (choices) => {
   let modalContent = `
@@ -150,7 +158,7 @@ displaySelectChoicesForUser = (choices) => {
   for (elem in choices.options) {
     modalContent =
       modalContent +
-      `<div class="modal-cell" onclick="nextStep()">
+      `<div class="modal-cell" onclick="nextStep('${choices.tagName}', '${elem}')">
         <img class="modal-image" src="${choices.options[elem].picture}" />
         ${choices.options[elem].name}
         </div>`;
@@ -160,7 +168,7 @@ displaySelectChoicesForUser = (choices) => {
     `</div>
         <button
             class="outline secondary modal-button"
-            onclick="nextStep()"
+            onclick="nextStep('${choices.tagName}')"
         >${TEXTS.iDontKnowButton}</button></div>`;
   let additionalHeight = computeRenderedImageWidth(
     100,
@@ -169,10 +177,11 @@ displaySelectChoicesForUser = (choices) => {
     200
   );
   updateBottomModalContent(modalContent, additionalHeight);
-  showBottomModal();
+  showBottomModal((overlayClickHideModal = false));
 };
 
 updateSliderDistanceValue = (value) => {
+  sliderValue = value;
   document.getElementById("sliderValue").innerHTML =
     value <= 1
       ? `${value} ${TEXTS.distanceUnit}`
@@ -191,24 +200,26 @@ displaySliderForUser = (choices) => {
               max="${choices.maxValue}"
               step="${choices.step}"
               oninput="updateSliderDistanceValue(this.value)" />
-          <div id="sliderValue">${choices.defaultValue} ${TEXTS.distanceUnitPlural}</div>
+          <div id="sliderValue"></div>
           <div class="modal-flex-buttons">
             <button
                 class="outline secondary modal-button"
-                onclick="nextStep()"
+                onclick="nextStep('${choices.tagName}')"
             >${TEXTS.iDontKnowButton}</button>
             <button
                 class="outline primary modal-button"
-                onclick="nextStep()"
+                onclick="nextStep('${choices.tagName}', '${sliderValue}')"
             >${TEXTS.confirmButton}</button>
           </div>
         </div>
     `;
   updateBottomModalContent(modalContent);
-  showBottomModal();
+  updateSliderDistanceValue(choices.defaultValue);
+  showBottomModal((overlayClickHideModal = false));
 };
 
 rotateArrowForDirection = (value, optionnalTransformation = 0) => {
+  sliderValue = Number(value);
   let arrow = document.getElementById("modal-arrow-direction");
   arrow.style.transform = `rotate(${
     Number(value) + optionnalTransformation
@@ -233,18 +244,41 @@ displayDirectionFormForUser = (choices) => {
     <div class="modal-flex-buttons">
       <button
           class="outline secondary modal-button"
-          onclick="nextStep()"
+          onclick="nextStep('${choices.tagName}')"
       >${TEXTS.iDontKnowButton}</button>
       <button
           class="outline primary modal-button"
-          onclick="nextStep()"
+          onclick="nextStep('${choices.tagName}', '${sliderValue}')"
       >${TEXTS.confirmButton}</button>
     </div>
   </div>
 `;
   updateBottomModalContent(modalContent);
   rotateArrowForDirection(choices.defaultValue, choices.additionalTransform);
-  showBottomModal();
+  showBottomModal((overlayClickHideModal = false));
+};
+
+displayMapFormForUser = (choices) => {
+  let modalContent = `
+  <div class="pico modal-div">
+    <h4 class="modal-title">${choices.title}</h4>
+    <div class="modal-flex-buttons">
+      <button
+          class="outline secondary modal-button"
+          onclick="cancelCameraCreation()"
+      >${TEXTS.cancelButton}</button>
+      <button
+          class="outline primary modal-button"
+          onclick="nextStep('${choices.tagName}')"
+      >${TEXTS.confirmButton}</button>
+    </div>
+  </div>
+`;
+  updateBottomModalContent(modalContent, (heightAdd = -15), (adaptMap = true));
+  showBottomModal(
+    (overlayClickHideModal = false),
+    (authorizeMoveBehindModal = true)
+  );
 };
 
 // -- Functions to get location of point from user --
@@ -265,8 +299,72 @@ removeCreationMarkerFromMap = () => {
 };
 
 // -- Functions to handle creation workflow --
-nextStep = () => {
-  console.log("TODO BPO");
+nextStep = (tagName, value = null) => {
+  console.log(tagName);
+  console.log(value);
+  hideBottomSheet();
+  if (tagName == choicesCameraLocation.tagName) {
+    position = removeCreationMarkerFromMap();
+    currentCamera.lat = position.lat;
+    currentCamera.lon = position.lng;
+    displaySelectChoicesForUser(choicesCameraType);
+  } else if (tagName == choicesCameraType.tagName) {
+    if (value != null) {
+      currentCamera.tags[tagName] = value;
+      if (value == "fixed" || value == "panning") {
+        displayDirectionFormForUser(choicesCameraDirection);
+      } else {
+        displaySelectChoicesForUser(choicesSurveillanceType);
+      }
+    } else {
+      displaySelectChoicesForUser(choicesSurveillanceType);
+    }
+  } else if (tagName == choicesCameraDirection.tagName) {
+    if (value != null) {
+      currentCamera.tags[tagName] = sliderValue;
+    }
+    displayDirectionFormForUser(choicesCameraAngle);
+  } else if (tagName == choicesCameraAngle.tagName) {
+    if (value != null) {
+      currentCamera.tags[tagName] = sliderValue;
+    }
+    displaySelectChoicesForUser(choicesSurveillanceType);
+  } else if (tagName == choicesSurveillanceType.tagName) {
+    if (value != null) {
+      currentCamera.tags[tagName] = value;
+    }
+    displaySelectChoicesForUser(choicesCameraMount);
+  } else if (tagName == choicesCameraMount.tagName) {
+    if (value != null) {
+      currentCamera.tags[tagName] = value;
+    }
+    displaySelectChoicesForUser(choicesCameraZone);
+  } else if (tagName == choicesCameraZone.tagName) {
+    if (value != null) {
+      currentCamera.tags[tagName] = value;
+    }
+    displaySliderForUser(choicesCameraHeight);
+  } else {
+    createCamera(currentCamera);
+    cancelCameraCreation();
+  }
 };
 
-displayDirectionFormForUser(choicesCameraDirection);
+startCameraCreation = () => {
+  // This function is called when the user click on the creation button
+  document.getElementById("latteralButtons").innerHTML = ""; // We remove the creation button of the interface
+  currentCamera = {
+    tags: {
+      man_made: "surveillance",
+      "surveillance:type": "camera",
+    },
+  };
+  addCreationMarkerOnMap();
+  displayMapFormForUser(choicesCameraLocation);
+};
+
+cancelCameraCreation = () => {
+  hideBottomSheet();
+  removeCreationMarkerFromMap();
+  document.getElementById("latteralButtons").innerHTML = creationCameraButton;
+};

@@ -25,10 +25,33 @@ let isDragging = false,
   startY,
   startHeight;
 
-const showBottomModal = () => {
+const showBottomModal = (
+  overlayClickHideModal = true,
+  authorizeMoveBehindModal = false
+) => {
   bottomSheet.classList.add("show");
   document.body.style.overflowY = "hidden";
   updateSheetHeight(80);
+  if (overlayClickHideModal) {
+    sheetOverlay.addEventListener("click", hideBottomSheet);
+  } else {
+    sheetOverlay.removeEventListener("click", hideBottomSheet);
+  }
+  if (authorizeMoveBehindModal) {
+    sheetOverlay.style.opacity = "0";
+    sheetOverlay.style.display = "none";
+    dragIcon.style.display = "none";
+    bottomSheet.style.maxHeight = sheetContent.style.maxHeight;
+    bottomSheet.style.top = "unset";
+    bottomSheet.style.bottom = "0";
+  } else {
+    sheetOverlay.style.opacity = "0.2";
+    sheetOverlay.style.display = "";
+    dragIcon.style.display = "";
+    bottomSheet.style.maxHeight = "";
+    bottomSheet.style.top = "0";
+    bottomSheet.style.bottom = "unset";
+  }
 };
 
 const updateSheetHeight = (height) => {
@@ -37,6 +60,8 @@ const updateSheetHeight = (height) => {
 };
 
 const hideBottomSheet = () => {
+  document.getElementById("map").style.height = `calc(100vh - 4rem)`;
+  map.invalidateSize();
   bottomSheet.classList.remove("show");
   document.body.style.overflowY = "auto";
 };
@@ -66,13 +91,19 @@ const dragStop = () => {
     : updateSheetHeight(sheetHeight);
 };
 
-const updateBottomModalContent = (content, heightAdd = 0) => {
+const updateBottomModalContent = (content, heightAdd = 0, adaptMap = false) => {
   bodyModal.innerHTML = content;
   let maxHeightModal = bodyModal.children[0].scrollHeight + 120 + heightAdd;
   if (maxHeightModal > window.screen.height) {
     maxHeightModal = window.screen.height * 0.9;
   }
   sheetContent.style.maxHeight = `${maxHeightModal}px`;
+  if (adaptMap) {
+    document
+      .getElementById("map")
+      .style.setProperty("height", `calc(100vh - 4rem - ${maxHeightModal}px)`);
+    map.invalidateSize();
+  }
 };
 
 dragIcon.addEventListener("mousedown", dragStart);
@@ -82,5 +113,3 @@ document.addEventListener("mouseup", dragStop);
 dragIcon.addEventListener("touchstart", dragStart);
 document.addEventListener("touchmove", dragging);
 document.addEventListener("touchend", dragStop);
-
-sheetOverlay.addEventListener("click", hideBottomSheet);

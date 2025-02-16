@@ -1,4 +1,3 @@
-// From under this line do not modify the file
 let getUserLang = () => {
   let [userLang] = navigator.language.split("-");
   if (!Object.keys(translatedTexts).includes(userLang)) {
@@ -9,6 +8,16 @@ let getUserLang = () => {
 
 const TEXTS = translatedTexts[getUserLang()];
 
+// Create some components
+var creationCameraButton = `
+  <img
+    src="images/contrib/add.svg"
+    id="buttonAddCamera"
+    title="${TEXTS.addCameraButton}"
+    onclick="startCameraCreation()"
+  />`;
+
+// Handle translations of UI
 document.title = `${TEXTS.titleApp} - ${TEXTS.teaserApp}`;
 document.getElementById("tr-titleApp").innerHTML = TEXTS.titleApp;
 document.getElementById("tr-burgerMenu").title = TEXTS.burgerMenu;

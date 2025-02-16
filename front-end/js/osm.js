@@ -32,25 +32,47 @@ async function OSMLogin() {
 
 checkIfUserConnected = () => {
   userIsConnected = OSM.isLoggedIn();
-  let button = document.getElementById("loginButton");
+  let buttonLogin = document.getElementById("loginButton");
+  let latteralButtons = document.getElementById("latteralButtons");
   if (userIsConnected) {
-    button.ariaBusy = false;
-    button.innerHTML = TEXTS.logoutButtonName;
-    button.title = TEXTS.logoutButtonTitle;
-    button.onclick = () => {
+    buttonLogin.ariaBusy = false;
+    buttonLogin.innerHTML = TEXTS.logoutButtonName;
+    buttonLogin.title = TEXTS.logoutButtonTitle;
+    buttonLogin.onclick = () => {
       OSM.logout();
       checkIfUserConnected();
     };
-    button.classList.remove("secondary");
-    button.classList.add("danger");
+    buttonLogin.classList.remove("secondary");
+    buttonLogin.classList.add("danger");
+    latteralButtons.innerHTML = creationCameraButton;
   } else {
-    button.ariaBusy = false;
-    button.innerHTML = TEXTS.loginButtonName;
-    button.title = TEXTS.loginButtonTitle;
-    button.onclick = OSMLogin;
-    button.classList.remove("danger");
-    button.classList.add("secondary");
+    buttonLogin.ariaBusy = false;
+    buttonLogin.innerHTML = TEXTS.loginButtonName;
+    buttonLogin.title = TEXTS.loginButtonTitle;
+    buttonLogin.onclick = OSMLogin;
+    buttonLogin.classList.remove("danger");
+    buttonLogin.classList.add("secondary");
+    latteralButtons.innerHTML = "";
   }
+};
+
+createCamera = async (camera) => {
+  camera.type = "node";
+  camera.id = -1; // Negative ID for new features
+  camera.uid = -1;
+  camera.changeset = -1;
+  camera.timestamp = "";
+  camera.user = "";
+  camera.version = 0;
+
+  console.log(camera);
+
+  let p = await OSM.uploadChangeset(
+    { created_by: "PanoptiCity", comment: "Adding a new camera" },
+    { create: [camera], modify: [], delete: [] }
+  );
+
+  console.log(p);
 };
 
 checkIfUserConnected();

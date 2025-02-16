@@ -23,14 +23,13 @@
   left: 0;
   width: 100%;
   height: 100%;
+  opacity: 0.2;
 }
 [data-theme="light"] .bottom-sheet .sheet-overlay {
-  opacity: 0.2;
   background: #000;
 }
 [data-theme="dark"] .bottom-sheet .sheet-overlay {
-  opacity: 0.1;
-  background: #fff;
+  background: #666;
 }
 
 .bottom-sheet .content {
@@ -166,4 +165,7 @@
   width: 50px !important;
   margin-left: auto;
   margin-right: auto;
+}
+[data-theme="dark"] #modal-arrow-direction {
+  filter: invert(20%);
 }
