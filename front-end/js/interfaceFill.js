@@ -26,6 +26,46 @@ var creationCameraButton = `
     onclick="startCameraCreation()"
   />`;
 
+// Handle side menu content
+let menuItems = [
+  {
+    name: TEXTS.aboutThisSiteTitle,
+    content: TEXTS.aboutThisSiteContent,
+  },
+  {
+    name: TEXTS.whyThisNameTitle,
+    content: TEXTS.whyThisNameContent,
+  },
+];
+
+fillSideMenu = () => {
+  let sideMenuContent = document.getElementById("sideMenuContent");
+  let menuContent = "";
+  menuItems.forEach((elem, n) => {
+    menuContent =
+      menuContent +
+      `
+      <li class="menu__li">
+        <a class="menu__item" title=${elem.name} onclick="displayMenuContent(${n})">${elem.name}</a>
+      </li>`;
+  });
+  sideMenuContent.innerHTML = menuContent;
+};
+
+displayMenuContent = (n) => {
+  let content = `
+  <div class="pico modal-div">
+    <h4 class="modal-title">${menuItems[n].name}</h4>`;
+  menuItems[n].content.split("\n").forEach((elem, _) => {
+    content = content + `<p>${elem}</p>`;
+  });
+  content = content + "</div>";
+  updateBottomModalContent(content);
+  showBottomModal();
+};
+
+fillSideMenu();
+
 // Handle translations of UI
 document.title = `${TEXTS.titleApp} - ${TEXTS.teaserApp}`;
 document.getElementById("tr-titleApp").innerHTML = TEXTS.titleApp;
