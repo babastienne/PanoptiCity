@@ -171,6 +171,8 @@ We don't recommand to automatize this operation.
 - To launch the back-end, you need to run `docker compose up -d`. The back-end will be running on localhost on port 8000. You need to configure your server as an http_proxy to this port. Anything behind then endpoint `/api` need to be available.
 - The front-end is a static html website so it can be served by any web server.
 
+An example of basic server configuration can be found on the file `nginx.conf.example`.
+
 ### Development
 
 Pretty much the same as in production. If you want to contribute to this project there is some contribution ideas available on [todo.md](./todo.md). Don't hesitate to ask if you want to share ideas or need help to start.

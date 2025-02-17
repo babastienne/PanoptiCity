@@ -9,3 +9,4 @@ osm-data/
 
 # Env file
 .env
+nginx.conf
