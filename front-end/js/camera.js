@@ -55,20 +55,22 @@ function addCameraDetailsData(plotMarker, plot) {
     }
   }
   popupDataTable = popupDataTable + "</tbody></table>";
-  if (
-    listAttributes.length < 6 ||
-    (["fixed", "panning"].includes(plot["camera_type"]) && listAttributes < 8)
-  ) {
-    popupDataTable =
-      popupDataTable +
-      `
-      <div class="modal-flex-buttons">
-        <button
-            class="outline primary modal-button"
-            onclick="completeExistingCameraMissingAttributes(${plot.id})"
-        >${TEXTS.completeCameraButton}</button>
-      </div>
-    `;
+  if (OSM.isLoggedIn()) {
+    if (
+      listAttributes.length < 6 ||
+      (["fixed", "panning"].includes(plot["camera_type"]) && listAttributes < 8)
+    ) {
+      popupDataTable =
+        popupDataTable +
+        `
+        <div class="modal-flex-buttons">
+          <button
+              class="outline primary modal-button"
+              onclick="completeExistingCameraMissingAttributes(${plot.id})"
+          >${TEXTS.completeCameraButton}</button>
+        </div>
+      `;
+    }
   }
 
   popupDataTable = popupDataTable + "</div>";

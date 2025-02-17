@@ -389,5 +389,7 @@ completeExistingCameraMissingAttributes = async (cameraId) => {
 cancelCameraCreation = () => {
   hideBottomSheet();
   removeCreationMarkerFromMap();
-  document.getElementById("latteralButtons").innerHTML = creationCameraButton;
+  if (userIsConnected) {
+    document.getElementById("latteralButtons").innerHTML = creationCameraButton;
+  }
 };
