@@ -174,3 +174,9 @@
   margin-left: auto !important;
   margin-right: auto !important;
 }
+.modal-content {
+  max-width: 750px;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: justify;
+}

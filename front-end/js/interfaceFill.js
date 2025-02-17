@@ -55,11 +55,11 @@ fillSideMenu = () => {
 displayMenuContent = (n) => {
   let content = `
   <div class="pico modal-div">
-    <h4 class="modal-title">${menuItems[n].name}</h4>`;
+    <h4 class="modal-title">${menuItems[n].name}</h4><div class="modal-content">`;
   menuItems[n].content.split("\n").forEach((elem, _) => {
     content = content + `<p>${elem}</p>`;
   });
-  content = content + "</div>";
+  content = content + "</div></div>";
   updateBottomModalContent(content);
   showBottomModal();
 };
