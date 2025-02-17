@@ -40,7 +40,6 @@ services:
       # - ./back-end:/app
     environment:
       DJANGO_SECRET_KEY: ${SECRET_KEY}
-      DEBUG: ${DEBUG}
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
