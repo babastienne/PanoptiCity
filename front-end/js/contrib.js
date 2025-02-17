@@ -315,7 +315,6 @@ saveChoosenValue = (tagName, value = null) => {
     } else {
       currentCamera.tags[tagName] = null;
     }
-    console.log(currentCamera.tags[tagName]);
   } else {
     currentCamera.tags[tagName] = value;
   }

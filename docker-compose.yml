@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   postgis:
     image: postgis/postgis:latest
@@ -11,6 +9,8 @@ services:
       - postgis_data:/var/lib/postgresql/data
     ports:
       - "${POSTGRES_PORT}:5432"
+    env_file:
+      - .env
 
   osm2pgsql:
     image: iboates/osm2pgsql:latest
@@ -25,6 +25,8 @@ services:
     volumes:
       - ./back-end:/data
       - ./osm-data:/osm-data
+    env_file:
+      - .env
 
   web:
     build: .
@@ -44,7 +46,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_HOST: postgis
       POSTGRES_PORT: 5432
-      #  DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS}
+      DJANGO_ALLOWED_HOSTS: ${SERVER_NAME}
     env_file:
       - .env
 

@@ -2,12 +2,6 @@ OSM.configure({ apiUrl: OSM_API_URL });
 
 var userIsConnected;
 
-async function fetchOSMNode() {
-  let p = await OSM.getFeature("way", 23906749);
-  console.log(p);
-  console.log("It doesn't work with sandbox server, that's ok");
-}
-
 async function OSMLogin() {
   let button = document.getElementById("loginButton");
   button.title = TEXTS.inProgressLabel;

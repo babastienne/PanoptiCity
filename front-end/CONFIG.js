@@ -1,5 +1,5 @@
 // -- Back-end configuration --
-const BASE_URL_API = "https://panopticity.fr/api";
+const BASE_URL_API = "https://api.panopticity.fr/api";
 
 // -- OpenStreetMap App configuration (for contributions) --
 const OSM_API_URL = "https://api.openstreetmap.org";

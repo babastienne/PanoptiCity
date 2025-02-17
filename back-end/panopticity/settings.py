@@ -17,14 +17,13 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
-SECRET_KEY = SECRET_KEY = os.environ.get("SECRET_KEY")
+DEBUG = False
 
-DEBUG = bool(os.environ.get("DEBUG", default=0))
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('SERVER_NAME', 'localhost').split(' ')
 
 
 INSTALLED_APPS = [

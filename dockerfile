@@ -34,8 +34,8 @@ EXPOSE 8000
 
 
 # -- FOR DEVELOPMENT --
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
 
-# -- FOR PRODUCTION -- (FIXME Static files)
-# CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "panopticity.wsgi:application"]
+# -- FOR PRODUCTION --
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "panopticity.wsgi:application"]
