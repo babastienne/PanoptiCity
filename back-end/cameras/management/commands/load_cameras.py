@@ -3,7 +3,7 @@ import osmium
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import Point
 
-from cameras.models import Camera
+from cameras.models import Camera, CameraTags
 
 from timeit import default_timer as timer
 from datetime import timedelta
@@ -124,12 +124,19 @@ class Command(BaseCommand):
         if "surveillance:zone" in tags:
             camera.zone = tags["surveillance:zone"]
 
-        if "height" in tags:
-            try:
+        try:
+            if "height" in tags:
                 camera.height = float(tags["height"])
-            except Exception:
+            elif "ele" in tags:
+                camera.height = float(tags["ele"])
+        except Exception:
+            if "height" in tags:
                 self.stderr.write(
                     f"Camera #{camera.id}. Field : height. Expected float, found {tags['height']}. Field kept empty."
+                )
+            elif "ele" in tags:
+                self.stderr.write(
+                    f"Camera #{camera.id}. Field : ele. Expected float, found {tags['ele']}. Field kept empty."
                 )
 
         camera.direction = self.compute_direction(tags, camera)
@@ -143,6 +150,13 @@ class Command(BaseCommand):
                 )
 
         camera.save()
+
+        for tag in tags:
+            CameraTags.objects.update_or_create(
+                camera_id=camera,
+                name=tag.k,
+                value=tag.v
+            )
 
         if self.verbose:
             if created:

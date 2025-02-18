@@ -234,6 +234,13 @@ class Camera(models.Model):
         verbose_name_plural = "Cameras"
 
 
+
+class CameraTags(models.Model):
+    camera_id = models.ForeignKey(Camera, on_delete=models.PROTECT)
+    name = models.CharField(blank=True)
+    value = models.CharField(blank=True)
+
+
 class Building(models.Model):
     id = models.BigIntegerField(primary_key=True, blank=False)
     osm_id = models.BigIntegerField(blank=False, null=False)
