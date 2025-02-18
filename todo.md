@@ -1,44 +1,44 @@
-- [ ] Ajouter une légende qui permet d'afficher le détail des pictos : https://jsfiddle.net/TomazicM/rqu3nvLj/ (ou alors un onglet dédié ?)
-- [x] Pouvoir se localiser sur la carte
-- [ ] Rechercher une adresse
-- [x] Attributions OSM
-- [ ] Style mobile / RWD
-- [ ] Déplacer code front dans app django ?
-- [ ] Retirer popup front-end map "zoom min" ?
+- [ ] Add a legend enabling display of pictogram details : https://jsfiddle.net/TomazicM/rqu3nvLj/ (or a dedicated tab ?)
+- [x] Enabling self-localisation on the map
+- [ ] Search an address
+- [x] OSM Attributions 
+- [ ] Style for mobile / RWD
+- [ ] Move front code to django app ?
+- [ ] Remove "zoom min" frontend map popup ?
 
-# Performances utilisation
+# Performances 
 
-- [x] Gérer support de la pagination des résultats côté front-end.
-- [x] Gérer requêtes tuilées côté front-end
-- [ ] Mettre en place cache côté serveur + mécanisme invalidation du cache lors des mises à jours
-- [ ] Cache nginx + compression gzip/brotli
+- [x] Handle results pagination support on frontend side
+- [x] Handle tile requests on frontend side
+- [ ] Set up server-side cache + invalidation mechanism during updates
+- [ ] Nginx cache + gzip/brotli compression
 
-# Calculateur d'itinéraire
+# Transport route planner
 
-- [ ] Routing avec zones d'exlusion (chercher de ce côté ? https://www.liedman.net/leaflet-routing-machine/tutorials/alternative-routers/) https://skedgo.github.io/tripkit-leaflet/
+- [ ] Routing with exclusion zones (search there ? https://www.liedman.net/leaflet-routing-machine/tutorials/alternative-routers/) https://skedgo.github.io/tripkit-leaflet/
 
-# Pouvoir contribuer à OSM
+# Enable contribution to OSM
 
-## Formulaire de création
+## Create form
 
-- [ ] Direction: dessiner la flèche directement sur la carte et se passer du slider (avoir un rendu similaire à everydoor)
-- [ ] Trouver de meilleures images / illustrations
-- [ ] Adapter les illustrations en fonction des réponses précédentes (si on choisi un caméra dome on a ensuite que des images de caméras dôme)
+- [ ] Direction: draw arrow directly on the map, stop using the slider (similar to everydoor)
+- [ ] Find better illustration images
+- [ ] Adapt illustration images depending on previous responses (filter image with prior selection)
 
-## Communication avec OSM / Affichage des données
+## Communication with OSM / Data display
 
-- [ ] Après création et tant que objet pas synchronisé avec le back afficher un point temporaire sur la carte
-- [ ] Si pas de connexion garder dans localStorage données pour synchro ultérieure
-- [ ] Mettre en avant sur la carte les caméras qui ont besoin d'être complétées
-- [ ] Pouvoir "dupliquer" une caméra ?
+- [ ] After an object creation, while it is not synchronized yet with backend, show a temporary pin on the map
+- [ ] In no connection, keep data in the localStorage for future synchronization
+- [ ] Showcase camera that need to be updated
+- [ ] Enable camera "duplication" ?
 
-# Calcul champ de vision
+# Field of vision calculation
 
-## Re-dessiner champ de vision caméra selon murs batiments
+## Redraw camera field of vision according to surrounding building walls
 
-- [ ] Ne pas compter les caméras marquée comme "indoor" > Géré ? A Vérifier mais normalement c'est bon. Vérifier que le champ de vision ne sort pas du batîment.
-- [x] Intégrer dans la base les multi-polygones ("relation" osm) car actuellement cela fait des vides
-- [x] Prise en compte du tag "roof" pour certains batiments pour permettre de voir à travers (exemple péages) https://wiki.openstreetmap.org/wiki/FR:Tag:building=roof?uselang=fr
+- [ ] Do not take into account "indoor" tagged cameras ? > Handled ? To check but should be ok. Check that filed of vision do not go out of buildings. 
+- [x] Integrate multi-polygone n the database ("relation" osm) because it currently generated voids.
+- [x] Take into account "roof" tag for some buildings to enable seeing throught them (tollgate example) https://wiki.openstreetmap.org/wiki/FR:Tag:building=roof?uselang=fr
 
 # Improve field of view for cameras
 
@@ -57,22 +57,22 @@ Ressources :
 - http://artpictures.club/autumn-2023.html
 - https://github.com/berkbavas/FovCalculator
 
-# Données
+# Data
 
-- [ ] Importer tous les tags des objets "brut" (pour permettre l'édition)
-- [ ] Gérer le cas des noeuds qui comportent plusieurs caméras (séparées par : ou ;)
+- [ ] Import all tags for "brut" object(to enable edition)
+- [ ] Handle nodes containing several cameras (split by : or ;)
 
-## Performances d'import des données
+## Data import performance
 
-- [x] Comment importer un grand volume de données ? Buffer lors de l'import ou tout en base ?
-- [x] Comment tenir à jour la donnée ? Fréquence et procédure ? Piste : Utiliser le mécanisme de diff pour générer un fichier de diff via une commande et l'appliquer sur la base ? https://docs.osmcode.org/pyosmium/latest/reference/Replication/#osmium.replication.ReplicationServer.collect_diffs
+- [x] How ot import a large amount of data ? Buffer when importing of all in databse ?
+- [x] How to refresh data ? Frequency and process ? Clue : Use mechansim to generate a diff file with a command and apply it on the database ? https://docs.osmcode.org/pyosmium/latest/reference/Replication/#osmium.replication.ReplicationServer.collect_diffs
 
-## Performances front-end
+## Front-end performance
 
-- [ ] Invalider les requêtes en cours avant pour gérer le cas de mouvements sur la carte
-- [ ] Limite de stockage / Size of localStorage > stocker via indexDb les données
+- [ ] Invalidate on-going requests before to deal with movement on the map
+- [ ] Storage limit / Size of localStorage > store data via indexDb
 
-## Divers performance
+## miscellaneous performance
 
 - [ ] Optim front : Debounce : https://www.freecodecamp.org/news/javascript-debounce-example/
 - [x] Optimize localstorage : do not store everything
