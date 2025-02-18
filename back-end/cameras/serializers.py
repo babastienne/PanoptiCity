@@ -35,10 +35,16 @@ class CameraListSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CameraDetailSerializer(serializers.HyperlinkedModelSerializer):
+    tags = serializers.SerializerMethodField()
+
+    def get_tags(self, obj):
+        return {tag.name: tag.value for tag in obj.cameratags_set.order_by('name')}
+
     class Meta:
         model = Camera
         fields = [
             "id",
+            "tags",
             "mount",
             "surveillance_type",
             "surveillance",
