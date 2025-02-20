@@ -1,6 +1,8 @@
 var map;
 var layerSwitcherLight;
 var layerSwitcherDark;
+var zoomControl;
+var locateControl;
 
 function initMap() {
   var esriTiles = L.tileLayer(
@@ -8,8 +10,7 @@ function initMap() {
     {
       maxNativeZoom: 19,
       maxZoom: 21,
-      attribution:
-        "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+      attribution: "Tiles &copy; Esri",
       label: "Satellite",
     }
   );
@@ -39,8 +40,18 @@ function initMap() {
     }
   );
 
+  var OpenStreetMap_HOT = L.tileLayer(
+    "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+    {
+      maxZoom: 21,
+      maxNativeZoom: 19,
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | <a href="https://www.hotosm.org/" target="_blank">Humanitarian OSM Team</a>',
+    }
+  );
+
   // Define dark map theme
-  var baseDarkMaps = [CartoDB_DarkVoyage, esriTiles];
+  var baseDarkMaps = [CartoDB_DarkVoyage, OpenStreetMap_HOT, esriTiles];
   layerSwitcherLight = L.control.basemaps({
     basemaps: baseDarkMaps,
     tileX: 15,
@@ -50,7 +61,7 @@ function initMap() {
   layerSwitcherLight.setPosition("bottomright");
 
   // Define light map theme
-  var baseLightMaps = [CartoDB_Voyager, esriTiles];
+  var baseLightMaps = [CartoDB_Voyager, OpenStreetMap_HOT, esriTiles];
   layerSwitcherDark = L.control.basemaps({
     basemaps: baseLightMaps,
     tileX: 15,
@@ -67,7 +78,7 @@ function initMap() {
     zoomControl: false,
   });
   // Handle zoom buttons (translate the buttons)
-  let zoomControl = L.control.zoom({
+  zoomControl = L.control.zoom({
     zoomOutTitle: TEXTS.mapZoomOut,
     zoomInTitle: TEXTS.mapZoomIn,
   });
@@ -97,13 +108,12 @@ function initMap() {
   map.addLayer(tilesCams); // Add this layer after initialization because it need to know map to init itself
 
   // Leaflet locate button
-  L.control
-    .locate({
-      strings: {
-        title: TEXTS.mapLocateButton,
-      },
-    })
-    .addTo(map);
+  locateControl = L.control.locate({
+    strings: {
+      title: TEXTS.mapLocateButton,
+    },
+  });
+  locateControl.addTo(map);
 }
 
 // this function check if there is a BBox in local storage (= user already visit the site)
