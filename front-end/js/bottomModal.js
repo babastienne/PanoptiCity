@@ -22,6 +22,7 @@ const bodyModal = bottomSheet.querySelector(".body-modal");
 const dragIcon = bottomSheet.querySelector(".drag-icon");
 
 let isDragging = false,
+  allowHiding = true,
   startY,
   startHeight;
 
@@ -34,8 +35,10 @@ const showBottomModal = (
   updateSheetHeight(80);
   if (overlayClickHideModal) {
     sheetOverlay.addEventListener("click", hideBottomSheet);
+    allowHiding = true;
   } else {
     sheetOverlay.removeEventListener("click", hideBottomSheet);
+    allowHiding = false;
   }
   if (authorizeMoveBehindModal) {
     sheetOverlay.style.opacity = "0";
@@ -55,8 +58,10 @@ const showBottomModal = (
 };
 
 const updateSheetHeight = (height) => {
-  sheetContent.style.height = `${height}vh`;
-  bottomSheet.classList.toggle("fullscreen", height === 100);
+  if (allowHiding || height > 20) {
+    sheetContent.style.height = `${height}vh`;
+    bottomSheet.classList.toggle("fullscreen", height === 100);
+  }
 };
 
 const hideBottomSheet = () => {
@@ -84,7 +89,7 @@ const dragStop = () => {
   isDragging = false;
   bottomSheet.classList.remove("dragging");
   const sheetHeight = parseInt(sheetContent.style.height);
-  sheetHeight < 25
+  sheetHeight < 20 && allowHiding
     ? hideBottomSheet()
     : sheetHeight > 90
     ? updateSheetHeight(100)

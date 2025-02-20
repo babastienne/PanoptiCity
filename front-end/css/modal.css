@@ -166,6 +166,12 @@
   margin-left: auto;
   margin-right: auto;
 }
+#overlay-arrow-direction {
+  height: 200px !important;
+  position: absolute;
+  z-index: 5200;
+  left: calc(50% - 50px);
+}
 [data-theme="dark"] #modal-arrow-direction {
   filter: invert(20%);
 }

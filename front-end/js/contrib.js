@@ -34,14 +34,6 @@ displaySelectChoicesForUser = (choices) => {
   showBottomModal((overlayClickHideModal = false));
 };
 
-updateSliderDistanceValue = (value) => {
-  sliderValue = value;
-  document.getElementById("sliderValue").innerHTML =
-    value <= 1
-      ? `${value} ${TEXTS.distanceUnit}`
-      : `${value} ${TEXTS.distanceUnitPlural}`;
-};
-
 displaySliderForUser = (choices) => {
   let modalContent = `
         <div class="pico modal-div">
@@ -72,16 +64,31 @@ displaySliderForUser = (choices) => {
   showBottomModal((overlayClickHideModal = false));
 };
 
-rotateArrowForDirection = (value, optionnalTransformation = 0) => {
-  sliderValue = Number(value);
-  let arrow = document.getElementById("modal-arrow-direction");
-  arrow.style.transform = `rotate(${
-    Number(value) + optionnalTransformation
-  }deg)`;
-  document.getElementById("sliderValue").innerHTML = `${value}°`;
+displayDirectionFormForUser = (choices) => {
+  let modalContent = `
+  <div class="pico modal-div">
+    <h4 class="modal-title">${choices.title}</h4>
+    <div class="modal-flex-buttons">
+      <button
+          class="outline secondary modal-button"
+          onclick="nextStep('${choices.tagName}')"
+      >${TEXTS.iDontKnowButton}</button>
+      <button
+          class="outline primary modal-button"
+          onclick="nextStep('${choices.tagName}', '${sliderValue}')"
+      >${TEXTS.confirmButton}</button>
+    </div>
+  </div>
+`;
+  updateBottomModalContent(modalContent, (heightAdd = -15), (adaptMap = true));
+  addDirectionArrowOnMap();
+  showBottomModal(
+    (overlayClickHideModal = false),
+    (authorizeMoveBehindModal = true)
+  );
 };
 
-displayDirectionFormForUser = (choices) => {
+displayAngleFormForUser = (choices) => {
   let modalContent = `
   <div class="pico modal-div">
     <h4 class="modal-title">${choices.title}</h4>
@@ -135,7 +142,7 @@ displayMapFormForUser = (choices) => {
   );
 };
 
-// -- Functions to get location of point from user --
+// -- UTILS Functions --
 addCreationMarkerOnMap = () => {
   currentPositionMarker.setLatLng(map.getCenter());
   currentPositionMarker.addTo(map);
@@ -152,6 +159,85 @@ removeCreationMarkerFromMap = () => {
   return currentPositionMarker.getLatLng();
 };
 
+addDirectionArrowOnMap = () => {
+  map.dragging.disable();
+  locateControl.remove(map);
+  let overlay = document.getElementById("customOverlay");
+  overlay.innerHTML = `<img id="overlay-arrow-direction" draggable="false" src="/images/contrib/arrow-base.svg" />`;
+  let arrow = document.getElementById("overlay-arrow-direction");
+  arrow.style.top = `calc(${map.getSize().y / 2}px + 4rem - 100px)`;
+  let mapDiv = document.getElementById("map");
+  mapDiv.addEventListener("mousedown", eventRotationArrow, false);
+  arrow.addEventListener("mousedown", eventRotationArrow, false);
+  mapDiv.addEventListener("touchstart", eventRotationArrow, false);
+  arrow.addEventListener("touchstart", eventRotationArrow, false);
+};
+
+eventRotationArrow = (event) => {
+  typeEvents =
+    event.type == "mousedown"
+      ? ["mousemove", "mouseup"]
+      : ["touchmove", "touchend"];
+  var arrow = document.getElementById("overlay-arrow-direction");
+  var arrowRects = arrow.getBoundingClientRect();
+  var arrowX = arrowRects.left + arrowRects.width / 2;
+  var arrowY = arrowRects.top + arrowRects.height / 2;
+
+  function eventMoveHandlerMouse(event) {
+    let geom = event.type == "touchmove" ? event.touches[0] : event;
+    var angle =
+      Math.atan2(geom.clientY - arrowY, geom.clientX - arrowX) + Math.PI / 2;
+    rotateArrow((angle * 180) / Math.PI);
+  }
+
+  window.addEventListener(typeEvents[0], eventMoveHandlerMouse, false);
+
+  window.addEventListener(
+    typeEvents[1],
+    function eventEndHandler() {
+      window.removeEventListener(typeEvents[0], eventMoveHandlerMouse, false);
+      window.removeEventListener(typeEvents[1], eventEndHandler);
+    },
+    false
+  );
+};
+
+function rotateArrow(deg) {
+  let arrow = document.getElementById("overlay-arrow-direction");
+  arrow.style.transform = `rotate(${deg}deg)`;
+  sliderValue = Math.round(deg);
+}
+
+removeDirectionArrowFromMap = () => {
+  map.dragging.enable();
+  locateControl.addTo(map);
+  let arrow = document.getElementById("overlay-arrow-direction");
+  let mapDiv = document.getElementById("map");
+  mapDiv.removeEventListener("mousedown", eventRotationArrow, false);
+  arrow.removeEventListener("mousedown", eventRotationArrow, false);
+  mapDiv.removeEventListener("touchstart", eventRotationArrow, false);
+  arrow.removeEventListener("touchstart", eventRotationArrow, false);
+  let overlay = document.getElementById("customOverlay");
+  overlay.innerHTML = "";
+};
+
+rotateArrowForDirection = (value, optionnalTransformation = 0) => {
+  sliderValue = Number(value);
+  let arrow = document.getElementById("modal-arrow-direction");
+  arrow.style.transform = `rotate(${
+    Number(value) + optionnalTransformation
+  }deg)`;
+  document.getElementById("sliderValue").innerHTML = `${value}°`;
+};
+
+updateSliderDistanceValue = (value) => {
+  sliderValue = value;
+  document.getElementById("sliderValue").innerHTML =
+    value <= 1
+      ? `${value} ${TEXTS.distanceUnit}`
+      : `${value} ${TEXTS.distanceUnitPlural}`;
+};
+
 // -- Functions to handle creation workflow --
 saveChoosenValue = (tagName, value = null) => {
   if (tagName == choicesCameraLocation.tagName) {
@@ -164,6 +250,9 @@ saveChoosenValue = (tagName, value = null) => {
     tagName == choicesCameraAngle.tagName ||
     tagName == choicesCameraHeight.tagName
   ) {
+    if (tagName == choicesCameraDirection.tagName) {
+      removeDirectionArrowFromMap();
+    }
     if (value != null) {
       currentCamera.tags[tagName] = sliderValue;
     } else {
@@ -194,7 +283,7 @@ chooseNextStep = () => {
     existingCameraTags.includes(choicesCameraDirection.tagName) &&
     !existingCameraTags.includes(choicesCameraAngle.tagName)
   ) {
-    displayDirectionFormForUser(choicesCameraAngle);
+    displayAngleFormForUser(choicesCameraAngle);
   } else if (!existingCameraTags.includes(choicesSurveillanceType.tagName)) {
     displaySelectChoicesForUser(choicesSurveillanceType);
   } else if (!existingCameraTags.includes(choicesCameraMount.tagName)) {
