@@ -1,12 +1,12 @@
 - [ ] Add a legend enabling display of pictogram details : https://jsfiddle.net/TomazicM/rqu3nvLj/ (or a dedicated tab ?)
 - [x] Enabling self-localisation on the map
 - [ ] Search an address
-- [x] OSM Attributions 
+- [x] OSM Attributions
 - [ ] Style for mobile / RWD
 - [ ] Move front code to django app ?
 - [ ] Remove "zoom min" frontend map popup ?
 
-# Performances 
+# Performances
 
 - [x] Handle results pagination support on frontend side
 - [x] Handle tile requests on frontend side
@@ -19,11 +19,12 @@
 
 # Enable contribution to OSM
 
-## Create form
+## Creation form
 
-- [ ] Direction: draw arrow directly on the map, stop using the slider (similar to everydoor)
+- [x] Direction: draw arrow directly on the map, stop using the slider (similar to everydoor)
 - [ ] Find better illustration images
 - [ ] Adapt illustration images depending on previous responses (filter image with prior selection)
+- [ ] Add possibility to create comment / text form
 
 ## Communication with OSM / Data display
 
@@ -31,12 +32,14 @@
 - [ ] In no connection, keep data in the localStorage for future synchronization
 - [ ] Showcase camera that need to be updated
 - [ ] Enable camera "duplication" ?
+- [x] Display buildings limits to help position cameras > Done with new tilelayer
+- [ ] Handle snapping of cameras to building (not easy)
 
 # Field of vision calculation
 
 ## Redraw camera field of vision according to surrounding building walls
 
-- [ ] Do not take into account "indoor" tagged cameras ? > Handled ? To check but should be ok. Check that filed of vision do not go out of buildings. 
+- [ ] Do not take into account "indoor" tagged cameras ? > Handled ? To check but should be ok. Check that filed of vision do not go out of buildings.
 - [x] Integrate multi-polygone n the database ("relation" osm) because it currently generated voids.
 - [x] Take into account "roof" tag for some buildings to enable seeing throught them (tollgate example) https://wiki.openstreetmap.org/wiki/FR:Tag:building=roof?uselang=fr
 
@@ -59,7 +62,7 @@ Ressources :
 
 # Data
 
-- [ ] Import all tags for "brut" object(to enable edition)
+- [x] Import all tags for "brut" object(to enable edition)
 - [ ] Handle nodes containing several cameras (split by : or ;)
 
 ## Data import performance
