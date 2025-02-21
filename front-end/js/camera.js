@@ -14,7 +14,7 @@ choicesCameraType = {
     },
     panning: {
       name: TEXTS.cameraTypePanning,
-      picture: "images/contrib/type-fixed.svg",
+      picture: "images/contrib/type-panning-arrow.svg",
     },
   },
 };

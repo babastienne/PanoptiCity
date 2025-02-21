@@ -138,6 +138,7 @@
   max-width: 200px !important;
   min-width: 100px !important;
   width: 100%;
+  border-radius: 15px;
 }
 .modal-button {
   margin-top: 20px !important;
