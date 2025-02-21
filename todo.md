@@ -2,8 +2,8 @@
 - [x] Enabling self-localisation on the map
 - [ ] Search an address
 - [x] OSM Attributions
-- [ ] Style for mobile / RWD
-- [ ] Move front code to django app ?
+- [x] Style for mobile / RWD
+- [ ] ~~Move front code to django app ?~~
 - [ ] Remove "zoom min" frontend map popup ?
 
 # Performances
@@ -39,7 +39,7 @@
 
 ## Redraw camera field of vision according to surrounding building walls
 
-- [ ] Do not take into account "indoor" tagged cameras ? > Handled ? To check but should be ok. Check that filed of vision do not go out of buildings.
+- [x] Do not take into account "indoor" tagged cameras ? > Handled ? To check but should be ok. Check that filed of vision do not go out of buildings.
 - [x] Integrate multi-polygone n the database ("relation" osm) because it currently generated voids.
 - [x] Take into account "roof" tag for some buildings to enable seeing throught them (tollgate example) https://wiki.openstreetmap.org/wiki/FR:Tag:building=roof?uselang=fr
 
@@ -93,3 +93,14 @@ Ressources :
 
 - [x] Zoom initial de la carte et emplacement de départ
 - [ ]
+
+## Main priority
+
+- [ ] Improve UI to encourage contribution > Every action availble but popup to conect if not logged in
+- [x] Do not display FOV of inside cameras outside buildings
+- [ ] Display cameras that need to be completed
+- [ ] Allow deletion of cameras
+- [ ] Allow to modify existing fields
+- [ ] Contribute operator (list of values ?)
+- [ ] Simplify pictograms
+- [ ] Remove guards ?

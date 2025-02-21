@@ -48,6 +48,9 @@ CAMERA_TYPE_CHOICES = {
     "dom": "dom",
 }
 
+class ExteriorRing(models.functions.GeomOutputGeoFunc):
+    function = "ST_ExteriorRing"
+
 
 class Camera(models.Model):
     id = models.BigIntegerField(primary_key=True, blank=False)
@@ -128,14 +131,22 @@ class Camera(models.Model):
             self.location, end_of_vision_field
         )  # Build a line between the camera and its end vision
         try:
+            intersection_field = "geom"
             buildings_accross = (
                 Building.objects.filter(geom__intersects=line_vision)
                 .exclude(
                     geom__touches=line_vision  # Exclude building if it only touches with one point of the line to match cases when camera is on wall
                 )
+            )
+            if self.surveillance == "indoor":
+                buildings_accross = buildings_accross.annotate(
+                    boundary=ExteriorRing("geom")
+                )
+                intersection_field = "boundary"
+            buildings_accross = (buildings_accross
                 .annotate(
                     closest_intersection_point=ClosestPoint(
-                        Intersection("geom", line_vision), self.location
+                        Intersection(intersection_field, line_vision), self.location
                     )
                 )
                 .annotate(
@@ -144,14 +155,14 @@ class Camera(models.Model):
                     )  # Add field with distance between location and intersection point of the building
                 )
             )
-            if buildings_camera_is_into.count():
+            if buildings_camera_is_into.count() and self.surveillance != "indoor":
                 buildings_accross = buildings_accross.exclude(
                     geom__contains=self.location
-                )  # We remove building the camera is into
+                )  # We remove building the camera is into if it is not an indoor camera
             building_accross = buildings_accross.order_by(
                 "distance"
             ).first()  # We sort by this distance so that new endOfVision is the closest to the camera
-            if building_accross:
+            if building_accross and building_accross.closest_intersection_point is not None:
                 end_of_vision_field = building_accross.closest_intersection_point
         except Exception as e:
             raise e
