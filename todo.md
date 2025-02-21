@@ -45,7 +45,7 @@
 
 # Improve field of view for cameras
 
-- [ ] Do something with panning cameras
+- [x] Do something with panning cameras > Panning cameras are considered as domes for their FOV
 - [ ] Compute focus depending on the lens / type of camera.
 
 - Wide-Angle Camera : Lens 2.8mm. Angle 110°. Distance 10m.
@@ -92,7 +92,6 @@ Ressources :
 ## Create better configuration
 
 - [x] Zoom initial de la carte et emplacement de départ
-- [ ]
 
 ## Main priority
 

@@ -28,6 +28,9 @@ SURVEILLANCE_CHOICES = {
     "public": "public",
     "transportation": "transportation",
     "traffic": "traffic",
+    "red_light": "red_light",
+    "level_crossing": "level_crossing",
+    "speed_camera": "speed_camera",
 }
 
 ZONE_CHOICES = {
@@ -232,7 +235,7 @@ class Camera(models.Model):
     def compute_focus(self):
         if self.camera_type == "fixed" and self.direction is not None:
             return self.compute_focus_fixed()
-        if self.camera_type == "dome":
+        if self.camera_type in ["dome", "panning"]:
             return self.compute_focus_dome()
         return None
 
