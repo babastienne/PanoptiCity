@@ -7,7 +7,7 @@ from cameras.serializers import CameraListSerializer, CameraDetailSerializer
 
 # ViewSets define the view behavior.
 class CameraViewSet(viewsets.ModelViewSet):
-    queryset = Camera.objects.all()
+    queryset = Camera.objects.all().prefetch_related("camerafocus_set")
     serializer_class = CameraListSerializer
     detail_serializer_class = CameraDetailSerializer
     bbox_filter_field = "location"

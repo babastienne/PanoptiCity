@@ -13,14 +13,14 @@
     initialize(url, options) {
       // Function called one time when creating our object
       this.url = url;
-      this.MIN_ZOOM_TO_DISPLAY_FOCUS = 16;
+      this.MIN_ZOOM_TO_DISPLAY_FOCUS = 17;
       this.displayedFocusList = [];
       this.displayedCamerasList = [];
       this.displayCameras = false;
       this.displayCamerasFocus = false;
       L.GridLayer.prototype.initialize.call(this, options);
       this.markersCluster = L.markerClusterGroup({
-        disableClusteringAtZoom: 15,
+        disableClusteringAtZoom: 16,
         spiderfyOnMaxZoom: false,
         removeOutsideVisibleBounds: true,
       });
@@ -149,13 +149,18 @@
         if (camera.focus != null && this.displayCamerasFocus) {
           // Only if focus exists for the camera and if able to display it
           // Draw camera's field of view and add it to map.
-          var plotFocus = new L.Polygon(camera.focus, {
-            color: camera.color,
-            weight: 1,
-            fillOpacity: 0.1,
-          });
-          map.addLayer(plotFocus);
-          this.displayedFocusList.push(plotFocus);
+          let plotFocus;
+          for (elem in camera.focus) {
+            if (camera.focus[elem]) {
+              plotFocus = new L.Polygon(camera.focus[elem], {
+                color: levelsCameraConfiguration[elem].color,
+                weight: levelsCameraConfiguration[elem].weight,
+                fillOpacity: levelsCameraConfiguration[elem].fill,
+              });
+              map.addLayer(plotFocus);
+              this.displayedFocusList.push(plotFocus);
+            }
+          }
         }
       } catch (e) {
         console.error(

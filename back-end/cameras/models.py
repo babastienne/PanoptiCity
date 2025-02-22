@@ -2,7 +2,7 @@ import math
 
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Distance, Intersection, ClosestPoint
-from django.contrib.gis.geos import Polygon, Point, LineString
+from django.contrib.gis.geos import Polygon, Point, LineString, MultiPolygon
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
@@ -51,6 +51,18 @@ CAMERA_TYPE_CHOICES = {
     "dom": "dom",
 }
 
+LEVEL_COEFFICIENTS = {
+    "identification": 1,       # By default the focus computed without any coef is the recognition one for 250ppm
+    "recognition": 3.84615, # 3.84615 = Ratio between 250ppm and 65 ppm
+    "observation": 10,      # 25 = Ratio between 250ppm and 25 ppm
+}
+
+SCENARIOS_COEFFICIENTS = {  # FIXME
+    "best":0.51,
+    "mean": 1.2,
+    "worst": 3.1,
+}
+
 class ExteriorRing(models.functions.GeomOutputGeoFunc):
     function = "ST_ExteriorRing"
 
@@ -72,7 +84,6 @@ class Camera(models.Model):
     angle = models.IntegerField(
         blank=True, null=True, validators=[MaxValueValidator(360), MinValueValidator(0)]
     )
-    focus = models.PolygonField(null=True)
 
     @property
     def color(self):
@@ -116,7 +127,7 @@ class Camera(models.Model):
         if self.height:
             height = 1.5 if self.height < 1.5 else self.height
             height = 12 if self.height > 12 else self.height
-        return height
+        return 1 + height / 10
 
     def compute_camera_angle(self):
         if self.angle:
@@ -173,74 +184,99 @@ class Camera(models.Model):
             pass
         return end_of_vision_field
 
-    def compute_focus_dome(self):
-        height = self.compute_camera_height()
-        buildings_camera_is_into = Building.objects.filter(geom__contains=self.location)
-        focus = []
+    def compute_all_focus(self):
+        for scenario in FOCUS_SCENARIOS_CHOICES:
+            self.compute_specific_focus(scenario)
 
-        coefLat = 1.0 / math.cos(self.location.x * math.pi / 180)
-
-        for x in range(0, 63, 1):  # 6,3 ~= 2pi
-            end_of_vision_field = Point(
-                [
-                    self.location.x + 0.000063 * math.cos(x / 10) * height,
-                    self.location.y + 0.000063 * math.sin(x / 10) * coefLat * height,
-                ]
-            )
-            end_of_vision_field = self.get_intersection_point_with_building(
-                end_of_vision_field, buildings_camera_is_into
-            )
-            if not end_of_vision_field:
-                continue
-            focus.append(end_of_vision_field)
-        focus.append(focus[0])
-
-        return Polygon(focus)
-
-    def compute_focus_fixed(self):
-        direction = self.compute_camera_direction()
-        height = self.compute_camera_height()
-        angle = self.compute_camera_angle()
-
-        buildings_camera_is_into = Building.objects.filter(geom__contains=self.location)
-
-        focus = [self.location]
-        coefLat = 1.0 / math.cos(self.location.x * math.pi / 180)
-        for x in range(-7, 7, 1):
-            end_of_vision_field = Point(
-                [
-                    self.location.x
-                    + 0.000063 * math.cos(direction + x / 10) * height * angle,
-                    self.location.y
-                    + 0.000063
-                    * math.sin(direction + x / 10)
-                    * coefLat
-                    * height
-                    * angle,
-                ]
-            )  # This point is the end of the field of vision of camera
-
-            end_of_vision_field = self.get_intersection_point_with_building(
-                end_of_vision_field, buildings_camera_is_into
-            )
-            if not end_of_vision_field:
-                continue
-
-            focus.append(end_of_vision_field)
-        focus.append(
-            focus[0]
-        )  # We close the polygon by adding again our first point (camera location)
-        return Polygon(focus)
-
-    def compute_focus(self):
+    def compute_specific_focus(self, scenario):
+        levels_focus = None
         if self.camera_type == "fixed" and self.direction is not None:
-            return self.compute_focus_fixed()
+            levels_focus = self.compute_multiple_focus(scenario, True, -7, 7)
         if self.camera_type in ["dome", "panning"]:
-            return self.compute_focus_dome()
+            levels_focus = self.compute_multiple_focus(scenario, False, 0, 63)  # 6.3 ~= 2pi
+        if levels_focus:
+            for level in FOCUS_LEVELS_CHOICES:
+                focus, _ = CameraFocus.objects.get_or_create(
+                    camera_id = self,
+                    scenario = scenario,
+                    level = level
+                )
+                focus.geom = levels_focus[level]
+                focus.save()
         return None
+    
+    def compute_multiple_focus(self, scenario, fixed, min_range, max_range):
+        buildings_camera_is_into = Building.objects.filter(geom__contains=self.location)
+        polygons_focus = {}
+        levels_focus = {
+            'identification': [self.location] if fixed else [],
+            'recognition': [self.location] if fixed else [],
+            'observation': [self.location] if fixed else [],
+        }
+        previous_polygon = None
+
+        for x in range(min_range, max_range, 1):
+            for level in FOCUS_LEVELS_CHOICES:
+                end_of_fov = Point(
+                    [
+                        self.location.x + self.compute_coefficient(x, scenario, level, cos=True, fixed=fixed),
+                        self.location.y + self.compute_coefficient(x, scenario, level, cos=False, fixed=fixed),
+                    ]
+                )
+                new_end_of_fov = self.get_intersection_point_with_building(
+                    end_of_fov, buildings_camera_is_into
+                )
+                if not end_of_fov:
+                    continue
+                levels_focus[level].append(new_end_of_fov)
+                if new_end_of_fov != end_of_fov:  # If different mean there is an obstacle on the way so don't need to compute further
+                    if level in ['recognition', 'identification']:
+                        levels_focus['observation'].append(new_end_of_fov)
+                    if level == 'identification':
+                        levels_focus['recognition'].append(new_end_of_fov)
+                    break
+                        
+        for level in FOCUS_LEVELS_CHOICES:
+            levels_focus[level].append(levels_focus[level][0])
+            computed_polygon = Polygon(levels_focus[level])
+            if previous_polygon:
+                polygons_focus[level] = self.compute_diffs_polygons(computed_polygon, previous_polygon)
+            else:
+                polygons_focus[level] = MultiPolygon(computed_polygon)
+            previous_polygon = computed_polygon
+        
+        return polygons_focus
+
+    def compute_coefficient(self, x, scenario, level, cos=True, fixed=False):
+        height = self.compute_camera_height()
+        direction = self.compute_camera_direction() if fixed else 0
+        coef = 0.00026 * height * LEVEL_COEFFICIENTS[level] * SCENARIOS_COEFFICIENTS[scenario]
+        if cos:
+            coefLat = 1.0 / math.cos(self.location.y * math.pi / 180)
+            coef = coef * math.cos(direction + x / 10) * coefLat
+        else:
+            coef = coef * math.sin(direction + x / 10)
+        if fixed:
+            coef = coef * self.compute_camera_angle()
+        return coef
+
+    def compute_diffs_polygons(self, shapeA, shapeB):
+        diff_recognition = shapeA - shapeB
+        recognition_multipolygon = MultiPolygon()
+        if type(diff_recognition) == Polygon:
+            diff_recognition = MultiPolygon(diff_recognition)
+        elif type(diff_recognition) != MultiPolygon:
+            return recognition_multipolygon
+        for polygon in diff_recognition:
+            polygon.srid = 4326
+            polygon.transform(3857)
+            if polygon.area > 3:  # We keep only the polygons with area > 3m²
+                polygon.transform(4326)
+                recognition_multipolygon.append(polygon)
+        return recognition_multipolygon
 
     def save(self, *args, **kwargs):
-        self.focus = self.compute_focus()
+        self.compute_all_focus()
         super(Camera, self).save(*args, **kwargs)
 
     class Meta:
@@ -248,6 +284,26 @@ class Camera(models.Model):
         verbose_name_plural = "Cameras"
 
 
+FOCUS_SCENARIOS_CHOICES = {
+    "best": "Best case scenario",
+    "mean": "Average",
+    "worst": "Worst case scenario",
+}
+
+FOCUS_LEVELS_CHOICES = {
+    "identification": "identification",
+    "recognition": "recognition",
+    "observation": "observation",
+}
+
+class CameraFocus(models.Model):
+    camera_id = models.ForeignKey(Camera, on_delete=models.PROTECT)
+    scenario = models.CharField(choices=FOCUS_SCENARIOS_CHOICES, blank=False)
+    level = models.CharField(choices=FOCUS_LEVELS_CHOICES, blank=False)
+    geom = models.MultiPolygonField(null=True)
+
+    class Meta:
+        unique_together = ('camera_id', 'scenario', 'level',)
 
 class CameraTags(models.Model):
     camera_id = models.ForeignKey(Camera, on_delete=models.PROTECT)

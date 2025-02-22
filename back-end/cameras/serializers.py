@@ -2,6 +2,11 @@ from rest_framework import serializers
 
 from cameras.models import Camera
 
+MATCHING_LEVEL_COLORS = {
+    'identification': 'purple',
+    'recognition': 'red',
+    'observation': 'green',
+}
 
 class CameraListSerializer(serializers.HyperlinkedModelSerializer):
     lat = serializers.SerializerMethodField()
@@ -15,12 +20,15 @@ class CameraListSerializer(serializers.HyperlinkedModelSerializer):
         return round(obj.location.x, 6)
 
     def get_focus(self, obj):
-        focus = obj.focus
-        return (
-            [[round(point[1], 6), round(point[0], 6)] for point in focus[0]]
-            if focus
-            else None
-        )
+        list_focus = {}
+        for elem in obj.camerafocus_set.all():
+            if elem.scenario == 'best':
+                list_focus[elem.level] = (
+                        [[[[round(point[1], 6), round(point[0], 6)] for point in elem] for elem in poly] for poly in elem.geom]
+                        if elem.geom
+                        else None
+                    )
+        return list_focus
 
     def __init__(self, *args, **kwargs):
         # Don't return focus and color when not explicitly asked with query_param 'focus'

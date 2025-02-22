@@ -16,6 +16,9 @@
       - [Steps to update the buildings](#steps-to-update-the-buildings)
     - [Run the website for production](#run-the-website-for-production)
     - [Development](#development)
+  - [Calculation methods for field of view](#calculation-methods-for-field-of-view)
+    - [What is the field of view](#what-is-the-field-of-view)
+    - [The lack of data in OpenStreetMap](#the-lack-of-data-in-openstreetmap)
   - [More information](#more-information)
     - [Create or tag multiple cameras on same location](#create-or-tag-multiple-cameras-on-same-location)
     - [Complementary resources](#complementary-resources)
@@ -176,6 +179,66 @@ An example of basic server configuration can be found on the file `nginx.conf.ex
 ### Development
 
 Pretty much the same as in production. If you want to contribute to this project there is some contribution ideas available on [todo.md](./todo.md). Don't hesitate to ask if you want to share ideas or need help to start.
+
+## Calculation methods for field of view
+
+### What is the field of view
+
+The field of view is the area visible/covered by a CCTV. the field of view of every camera depends on a lot of variables. The most important are :
+
+- The height of the camera
+- The direction in which the camera is pointed
+- The angle (tilt) of the camera that indicated if it is pointed toward the horizon or the floor
+- The [resolution](https://en.wikipedia.org/wiki/Image_resolution) of the lens of the camera. This gives the number of pixels (e.g: 1920x1080 ~= 2MP ; 2556x1440 ~= 4MP ; 3840x2160 ~= 8MP ; etc.).
+- The [focal lens](https://en.wikipedia.org/wiki/Camera_lens#Aperture_and_focal_length) of the lens. This mainly impact the angle of view and allow some cameras to be wide-angle (low focal) or on the opposite to focus on specific details (high focal). The focal is expressed in mm (e.g: 8mm ; 12mm ; 75mm).
+- The [sensor format](https://en.wikipedia.org/wiki/Image_sensor_format) which is the ratio that indicates the size of the image (usually expressed as 1/2.5" ; 2/3" ; etc.).
+
+The combination of those 3 parameters allow to determine the quality of an image for a specific distance. The quality is expressed in PPM (pixels per meters) representing the pixel density. For example for a camera of 1920x1080 resolution with a 25mm lens and a 1/3" format, the quality of the image of a person standing 10 meters away from the camera will be 998ppm.
+
+By taking those elements in consideration, we can compute the field of view of camera in which a person can be identified, recognized, detected. We use this matching table to establish what quality corresponds to what level :
+
+| Level of surveillance                                                                                                                                                                                              | Image quality |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
+| Identification: At this level a person can easily be identified by any human or automated program.                                                                                                                 | > 250 PPM     |
+| Recognition: Some specific details can be seen. Not enough details to automatize the recognition but a targeted person can still be recognized by a human eye. This quality level can be used for forensic review. | 250 - 65 PPM  |
+| Observation: It is possible to detect persons, objects and movements but not to identify details. Usually for large non targeted observation.                                                                      | 25 - 65 PPM   |
+| Not usable                                                                                                                                                                                                         | < 25 PPM      |
+
+> The level of surveillance and corresponding qualities are inspired from this [Department of Homeland Security document about VideoSurveillance Quality](https://www.dhs.gov/sites/default/files/publications/VQiPS_Digital-Video-Quality-HB_UPDATED-180117-508.pdf).
+
+It is important to note that a lot of modern cameras have the ability to zoom and move. We talk about dome or PTZ cameras (Pan-Tilt-Zoom). It means that for a lot of devices the variables (particularly the focal) can change depending if the camera is zoomed or not. Public cameras can generally alternate between wide angle and zoomed views depending on the operator or detection algorythm behind.
+
+### The lack of data in OpenStreetMap
+
+Obvisouly for each camera the information about resolution, focal and sensor format are not in the OpenStreetMap database. First because it would be a pain to contribute but mainly because it is not possible to get this information even when on field.
+
+The other variables (height, angle and direction) are more easy to declare in OpenStreetMap. Panopticity encourage users to declare the height of a camera every time as well as the direction and the angle when it's a fixed or panning camera.
+
+**If sometimes there is no data, how can we determine what are the values that should be used in Panopticity then ?**
+
+For basic information, we use default values if they are not tagged in OSM. If they are presents we use them. Default values are:
+
+| Field     | Default Value                                                                              |
+| --------- | ------------------------------------------------------------------------------------------ |
+| Height    | 5 meters                                                                                   |
+| Angle     | 15°                                                                                        |
+| Direction | No default value. If a fixed camera does not have direction, no field of view is displayed |
+
+For the other fields, to make an estimation, we compiled in a file the technnical information of more than TODO models of CCTV cameras from TODO differents brands. This gave us a global view of the current technical level of the CCTV market as it is in 2025. Keep in mind that new camera models are released every week so depending when you read this lines the numbers can be differents today.
+
+The numbers used can be seen in the TODO file.
+
+With those numbers, we sorted every variable and were able to determine statistics about quality of cameras. Depending of the camera type (fixed or dome/PTZ cameras), we created three models to help us determine the quality of cameras (and therefore their field of view):
+
+| Scenario            | Description                                                                                                                                                                                           | Values for Fixed Cameras | Dome/PTZ Cameras |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | ---------------- |
+| Best Case Scenario  | This is the scenario corresponding to the first decile which means that 90% of cameras on the market have better quality that what is displayed on map as the field of view                           | TODO                     | TODO             |
+| Mean / Average      | The default scenario. There are as many cameras with better quality than the displayed field of view as there are with poorer quality                                                                 | TODO                     | TODO             |
+| Worst Case Scenario | This is the scenario corresponding to the last decile, which means that the displayed field of view on map is like if all cameras were in the top 10% of the market (in terms of technical abilities) | TODO                     | TODO             |
+
+**How it could be improved**
+
+One good way to improve this models would be to create a correlation between every camera model and their sales numbers to ponderate the weight of each camera in the model computation. However thoses numbers can't be easily found.
 
 ## More information
 

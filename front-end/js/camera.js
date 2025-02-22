@@ -1,3 +1,21 @@
+levelsCameraConfiguration = {
+  identification: {
+    color: "purple",
+    weight: 0.3,
+    fill: 0.3,
+  },
+  recognition: {
+    color: "red",
+    weight: 0.2,
+    fill: 0.15,
+  },
+  observation: {
+    color: "green",
+    weight: 0.1,
+    fill: 0.2,
+  },
+};
+
 choicesCameraType = {
   title: TEXTS.cameraTypeQuestion,
   name: TEXTS.cameraTypeName,
