@@ -24,15 +24,18 @@ const dragIcon = bottomSheet.querySelector(".drag-icon");
 let isDragging = false,
   allowHiding = true,
   startY,
-  startHeight;
+  startHeight,
+  moveBehindModal = null;
 
 const showBottomModal = (
   overlayClickHideModal = true,
-  authorizeMoveBehindModal = false
+  authorizeMoveBehindModal = false,
+  authorizeDragModal = true,
+  defaultHeight = 80
 ) => {
   bottomSheet.classList.add("show");
   document.body.style.overflowY = "hidden";
-  updateSheetHeight(80);
+  updateSheetHeight(defaultHeight);
   if (overlayClickHideModal) {
     sheetOverlay.addEventListener("click", hideBottomSheet);
     allowHiding = true;
@@ -43,24 +46,30 @@ const showBottomModal = (
   if (authorizeMoveBehindModal) {
     sheetOverlay.style.opacity = "0";
     sheetOverlay.style.display = "none";
-    dragIcon.style.display = "none";
-    bottomSheet.style.maxHeight = sheetContent.style.maxHeight;
+    bottomSheet.style.maxHeight = sheetContent.style.height;
     bottomSheet.style.top = "unset";
     bottomSheet.style.bottom = "0";
   } else {
     sheetOverlay.style.opacity = "0.2";
     sheetOverlay.style.display = "";
-    dragIcon.style.display = "";
     bottomSheet.style.maxHeight = "";
     bottomSheet.style.top = "0";
     bottomSheet.style.bottom = "unset";
   }
+  if (authorizeDragModal) {
+    dragIcon.style.display = "";
+  } else {
+    dragIcon.style.display = "none";
+  }
+  moveBehindModal = authorizeMoveBehindModal;
 };
 
 const updateSheetHeight = (height) => {
   if (allowHiding || height > 20) {
     sheetContent.style.height = `${height}vh`;
-    bottomSheet.classList.toggle("fullscreen", height === 100);
+  }
+  if (moveBehindModal) {
+    bottomSheet.style.maxHeight = sheetContent.style.height;
   }
 };
 
@@ -69,6 +78,7 @@ const hideBottomSheet = () => {
   map.invalidateSize();
   bottomSheet.classList.remove("show");
   document.body.style.overflowY = "auto";
+  removeCameraFOVDetail();
 };
 
 const dragStart = (e) => {

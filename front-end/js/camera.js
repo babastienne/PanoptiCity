@@ -1,18 +1,22 @@
+var cameraDetails = {};
+var cameraDetailsPlots = [];
+var cameraDetailsSelectedScenario = "mean";
+
 levelsCameraConfiguration = {
   identification: {
-    color: "purple",
-    weight: 0.3,
-    fill: 0.3,
+    color: "red",
+    weight: 0.5,
+    fill: 0.4,
   },
   recognition: {
-    color: "red",
-    weight: 0.2,
-    fill: 0.15,
+    color: "orange",
+    weight: 0.5,
+    fill: 0.4,
   },
   observation: {
     color: "green",
-    weight: 0.1,
-    fill: 0.2,
+    weight: 0.5,
+    fill: 0.4,
   },
 };
 
@@ -234,8 +238,9 @@ async function getCameraDetails(idCamera) {
 async function displayCameraDetails(e) {
   // Function called onClick on a camera Marker
   idCamera = e.target.options.id;
-  let cameraDetails = await getCameraDetails(idCamera);
+  cameraDetails = await getCameraDetails(idCamera);
   addCameraDetailsData(e.target, cameraDetails);
+  _displayCameraFOV("mean");
 }
 
 function _transformTagContentInHtml(content) {
@@ -271,12 +276,18 @@ function addCameraDetailsData(plotMarker, plot) {
   let { lat, lng } = plotMarker.getLatLng();
   let listAttributes = [];
   popupDataTable = `<div class="pico modal-div">
+
+  ${_generateContentFOV()}
+
+  <h4 class="modal-title">${TEXTS.tagsDetails}</h4>
   <table class="pico modal-table">
       <thead>
         <tr>
           <th>${TEXTS.identifier}</th>
           <th>
-              <a target="blank" href="https://www.openstreetmap.org/node/${plot.id}">${plot.id}</a>
+              <a target="blank" href="https://www.openstreetmap.org/node/${
+                plot.id
+              }">${plot.id}</a>
           </th>
         </tr>
       </thead>
@@ -308,28 +319,104 @@ function addCameraDetailsData(plotMarker, plot) {
     }
     listAttributes.push(x);
   }
-  popupDataTable = popupDataTable + "</tbody></table>";
+
+  popupDataTable += `</tbody></table>${_displayEditionButton(
+    listAttributes
+  )}</div>`;
+
+  cancelCameraCreation();
+  updateBottomModalContent(popupDataTable);
+  showBottomModal(
+    (overlayClickHideModal = true),
+    (authorizeMoveBehindModal = true),
+    (authorizeDragModal = true),
+    (defaultHeight = 50)
+  );
+}
+
+// Camera edition methods
+function _displayEditionButton(listAttributes) {
+  content = "";
   if (OSM.isLoggedIn()) {
     if (
       listAttributes.length < 7 ||
-      (["fixed", "panning"].includes(plot["camera_type"]) &&
+      (["fixed", "panning"].includes(cameraDetails["camera_type"]) &&
         listAttributes.length < 9)
     ) {
-      popupDataTable =
-        popupDataTable +
-        `
+      content = `
         <div class="modal-flex-buttons">
           <button
               class="outline primary modal-button"
-              onclick="completeExistingCameraMissingAttributes(${plot.id})"
+              onclick="completeExistingCameraMissingAttributes(${cameraDetails.id})"
           >${TEXTS.completeCameraButton}</button>
         </div>
       `;
     }
   }
+  return content;
+}
 
-  popupDataTable = popupDataTable + "</div>";
-  cancelCameraCreation();
-  updateBottomModalContent(popupDataTable);
-  showBottomModal();
+// Camera Field of view methods
+function _generateContentFOV() {
+  let content = `<h4 class="modal-title">${TEXTS.simulateFOV}</h4>`;
+  if (cameraDetails.fov.mean.identification) {
+    content += `
+      <div class="modal-flex-buttons" role="group">
+        <button
+          class="secondary modal-button button-group"
+          id="button-best"
+          onclick="_displayCameraFOV('best')"
+        >${TEXTS.bestScenario}</button>
+        <button
+          class="modal-button button-group"
+          id="button-mean"
+          onclick="_displayCameraFOV('mean')"
+        >${TEXTS.meanScenario}</button>
+        <button
+          class="secondary modal-button button-group"
+          id="button-worst"
+          onclick="_displayCameraFOV('worst')"
+        >${TEXTS.worstScenario}</button>
+      </div>
+    `;
+  } else {
+    content += `<p>${TEXTS.noFOV}</p>`;
+  }
+  return content;
+}
+
+function removeCameraFOVDetail() {
+  if (cameraDetailsPlots.length) {
+    for (elem in cameraDetailsPlots) {
+      map.removeLayer(cameraDetailsPlots[elem]);
+    }
+    cameraDetailsPlots = [];
+  }
+  try {
+    let button = document.getElementById(
+      `button-${cameraDetailsSelectedScenario}`
+    );
+    button.classList.add("secondary");
+  } catch (e) {}
+}
+
+function _displayCameraFOV(scenario) {
+  removeCameraFOVDetail();
+  cameraDetailsSelectedScenario = scenario;
+  try {
+    let button = document.getElementById(`button-${scenario}`);
+    button.classList.remove("secondary");
+  } catch (e) {}
+  let plotDetail;
+  for (elem in cameraDetails.fov[scenario]) {
+    if (cameraDetails.fov[scenario][elem]) {
+      plotDetail = new L.Polygon(cameraDetails.fov[scenario][elem], {
+        color: levelsCameraConfiguration[elem].color,
+        weight: levelsCameraConfiguration[elem].weight,
+        fillOpacity: levelsCameraConfiguration[elem].fill,
+      });
+      map.addLayer(plotDetail);
+      cameraDetailsPlots.push(plotDetail);
+    }
+  }
 }

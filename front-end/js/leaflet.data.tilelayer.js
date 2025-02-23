@@ -149,18 +149,13 @@
         if (camera.focus != null && this.displayCamerasFocus) {
           // Only if focus exists for the camera and if able to display it
           // Draw camera's field of view and add it to map.
-          let plotFocus;
-          for (elem in camera.focus) {
-            if (camera.focus[elem]) {
-              plotFocus = new L.Polygon(camera.focus[elem], {
-                color: levelsCameraConfiguration[elem].color,
-                weight: levelsCameraConfiguration[elem].weight,
-                fillOpacity: levelsCameraConfiguration[elem].fill,
-              });
-              map.addLayer(plotFocus);
-              this.displayedFocusList.push(plotFocus);
-            }
-          }
+          var plotFocus = new L.Polygon(camera.focus, {
+            color: camera.color,
+            weight: 1,
+            fillOpacity: 0.1,
+          });
+          map.addLayer(plotFocus);
+          this.displayedFocusList.push(plotFocus);
         }
       } catch (e) {
         console.error(

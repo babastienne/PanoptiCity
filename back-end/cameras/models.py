@@ -52,15 +52,23 @@ CAMERA_TYPE_CHOICES = {
 }
 
 LEVEL_COEFFICIENTS = {
-    "identification": 1,       # By default the focus computed without any coef is the recognition one for 250ppm
-    "recognition": 3.84615, # 3.84615 = Ratio between 250ppm and 65 ppm
-    "observation": 10,      # 25 = Ratio between 250ppm and 25 ppm
+    "identification": 1,     # By default the focus computed without any coef is the recognition one for 250ppm
+    "recognition": 3.84615,  # 3.84615 = Ratio between 250ppm and 65 ppm
+    "observation": 10,       # 25 = Ratio between 250ppm and 25 ppm
 }
 
-SCENARIOS_COEFFICIENTS = {  # FIXME
-    "best":0.51,
-    "mean": 1.2,
-    "worst": 3.1,
+# Nominal coef = 25mm (focal) with 1920x1080 (resolution) = 1 x 1
+SCENARIOS_COEFFICIENTS = {
+    "fixed": {
+        "best": 0.112,   # 2.8mm (focal) x 1920x1080 (resolution) = 2.8/25 x 1 = 0.112
+        "mean": 0.3621,  # 6.8mm (focal) x 2556x1440 (resolution) = 6.8/25 x 2556/1920 = 0.272 * 1.331 = 0.3621
+        "worst": 2.08,   # 26mm (focal) x 3840x2160 (resolution) = 26/25 x 3840/1920 = 1.04 * 2 = 2.08
+    },
+    "dome/ptz": {
+        "best": 0.0746,   # 2.8mm (focal) x 1280x1024 (resolution) = 2.8/25 x 1280*1920 = 0.112 * 0.666 = 0.0746
+        "mean": 0.3621,  # 6.5mm (focal) x 2556x1440 (resolution) = 6.5/25 x 2556/1920 = 0.26 * 1.331 = 0.346
+        "worst": 5.456,   # 68.2mm (focal) x 3840x2160 (resolution) = 68.2/25 x 3840/1920 = 2.728 * 2 = 5.456
+    }
 }
 
 class ExteriorRing(models.functions.GeomOutputGeoFunc):
@@ -84,6 +92,7 @@ class Camera(models.Model):
     angle = models.IntegerField(
         blank=True, null=True, validators=[MaxValueValidator(360), MinValueValidator(0)]
     )
+    focus =  models.PolygonField(null=True)  # This field store the recognition + identification focus for the mean scenario which is the default focus
 
     @property
     def color(self):
@@ -119,7 +128,7 @@ class Camera(models.Model):
             camera_direction -= 360
         elif camera_direction < -180:
             camera_direction += 360
-        camera_direction = (camera_direction * 207986.0) / 11916720
+        camera_direction = (camera_direction * math.pi) / 180
         return camera_direction
 
     def compute_camera_height(self):
@@ -134,7 +143,7 @@ class Camera(models.Model):
             if abs(self.angle) <= 15:
                 return 1
             else:
-                return math.cos(((abs(self.angle) - 15) * 207986.0) / 11916720)
+                return math.cos(((abs(self.angle) - 15) * math.pi) / 180)
         else:
             return 1  # default angle
 
@@ -191,9 +200,9 @@ class Camera(models.Model):
     def compute_specific_focus(self, scenario):
         levels_focus = None
         if self.camera_type == "fixed" and self.direction is not None:
-            levels_focus = self.compute_multiple_focus(scenario, True, -7, 7)
+            levels_focus = self.compute_multiple_focus(scenario, True, -7, 7)  # -7 to 7 = 15 iterations ~= 85°
         if self.camera_type in ["dome", "panning"]:
-            levels_focus = self.compute_multiple_focus(scenario, False, 0, 63)  # 6.3 ~= 2pi
+            levels_focus = self.compute_multiple_focus(scenario, False, 0, 63)  # 6.3 ~= 2pi = 360°
         if levels_focus:
             for level in FOCUS_LEVELS_CHOICES:
                 focus, _ = CameraFocus.objects.get_or_create(
@@ -239,6 +248,8 @@ class Camera(models.Model):
         for level in FOCUS_LEVELS_CHOICES:
             levels_focus[level].append(levels_focus[level][0])
             computed_polygon = Polygon(levels_focus[level])
+            if scenario == 'mean' and level == 'recognition':
+                self.focus = computed_polygon
             if previous_polygon:
                 polygons_focus[level] = self.compute_diffs_polygons(computed_polygon, previous_polygon)
             else:
@@ -250,7 +261,7 @@ class Camera(models.Model):
     def compute_coefficient(self, x, scenario, level, cos=True, fixed=False):
         height = self.compute_camera_height()
         direction = self.compute_camera_direction() if fixed else 0
-        coef = 0.00026 * height * LEVEL_COEFFICIENTS[level] * SCENARIOS_COEFFICIENTS[scenario]
+        coef = 0.00026 * height * LEVEL_COEFFICIENTS[level] * SCENARIOS_COEFFICIENTS['fixed' if fixed else 'dome/ptz'][scenario]
         if cos:
             coefLat = 1.0 / math.cos(self.location.y * math.pi / 180)
             coef = coef * math.cos(direction + x / 10) * coefLat

@@ -22,6 +22,7 @@
   - [Calculation methods for field of view](#calculation-methods-for-field-of-view)
     - [What is the field of view](#what-is-the-field-of-view)
     - [The lack of data in OpenStreetMap](#the-lack-of-data-in-openstreetmap)
+    - [Angle of vision for fixed cameras](#angle-of-vision-for-fixed-cameras)
   - [More information](#more-information)
     - [Create or tag multiple cameras on same location](#create-or-tag-multiple-cameras-on-same-location)
     - [Complementary resources](#complementary-resources)
@@ -214,12 +215,12 @@ The combination of those 3 parameters allow to determine the quality of an image
 
 By taking those elements in consideration, we can compute the field of view of camera in which a person can be identified, recognized, detected. We use this matching table to establish what quality corresponds to what level :
 
-| Level of surveillance                                                                                                                                                                                              | Image quality |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
-| Identification: At this level a person can easily be identified by any human or automated program.                                                                                                                 | > 250 PPM     |
-| Recognition: Some specific details can be seen. Not enough details to automatize the recognition but a targeted person can still be recognized by a human eye. This quality level can be used for forensic review. | 250 - 65 PPM  |
-| Observation: It is possible to detect persons, objects and movements but not to identify details. Usually for large non targeted observation.                                                                      | 25 - 65 PPM   |
-| Not usable                                                                                                                                                                                                         | < 25 PPM      |
+| Level of surveillance                                                                                                                                                                                                            | Image quality    | Example                                                           |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- | ----------------------------------------------------------------- |
+| **Identification**: At this level a person can easily be identified by any human or automated program.                                                                                                                           | **> 250 PPM**    | 320ppm image ![320ppm image of a cyclist](docs/example320ppm.jpg) |
+| **Recognition**: Some specific details can be seen. Sometimes not enough details to automatize the recognition but a targeted person can still be recognized by a human eye. This quality level can be used for forensic review. | **250 - 65 PPM** | 160ppm image ![160ppm image of a cyclist](docs/example160ppm.jpg) |
+| **Observation**: It is possible to detect persons, objects and movements but not to identify details. Usually for large non targeted observation.                                                                                | **25 - 65 PPM**  | 40ppm image ![40ppm image of a cyclist](docs/example40ppm.jpg)    |
+| **Not usable**: At this level we consider the camera unable to detect anything and do not display any field of view anymore.                                                                                                     | **< 25 PPM**     | 20ppm image ![40ppm image of a cyclist](docs/example20ppm.jpg)    |
 
 > The level of surveillance and corresponding qualities are inspired from this [Department of Homeland Security document about VideoSurveillance Quality](https://www.dhs.gov/sites/default/files/publications/VQiPS_Digital-Video-Quality-HB_UPDATED-180117-508.pdf).
 
@@ -241,21 +242,35 @@ For basic information, we use default values if they are not tagged in OSM. If t
 | Angle     | 15°                                                                                        |
 | Direction | No default value. If a fixed camera does not have direction, no field of view is displayed |
 
-For the other fields, to make an estimation, we compiled in a file the technnical information of more than TODO models of CCTV cameras from TODO differents brands. This gave us a global view of the current technical level of the CCTV market as it is in 2025. Keep in mind that new camera models are released every week so depending when you read this lines the numbers can be differents today.
+For the other fields, to make an estimation, we compiled in a file the technnical information of more than 15200 models of CCTV cameras from 143 differents brands. This gave us a global view of the current technical level of the CCTV market as it is in 2025. Keep in mind that new camera models are released every week so depending when you read this lines the numbers can be differents today.
 
-The numbers used can be seen in the TODO file.
+The numbers used can be seen in the `docs/AllCameraList.ods` file (or in JSON format in `docs/camerasList.json`).
 
 With those numbers, we sorted every variable and were able to determine statistics about quality of cameras. Depending of the camera type (fixed or dome/PTZ cameras), we created three models to help us determine the quality of cameras (and therefore their field of view):
 
-| Scenario            | Description                                                                                                                                                                                           | Values for Fixed Cameras | Dome/PTZ Cameras |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | ---------------- |
-| Best Case Scenario  | This is the scenario corresponding to the first decile which means that 90% of cameras on the market have better quality that what is displayed on map as the field of view                           | TODO                     | TODO             |
-| Mean / Average      | The default scenario. There are as many cameras with better quality than the displayed field of view as there are with poorer quality                                                                 | TODO                     | TODO             |
-| Worst Case Scenario | This is the scenario corresponding to the last decile, which means that the displayed field of view on map is like if all cameras were in the top 10% of the market (in terms of technical abilities) | TODO                     | TODO             |
+| Scenario            | Description                                                                                                                                                                                           | Values for Fixed Cameras           | Dome/PTZ Cameras                    |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | ----------------------------------- |
+| Best Case Scenario  | This is the scenario corresponding to the first decile which means that 90% of cameras on the market have better quality that what is displayed on map as the field of view                           | 2.8mm focal & 1920x1080 resolution | 2.8mm focal & 1280x1024 resolution  |
+| Mean / Average      | The default scenario. There are as many cameras with better quality than the displayed field of view as there are with poorer quality                                                                 | 6.8mm focal & 2556x1440 resolution | 6.5mm focal & 2556x1440 resolution  |
+| Worst Case Scenario | This is the scenario corresponding to the last decile, which means that the displayed field of view on map is like if all cameras were in the top 10% of the market (in terms of technical abilities) | 26mm focal & 3840x2160 resolution  | 68.2mm focal & 3840x2160 resolution |
 
 **How it could be improved**
 
 One good way to improve this models would be to create a correlation between every camera model and their sales numbers to ponderate the weight of each camera in the model computation. However thoses numbers can't be easily found.
+
+### Angle of vision for fixed cameras
+
+For fixed cameras, we decided to use an angle for the width of view of 85°. Once again this angle depends a lot of the camera used and espacially its type (fisheye cameras for example, bullet cameras, etc.). Why 85° ? Our calculations showed that the average focal for fixed cameras in the best scenario (= first decile) is 2.8mm. From far the mains format of lenses are 1/3" and 1/2.7" (which corresponds respectively to 4.8mm and 5.37mm). With thoses informations we can estimate the angle of view of the majority of cameras:
+
+- Angle of view (in radian) = 2 \* ArcTan(Camera format in mm / 2 \* Camera focal in mm)
+- Conversion of radian in degrees: Degree = Radian \* 180 / Pi
+
+The results are:
+
+- For 1/3" lenses: 81.2°
+- for 1/2.7" lenses: 87.5°
+
+Therefore, to simplify we choose to use for all directed cameras an angle of view of ~85°.
 
 ## More information
 

@@ -20,15 +20,12 @@ class CameraListSerializer(serializers.HyperlinkedModelSerializer):
         return round(obj.location.x, 6)
 
     def get_focus(self, obj):
-        list_focus = {}
-        for elem in obj.camerafocus_set.all():
-            if elem.scenario == 'best':
-                list_focus[elem.level] = (
-                        [[[[round(point[1], 6), round(point[0], 6)] for point in elem] for elem in poly] for poly in elem.geom]
-                        if elem.geom
-                        else None
-                    )
-        return list_focus
+        focus = obj.focus
+        return (
+            [[round(point[1], 6), round(point[0], 6)] for point in focus[0]]
+            if focus
+            else None
+        )
 
     def __init__(self, *args, **kwargs):
         # Don't return focus and color when not explicitly asked with query_param 'focus'
@@ -44,9 +41,20 @@ class CameraListSerializer(serializers.HyperlinkedModelSerializer):
 
 class CameraDetailSerializer(serializers.HyperlinkedModelSerializer):
     tags = serializers.SerializerMethodField()
+    fov = serializers.SerializerMethodField()
 
     def get_tags(self, obj):
         return {tag.name: tag.value for tag in obj.cameratags_set.order_by('name')}
+
+    def get_fov(self, obj):
+        list_focus = {'best': {}, 'mean': {}, 'worst': {}}
+        for elem in obj.camerafocus_set.all():
+            list_focus[elem.scenario][elem.level] = (
+                    [[[[round(point[1], 6), round(point[0], 6)] for point in elem] for elem in poly] for poly in elem.geom]
+                    if elem.geom
+                    else None
+                )
+        return list_focus
 
     class Meta:
         model = Camera
@@ -61,4 +69,5 @@ class CameraDetailSerializer(serializers.HyperlinkedModelSerializer):
             "height",
             "direction",
             "angle",
+            "fov",
         ]

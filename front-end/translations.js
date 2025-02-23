@@ -24,6 +24,13 @@ let translatedTexts = {
     operator: "Operator",
     addCameraButton: "Add a new camera",
     completeCameraButton: "Complete missing information",
+    tagsDetails: "Tags details",
+    simulateFOV: "Simulate the camera field of view",
+    bestScenario: "Optimistic model",
+    meanScenario: "Realist model",
+    worstScenario: "Pessimist model",
+    noFOV:
+      "Camera is missing some information to be able to display field of view. Feel free to contribute to improve the database.",
     cameraLocationQuestion: "Move the map to choose the position of the camera",
     cameraLocationName: "Location",
     cameraSurveillanceQuestion: "What type of surveillance is it ?",
@@ -101,6 +108,13 @@ let translatedTexts = {
     identifier: "Identifiant",
     addCameraButton: "Ajouter une nouvelle caméra",
     completeCameraButton: "Compléter les informations manquantes",
+    tagsDetails: "Détail des attributs",
+    simulateFOV: "Simuler la vision de la caméra",
+    bestScenario: "Modèle optimiste",
+    meanScenario: "Modèle réaliste",
+    worstScenario: "Modèle pessimiste",
+    noFOV:
+      "Il manque des informations sur cette caméra pour pouvoir afficher son champ de vision. N'hésitez pas à contribuer pour enrichir la base de données.",
     cameraLocationQuestion:
       "Déplacez la carte pour choisir la position de la caméra",
     cameraLocationName: "Localisation",

@@ -93,6 +93,7 @@
 }
 .modal-title {
   text-align: center;
+  margin-top: 0 !important;
 }
 .modal-grid {
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -145,6 +146,10 @@
   margin-left: auto !important;
   margin-right: auto !important;
   min-width: 300px;
+}
+.button-group {
+  border-radius: 0 !important;
+  margin-top: 0 !important;
 }
 #sliderValue {
   margin-left: auto !important;
