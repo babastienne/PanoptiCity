@@ -1,5 +1,7 @@
 # PanoptiCity
 
+**A life under surveillance**
+
 ![PanoptiCity logo](front-end/android-chrome-192x192.png)
 
 - [PanoptiCity](#panopticity)
@@ -58,10 +60,13 @@ One major inspiration for this project has been the website [SunderS](https://su
 
 - Get data from OpenStreetMap database
 - Compute field of vision of each camera, take in consideration surounding buildings
+- Mutliple models for field of vision computation, based on an analysis of the technical features of available cameras on the cctv market. Possiblity to switch between models.
 - Connection with OpenStreetMap account
 - Edition of existing cameras
 - Creation form to contribute new cameras
 - Dark/light mode
+
+To discover all the features, go to [panopticity.fr](https://panopticity.fr/) !
 
 ## Installation
 
