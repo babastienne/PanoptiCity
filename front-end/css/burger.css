@@ -100,9 +100,11 @@
 }
 [data-theme="light"] .menu__item:hover {
   background-color: #cacbcb;
+  cursor: pointer;
 }
 [data-theme="dark"] .menu__item:hover {
   background-color: #6b6b6b;
+  cursor: pointer;
 }
 .menu__li {
   display: block !important;

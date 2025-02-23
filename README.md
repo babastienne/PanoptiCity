@@ -16,6 +16,9 @@
       - [Steps to update the buildings](#steps-to-update-the-buildings)
     - [Run the website for production](#run-the-website-for-production)
     - [Development](#development)
+  - [Configuration](#configuration)
+    - [Translations](#translations)
+    - [Burger Menu](#burger-menu)
   - [Calculation methods for field of view](#calculation-methods-for-field-of-view)
     - [What is the field of view](#what-is-the-field-of-view)
     - [The lack of data in OpenStreetMap](#the-lack-of-data-in-openstreetmap)
@@ -80,8 +83,6 @@ Define some variables used by the application by editing environment variables :
 - `cp .env.dist .env`
 - Then edit the `.env` file and replace the variables values by the ones you want to use.
 - Edit the configuration file for the front-end `front-end/CONFIG.js` and override with your parameters.
-
-> _Optional_: You can override translations of the front-end interface or add new languages by editing the file `front-end/translations.js`.
 
 ### Initialize database
 
@@ -179,6 +180,22 @@ An example of basic server configuration can be found on the file `nginx.conf.ex
 ### Development
 
 Pretty much the same as in production. If you want to contribute to this project there is some contribution ideas available on [todo.md](./todo.md). Don't hesitate to ask if you want to share ideas or need help to start.
+
+## Configuration
+
+### Translations
+
+You can override translations of the front-end interface or add new languages by editing the file `front-end/translations.js`. By default the project is translated in english and french. To add a new language you need to duplicate the english object, change it's language code (for example put `es` for Spanish) and then translate the entries.
+
+> Panopticity does not support the translations for countries variations (e.g `fr-CA` for Canadian french ; `en-US` for american english ; etc.). It only support main language translations. Any contribution to improve this behavior is welcome.
+
+By default PanoptiCity check the language configuration of the use browser to determine the language to display. It does not allow the user to switch the language interface directly. If you wish to improve this feel free to contribute.
+
+### Burger Menu
+
+The latteral menu allow to display static content to give users some information about any subject.
+
+By default PanoptiCity suggests some contents but you can override them to remove or add any entry. To do so, in the file `front-end/translations.js`, you'll need to edit the values under the `menuContent` object. Each sub-entry corresponds to an item to the menu. The key is the title of the content and the value is the body of the page. The value can contains HTML formated text. To simplify the formating it is also possible to use `\n` to split paragraphs.
 
 ## Calculation methods for field of view
 

@@ -27,36 +27,25 @@ var creationCameraButton = `
   />`;
 
 // Handle side menu content
-let menuItems = [
-  {
-    name: TEXTS.aboutThisSiteTitle,
-    content: TEXTS.aboutThisSiteContent,
-  },
-  {
-    name: TEXTS.whyThisNameTitle,
-    content: TEXTS.whyThisNameContent,
-  },
-];
-
 fillSideMenu = () => {
   let sideMenuContent = document.getElementById("sideMenuContent");
   let menuContent = "";
-  menuItems.forEach((elem, n) => {
+  for (entry in TEXTS.menuContent) {
     menuContent =
       menuContent +
       `
       <li class="menu__li">
-        <a class="menu__item" title=${elem.name} onclick="displayMenuContent(${n})">${elem.name}</a>
+        <a class="menu__item" title=${entry} onclick="displayMenuContent('${entry}')">${entry}</a>
       </li>`;
-  });
+  }
   sideMenuContent.innerHTML = menuContent;
 };
 
-displayMenuContent = (n) => {
+displayMenuContent = (entry) => {
   let content = `
   <div class="pico modal-div">
-    <h4 class="modal-title">${menuItems[n].name}</h4><div class="modal-content">`;
-  menuItems[n].content.split("\n").forEach((elem, _) => {
+    <h4 class="modal-title">${entry}</h4><div class="modal-content">`;
+  TEXTS.menuContent[entry].split("\n").forEach((elem, _) => {
     content = content + `<p>${elem}</p>`;
   });
   content = content + "</div></div>";
