@@ -287,7 +287,6 @@ function addCameraDetailsData(plotMarker, plot) {
         <tr>
           <td>Longitude</td><td>${lng}</td>
         </tr>`;
-  console.log(plot);
   for (x in plot.tags) {
     if (Object.keys(tagsListCamera).includes(x)) {
       if (tagsListCamera[x].display) {
@@ -313,7 +312,8 @@ function addCameraDetailsData(plotMarker, plot) {
   if (OSM.isLoggedIn()) {
     if (
       listAttributes.length < 7 ||
-      (["fixed", "panning"].includes(plot["camera_type"]) && listAttributes < 9)
+      (["fixed", "panning"].includes(plot["camera_type"]) &&
+        listAttributes.length < 9)
     ) {
       popupDataTable =
         popupDataTable +
