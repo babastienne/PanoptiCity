@@ -1,44 +1,52 @@
-# PanoptiCity
+<h1 align="center">PanoptiCity</h1>
 
-**A life under surveillance**
+<p align="center"><bold>A life under surveillance</bold></p>
 
-![PanoptiCity logo](front-end/android-chrome-192x192.png)
+<p align="center"><img alt="PanoptiCity logo" src="front-end/android-chrome-192x192.png"></p>
 
-- [PanoptiCity](#panopticity)
-  - [Introduction](#introduction)
-    - [Screenshots](#screenshots)
-    - [Supported features](#supported-features)
-  - [Installation](#installation)
-    - [Download the project and requirements](#download-the-project-and-requirements)
-    - [Set project environement](#set-project-environement)
-    - [Initialize database](#initialize-database)
-    - [Import initial data and update](#import-initial-data-and-update)
-      - [Steps to import data](#steps-to-import-data)
-      - [Steps to update the cameras](#steps-to-update-the-cameras)
-      - [Steps to update the buildings](#steps-to-update-the-buildings)
-    - [Run the website for production](#run-the-website-for-production)
-    - [Development](#development)
-  - [Configuration](#configuration)
-    - [Translations](#translations)
-    - [Burger Menu](#burger-menu)
-  - [Calculation methods for field of view](#calculation-methods-for-field-of-view)
-    - [What is the field of view](#what-is-the-field-of-view)
-    - [The lack of data in OpenStreetMap](#the-lack-of-data-in-openstreetmap)
-    - [Angle of vision for fixed cameras](#angle-of-vision-for-fixed-cameras)
-  - [More information](#more-information)
-    - [Create or tag multiple cameras on same location](#create-or-tag-multiple-cameras-on-same-location)
-    - [Complementary resources](#complementary-resources)
-      - [CCTV Effectiveness](#cctv-effectiveness)
-      - [Websites about mass surveillance](#websites-about-mass-surveillance)
-      - [Fight back](#fight-back)
-  - [Legal information for nerds](#legal-information-for-nerds)
-    - [Attribution](#attribution)
-      - [Cartography](#cartography)
-      - [OpenStreetMap](#openstreetmap)
-      - [Backend](#backend)
-      - [Frontend](#frontend)
-      - [Images](#images)
-    - [License](#license)
+- [Introduction](#introduction)
+  - [Screenshots](#screenshots)
+  - [Supported features](#supported-features)
+- [Installation](#installation)
+  - [Download the project and requirements](#download-the-project-and-requirements)
+  - [Set project environement](#set-project-environement)
+  - [Initialize database](#initialize-database)
+  - [Import initial data and update](#import-initial-data-and-update)
+    - [Steps to import data](#steps-to-import-data)
+    - [Steps to update the cameras](#steps-to-update-the-cameras)
+    - [Steps to update the buildings](#steps-to-update-the-buildings)
+  - [Run the website for production](#run-the-website-for-production)
+  - [Development](#development)
+- [Configuration](#configuration)
+  - [Translations](#translations)
+  - [Burger Menu](#burger-menu)
+- [Calculation methods for field of view](#calculation-methods-for-field-of-view)
+  - [What is the field of view](#what-is-the-field-of-view)
+  - [The lack of data in OpenStreetMap](#the-lack-of-data-in-openstreetmap)
+  - [Angle of vision for fixed cameras](#angle-of-vision-for-fixed-cameras)
+  - [Tilt angle for fixed cameras](#tilt-angle-for-fixed-cameras)
+  - [Statistic analysis of technical data from cameras dataset](#statistic-analysis-of-technical-data-from-cameras-dataset)
+    - [Limits of the dataset](#limits-of-the-dataset)
+    - [Format lense repartition](#format-lense-repartition)
+    - [Resolution repartition](#resolution-repartition)
+    - [Focals repartition](#focals-repartition)
+      - [Minimum focal](#minimum-focal)
+      - [Average focal](#average-focal)
+      - [Maximum focal](#maximum-focal)
+- [More information](#more-information)
+  - [Create or tag multiple cameras on same location](#create-or-tag-multiple-cameras-on-same-location)
+  - [Complementary resources](#complementary-resources)
+    - [CCTV Effectiveness](#cctv-effectiveness)
+    - [Websites about mass surveillance](#websites-about-mass-surveillance)
+    - [Fight back](#fight-back)
+- [Legal information for nerds](#legal-information-for-nerds)
+  - [Attribution](#attribution)
+    - [Cartography](#cartography)
+    - [OpenStreetMap](#openstreetmap)
+    - [Backend](#backend)
+    - [Frontend](#frontend)
+    - [Images](#images)
+  - [License](#license)
 
 ## Introduction
 
@@ -259,6 +267,8 @@ With those numbers, we sorted every variable and were able to determine statisti
 | Mean / Average      | The default scenario. There are as many cameras with better quality than the displayed field of view as there are with poorer quality                                                                 | 6.8mm focal & 2556x1440 resolution | 6.5mm focal & 2556x1440 resolution  |
 | Worst Case Scenario | This is the scenario corresponding to the last decile, which means that the displayed field of view on map is like if all cameras were in the top 10% of the market (in terms of technical abilities) | 26mm focal & 3840x2160 resolution  | 68.2mm focal & 3840x2160 resolution |
 
+The models numbers choosen are the result of a statistic analysis made for the cameras technical information compiled. More information about these analysis below.
+
 **How it could be improved**
 
 One good way to improve this models would be to create a correlation between every camera model and their sales numbers to ponderate the weight of each camera in the model computation. However thoses numbers can't be easily found.
@@ -276,6 +286,84 @@ The results are:
 - for 1/2.7" lenses: 87.5°
 
 Therefore, to simplify we choose to use for all directed cameras an angle of view of ~85°.
+
+### Tilt angle for fixed cameras
+
+While dome and PTZ cameras can usually change their tilt angle, it is not the case for fixed cameras. Therefore this data should be taken in consideration when computing the field of view of fixed cameras.
+
+At the moment the tilt angle is used to apply a computing coefficient. We consider the angle <= 15° being the same as 0° to compensate the vertical angle of vision that is at least 30°.
+
+This behavior can be improved to stop applying a coefficient and compute the real limit of field of view based on the camera height.
+
+### Statistic analysis of technical data from cameras dataset
+
+As mentionned above, the technical information of more than 15 000 cameras as been compiled into a dataset to have a global view of the technical abilities of the equipement sold on the market. The data as been used to determine the three models used to compute field of view of cameras.
+
+The dataset is available for consultation on this repository.
+
+The following sections compile some graphical analysis that display trends of repartition for multiple technical features (resolution, minimum focal, maximum focal, average focal and format) depending of cameras category (fixed or dome/ptz).
+
+#### Limits of the dataset
+
+Some specific cameras as been removed from dataset analysis, especially thermal or industrial cameras. Some camera type has been kept but affect the results.
+
+For exemple bullets or fisheyes cameras has been kept and categorized as Dome cameras. However, those cameras has a very short focal and are not really of the same type as "classical" dome or PTZ cameras that can have very large focal. This is a know limitation and the models could be improved by a better categorization or a ponderation with a weight for each sub-type determined by the statistical repartition analysis based on real world observations.
+
+#### Format lense repartition
+
+![Format lens repartition (linear)](docs/images/data-format.png)
+
+![Format lens repartition (logarithmic scale)](docs/images/data-format-log.png)
+
+#### Resolution repartition
+
+![Resolution repartition for any camera type](docs/images/data-resolution.png)
+
+#### Focals repartition
+
+Those numbers are the minimum/average/maximum focal available for each camera product. Some cameras only have one focal so each numbers will be the same. But some others can zoom and change their focal therefore these categorization has been made.
+
+##### Minimum focal
+
+**Fixed cameras**
+
+![Minimum focal repartition for fixed cameras (linear)](docs/images/data-min-focal-fixed.png)
+
+![Minimum focal repartition for fixed cameras (logarithmic scale)](docs/images/data-min-focal-fixed-log.png)
+
+**Dome/PTZ cameras**
+
+![Minimum focal repartition for dome/PTZ cameras (linear)](docs/images/data-min-focal-domeptz.png)
+
+![Minimum focal repartition for dome/PTZ cameras (logarithmic scale)](docs/images/data-min-focal-domeptz-log.png)
+
+##### Average focal
+
+**Fixed cameras**
+
+![Average focal repartition for fixed cameras (linear)](docs/images/data-average-focal-fixed.png)
+
+![Average focal repartition for fixed cameras (logarithmic scale)](docs/images/data-average-focal-fixed-log.png)
+
+**Dome/PTZ cameras**
+
+![Average focal repartition for dome/PTZ cameras (linear)](docs/images/data-average-focal-domeptz.png)
+
+![Average focal repartition for dome/PTZ cameras (logarithmic scale)](docs/images/data-average-focal-domeptz-log.png)
+
+##### Maximum focal
+
+**Fixed cameras**
+
+![Maximum focal repartition for fixed cameras (linear)](docs/images/data-max-focal-fixed.png)
+
+![Maximum focal repartition for fixed cameras (logarithmic scale)](docs/images/data-max-focal-fixed-log.png)
+
+**Dome/PTZ cameras**
+
+![Maximum focal repartition for dome/PTZ cameras (linear)](docs/images/data-max-focal-domeptz.png)
+
+![Maximum focal repartition for dome/PTZ cameras (logarithmic scale)](docs/images/data-max-focal-domeptz-log.png)
 
 ## More information
 
