@@ -93,6 +93,9 @@ class Camera(models.Model):
         blank=True, null=True, validators=[MaxValueValidator(360), MinValueValidator(0)]
     )
     focus =  models.PolygonField(null=True)  # This field store the recognition + identification focus for the mean scenario which is the default focus
+    # Fields stored to improve computation performances
+    buffer_max_vision = models.PolygonField(null=True)  # Buffer to store max FOV for fixed directed cameras
+    max_fov_distance = models.FloatField(null=True)
 
     @property
     def color(self):
@@ -131,27 +134,48 @@ class Camera(models.Model):
         camera_direction = (camera_direction * math.pi) / 180
         return camera_direction
 
-    def compute_camera_height(self):
+    def get_camera_height(self):
         height = 5  # default value
         if self.height:
             height = 1.5 if self.height < 1.5 else self.height
             height = 12 if self.height > 12 else self.height
-        return 1 + height / 10
+        return height
+    
+    def compute_camera_height_coef(self):
+        return 1 + self.get_camera_height() / 10
 
     def compute_camera_angle(self):
         if self.angle:
-            if abs(self.angle) <= 15:
+            if abs(self.angle) <= 17:
                 return 1
             else:
-                return math.cos(((abs(self.angle) - 15) * math.pi) / 180)
+                return math.cos(((abs(self.angle) - 17) * math.pi) / 180)
         else:
             return 1  # default angle
+        
+    def get_lat_coef(self):
+        return 1.0 / math.cos(self.location.y * math.pi / 180)
+    
+    def get_max_fov_distance(self):
+        if self.camera_type == "fixed" and self.angle:
+            if abs(self.angle) > 17:
+                return self.get_camera_height() / math.tan(((abs(self.angle) - 17) * math.pi) / 180) * self.get_lat_coef()
+        return None
+
+    def compute_buffer_fov(self):
+        if self.max_fov_distance:
+            location_copy = self.location.clone()
+            location_copy.transform(3857)
+            buffer_max_distance = location_copy.buffer(self.max_fov_distance)
+            buffer_max_distance.transform(4326)
+            return buffer_max_distance
+        return None
 
     def get_intersection_point_with_building(
         self, end_of_vision_field, buildings_camera_is_into
     ):
         line_vision = LineString(
-            self.location, end_of_vision_field
+            self.location, end_of_vision_field, srid=4326
         )  # Build a line between the camera and its end vision
         try:
             intersection_field = "geom"
@@ -187,8 +211,13 @@ class Camera(models.Model):
             ).first()  # We sort by this distance so that new endOfVision is the closest to the camera
             if building_accross and building_accross.closest_intersection_point is not None:
                 end_of_vision_field = building_accross.closest_intersection_point
+            # We compute end of fov for cases when camera is tilted
+            if ((building_accross and building_accross.distance and self.max_fov_distance and self.max_fov_distance < (building_accross.distance.m * self.get_lat_coef()))
+                or (self.max_fov_distance and not building_accross)):
+                intersection_line = line_vision.intersection(self.buffer_max_vision)
+                if intersection_line:
+                    end_of_vision_field = Point(intersection_line[-1], srid=4326)
         except Exception as e:
-            raise e
             # If this fails we keep the basic end_of_vision_field computed initially
             pass
         return end_of_vision_field
@@ -230,7 +259,7 @@ class Camera(models.Model):
                     [
                         self.location.x + self.compute_coefficient(x, scenario, level, cos=True, fixed=fixed),
                         self.location.y + self.compute_coefficient(x, scenario, level, cos=False, fixed=fixed),
-                    ]
+                    ], srid=4326
                 )
                 new_end_of_fov = self.get_intersection_point_with_building(
                     end_of_fov, buildings_camera_is_into
@@ -259,12 +288,11 @@ class Camera(models.Model):
         return polygons_focus
 
     def compute_coefficient(self, x, scenario, level, cos=True, fixed=False):
-        height = self.compute_camera_height()
+        height = self.compute_camera_height_coef()
         direction = self.compute_camera_direction() if fixed else 0
         coef = 0.00026 * height * LEVEL_COEFFICIENTS[level] * SCENARIOS_COEFFICIENTS['fixed' if fixed else 'dome/ptz'][scenario]
         if cos:
-            coefLat = 1.0 / math.cos(self.location.y * math.pi / 180)
-            coef = coef * math.cos(direction + x / 10) * coefLat
+            coef = coef * math.cos(direction + x / 10) * self.get_lat_coef()
         else:
             coef = coef * math.sin(direction + x / 10)
         if fixed:
@@ -287,6 +315,8 @@ class Camera(models.Model):
         return recognition_multipolygon
 
     def save(self, *args, **kwargs):
+        self.max_fov_distance = self.get_max_fov_distance()
+        self.buffer_max_vision = self.compute_buffer_fov()
         self.compute_all_focus()
         super(Camera, self).save(*args, **kwargs)
 

@@ -291,7 +291,7 @@ Therefore, to simplify we choose to use for all directed cameras an angle of vie
 
 While dome and PTZ cameras can usually change their tilt angle, it is not the case for fixed cameras. Therefore this data should be taken in consideration when computing the field of view of fixed cameras.
 
-At the moment the tilt angle is used to apply a computing coefficient. We consider the angle <= 15° being the same as 0° to compensate the vertical angle of vision that is at least 30°.
+At the moment the tilt angle is used to apply a computing coefficient. We consider the angle <= 17° being the same as 0° to compensate the vertical angle of vision that is at least 35° and because when aiming for a subject at the same level as the camera we tend to tilt it by 17°.
 
 This behavior can be improved to stop applying a coefficient and compute the real limit of field of view based on the camera height.
 
