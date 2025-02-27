@@ -47,6 +47,8 @@
 
 - [x] Do something with panning cameras > Panning cameras are considered as domes for their FOV
 - [ ] Compute focus depending on the lens / type of camera.
+- [ ] Improve compute of FOV depending on tilt
+- [ ] Adapt angle of FOV depending on focal
 
 - Wide-Angle Camera : Lens 2.8mm. Angle 110°. Distance 10m.
 - Standard Camera : Lens 3.6mm. Angle 80°. Distance 15m.

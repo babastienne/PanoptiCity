@@ -13,14 +13,14 @@
     initialize(url, options) {
       // Function called one time when creating our object
       this.url = url;
-      this.MIN_ZOOM_TO_DISPLAY_FOCUS = 16;
+      this.MIN_ZOOM_TO_DISPLAY_FOCUS = 17;
       this.displayedFocusList = [];
       this.displayedCamerasList = [];
       this.displayCameras = false;
       this.displayCamerasFocus = false;
       L.GridLayer.prototype.initialize.call(this, options);
       this.markersCluster = L.markerClusterGroup({
-        disableClusteringAtZoom: 15,
+        disableClusteringAtZoom: 16,
         spiderfyOnMaxZoom: false,
         removeOutsideVisibleBounds: true,
       });

@@ -2,6 +2,11 @@ from rest_framework import serializers
 
 from cameras.models import Camera
 
+MATCHING_LEVEL_COLORS = {
+    'identification': 'purple',
+    'recognition': 'red',
+    'observation': 'green',
+}
 
 class CameraListSerializer(serializers.HyperlinkedModelSerializer):
     lat = serializers.SerializerMethodField()
@@ -36,9 +41,20 @@ class CameraListSerializer(serializers.HyperlinkedModelSerializer):
 
 class CameraDetailSerializer(serializers.HyperlinkedModelSerializer):
     tags = serializers.SerializerMethodField()
+    fov = serializers.SerializerMethodField()
 
     def get_tags(self, obj):
         return {tag.name: tag.value for tag in obj.cameratags_set.order_by('name')}
+
+    def get_fov(self, obj):
+        list_focus = {'best': {}, 'mean': {}, 'worst': {}}
+        for elem in obj.camerafocus_set.all():
+            list_focus[elem.scenario][elem.level] = (
+                    [[[[round(point[1], 6), round(point[0], 6)] for point in elem] for elem in poly] for poly in elem.geom]
+                    if elem.geom
+                    else None
+                )
+        return list_focus
 
     class Meta:
         model = Camera
@@ -53,4 +69,5 @@ class CameraDetailSerializer(serializers.HyperlinkedModelSerializer):
             "height",
             "direction",
             "angle",
+            "fov",
         ]

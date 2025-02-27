@@ -84,7 +84,8 @@ displayDirectionFormForUser = (choices) => {
   addDirectionArrowOnMap();
   showBottomModal(
     (overlayClickHideModal = false),
-    (authorizeMoveBehindModal = true)
+    (authorizeMoveBehindModal = true),
+    (authorizeDragModal = false)
   );
 };
 
@@ -138,7 +139,8 @@ displayMapFormForUser = (choices) => {
   updateBottomModalContent(modalContent, (heightAdd = -15), (adaptMap = true));
   showBottomModal(
     (overlayClickHideModal = false),
-    (authorizeMoveBehindModal = true)
+    (authorizeMoveBehindModal = true),
+    (authorizeDragModal = false)
   );
 };
 
