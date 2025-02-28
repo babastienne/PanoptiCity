@@ -5,48 +5,11 @@
 <p align="center"><img alt="PanoptiCity logo" src="front-end/android-chrome-192x192.png"></p>
 
 - [Introduction](#introduction)
-  - [Screenshots](#screenshots)
-  - [Supported features](#supported-features)
 - [Installation](#installation)
-  - [Download the project and requirements](#download-the-project-and-requirements)
-  - [Set project environement](#set-project-environement)
-  - [Initialize database](#initialize-database)
-  - [Import initial data and update](#import-initial-data-and-update)
-    - [Steps to import data](#steps-to-import-data)
-    - [Steps to update the cameras](#steps-to-update-the-cameras)
-    - [Steps to update the buildings](#steps-to-update-the-buildings)
-  - [Run the website for production](#run-the-website-for-production)
-  - [Development](#development)
 - [Configuration](#configuration)
-  - [Translations](#translations)
-  - [Burger Menu](#burger-menu)
 - [Calculation methods for field of view](#calculation-methods-for-field-of-view)
-  - [What is the field of view](#what-is-the-field-of-view)
-  - [The lack of data in OpenStreetMap](#the-lack-of-data-in-openstreetmap)
-  - [Angle of vision for fixed cameras](#angle-of-vision-for-fixed-cameras)
-  - [Tilt angle for fixed cameras](#tilt-angle-for-fixed-cameras)
-  - [Statistic analysis of technical data from cameras dataset](#statistic-analysis-of-technical-data-from-cameras-dataset)
-    - [Limits of the dataset](#limits-of-the-dataset)
-    - [Format lense repartition](#format-lense-repartition)
-    - [Resolution repartition](#resolution-repartition)
-    - [Focals repartition](#focals-repartition)
-      - [Minimum focal](#minimum-focal)
-      - [Average focal](#average-focal)
-      - [Maximum focal](#maximum-focal)
 - [More information](#more-information)
-  - [Create or tag multiple cameras on same location](#create-or-tag-multiple-cameras-on-same-location)
-  - [Complementary resources](#complementary-resources)
-    - [CCTV Effectiveness](#cctv-effectiveness)
-    - [Websites about mass surveillance](#websites-about-mass-surveillance)
-    - [Fight back](#fight-back)
 - [Legal information for nerds](#legal-information-for-nerds)
-  - [Attribution](#attribution)
-    - [Cartography](#cartography)
-    - [OpenStreetMap](#openstreetmap)
-    - [Backend](#backend)
-    - [Frontend](#frontend)
-    - [Images](#images)
-  - [License](#license)
 
 ## Introduction
 
@@ -224,16 +187,16 @@ The field of view is the area visible/covered by a CCTV. the field of view of ev
 - The [focal lens](https://en.wikipedia.org/wiki/Camera_lens#Aperture_and_focal_length) of the lens. This mainly impact the angle of view and allow some cameras to be wide-angle (low focal) or on the opposite to focus on specific details (high focal). The focal is expressed in mm (e.g: 8mm ; 12mm ; 75mm).
 - The [sensor format](https://en.wikipedia.org/wiki/Image_sensor_format) which is the ratio that indicates the size of the image (usually expressed as 1/2.5" ; 2/3" ; etc.).
 
-The combination of those 3 parameters allow to determine the quality of an image for a specific distance. The quality is expressed in PPM (pixels per meters) representing the pixel density. For example for a camera of 1920x1080 resolution with a 25mm lens and a 1/3" format, the quality of the image of a person standing 10 meters away from the camera will be 998ppm.
+The combination of those last 3 parameters allow to determine the quality of an image for a specific distance. The quality is expressed in PPM (pixels per meters) representing the pixel density. For example for a camera of 1920x1080 resolution with a 25mm lens and a 1/3" format, the quality of the image of a person standing 10 meters away from the camera will be 998ppm.
 
 By taking those elements in consideration, we can compute the field of view of camera in which a person can be identified, recognized, detected. We use this matching table to establish what quality corresponds to what level :
 
-| Level of surveillance                                                                                                                                                                                                            | Image quality    | Example                                                                  |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- | ------------------------------------------------------------------------ |
-| **Identification**: At this level a person can easily be identified by any human or automated program.                                                                                                                           | **> 250 PPM**    | 320ppm image ![320ppm image of a cyclist](docs/images/example320ppm.jpg) |
-| **Recognition**: Some specific details can be seen. Sometimes not enough details to automatize the recognition but a targeted person can still be recognized by a human eye. This quality level can be used for forensic review. | **250 - 65 PPM** | 160ppm image ![160ppm image of a cyclist](docs/images/example160ppm.jpg) |
-| **Observation**: It is possible to detect persons, objects and movements but not to identify details. Usually for large non targeted observation.                                                                                | **25 - 65 PPM**  | 40ppm image ![40ppm image of a cyclist](docs/images/example40ppm.jpg)    |
-| **Not usable**: At this level we consider the camera unable to detect anything and do not display any field of view anymore.                                                                                                     | **< 25 PPM**     | 20ppm image ![40ppm image of a cyclist](docs/images/example20ppm.jpg)    |
+| Color on map                                       | Level of surveillance                                                                                                                                                                                                            | Image quality    | Example                                                                  |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- | ------------------------------------------------------------------------ |
+| ![Circle red](docs/images/zone-identification.svg) | **Identification**: At this level a person can easily be identified by any human or automated program.                                                                                                                           | **> 250 PPM**    | 320ppm image ![320ppm image of a cyclist](docs/images/example320ppm.jpg) |
+| ![Circle red](docs/images/zone-recognition.svg)    | **Recognition**: Some specific details can be seen. Sometimes not enough details to automatize the recognition but a targeted person can still be recognized by a human eye. This quality level can be used for forensic review. | **250 - 65 PPM** | 160ppm image ![160ppm image of a cyclist](docs/images/example160ppm.jpg) |
+| ![Circle red](docs/images/zone-observation.svg)    | **Observation**: It is possible to detect persons, objects and movements but not to identify details. Usually for large non targeted observation.                                                                                | **25 - 65 PPM**  | 40ppm image ![40ppm image of a cyclist](docs/images/example40ppm.jpg)    |
+|                                                    | **Not usable**: At this level we consider the camera unable to detect anything and do not display any field of view anymore.                                                                                                     | **< 25 PPM**     | 20ppm image ![40ppm image of a cyclist](docs/images/example20ppm.jpg)    |
 
 > The level of surveillance and corresponding qualities are inspired from this [Department of Homeland Security document about VideoSurveillance Quality](https://www.dhs.gov/sites/default/files/publications/VQiPS_Digital-Video-Quality-HB_UPDATED-180117-508.pdf).
 

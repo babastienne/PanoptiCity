@@ -358,22 +358,27 @@ function _displayEditionButton(listAttributes) {
 
 // Camera Field of view methods
 function _generateContentFOV() {
-  let content = `<h4 class="modal-title">${TEXTS.simulateFOV}</h4>`;
+  let content = `<h4 class="modal-title">
+    ${TEXTS.simulateFOV}
+    <sup><a href="https://github.com/babastienne/PanoptiCity?tab=readme-ov-file#calculation-methods-for-field-of-view" target="_blank">
+      <img class="info-bubble" src="images/cameras/info-circle.svg" />
+    </a></sup>
+  </h4>`;
   if (cameraDetails.fov.mean.identification) {
     content += `
-      <div class="modal-flex-buttons" role="group">
+      <div class="modal-flex-buttons-fov" role="group">
         <button
-          class="secondary modal-button button-group"
+          class="secondary modal-button-fov button-group"
           id="button-best"
           onclick="_displayCameraFOV('best')"
         >${TEXTS.bestScenario}</button>
         <button
-          class="modal-button button-group"
+          class="modal-button-fov button-group"
           id="button-mean"
           onclick="_displayCameraFOV('mean')"
         >${TEXTS.meanScenario}</button>
         <button
-          class="secondary modal-button button-group"
+          class="secondary modal-button-fov button-group"
           id="button-worst"
           onclick="_displayCameraFOV('worst')"
         >${TEXTS.worstScenario}</button>

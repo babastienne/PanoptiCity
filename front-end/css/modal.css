@@ -147,6 +147,12 @@
   margin-right: auto !important;
   min-width: 300px;
 }
+.modal-button-fov {
+  margin-top: 20px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  /* min-width: 300px; */
+}
 .button-group {
   border-radius: 0 !important;
   margin-top: 0 !important;
@@ -165,6 +171,13 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap-reverse;
+}
+.modal-flex-buttons-fov {
+  display: flex;
+  flex-direction: row;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 #modal-arrow-direction {
   height: 100px !important;
@@ -191,4 +204,16 @@
   margin-left: auto !important;
   margin-right: auto !important;
   text-align: justify;
+}
+.info-bubble {
+  cursor: pointer;
+  height: 1.25rem !important;
+}
+[data-theme="dark"] .info-bubble {
+  filter: invert(79%) sepia(7%) saturate(407%) hue-rotate(182deg)
+    brightness(95%) contrast(86%);
+}
+[data-theme="light"] .info-bubble {
+  filter: invert(33%) sepia(9%) saturate(707%) hue-rotate(180deg)
+    brightness(90%) contrast(88%);
 }

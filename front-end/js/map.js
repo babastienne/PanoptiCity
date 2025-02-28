@@ -16,14 +16,14 @@ function initMap() {
   );
 
   var CartoDB_DarkVoyage = L.tileLayer(
-    "//{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
-      maxNativeZoom: 20,
+      maxNativeZoom: 19,
       maxZoom: 21,
-      subdomains: "abcd",
+      subdomains: "abc",
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      className: "dark-map-tiles",
+      // className: "dark-map-tiles",
       label: "Map",
     }
   );
