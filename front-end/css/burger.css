@@ -109,6 +109,7 @@
 .menu__li {
   display: block !important;
   padding: 0 !important;
+  cursor: pointer;
 }
 .menu__left {
   width: 30px;
