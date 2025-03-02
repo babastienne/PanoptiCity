@@ -20,8 +20,9 @@
       this.displayCamerasFocus = false;
       L.GridLayer.prototype.initialize.call(this, options);
       this.markersCluster = L.markerClusterGroup({
-        disableClusteringAtZoom: 16,
-        spiderfyOnMaxZoom: false,
+        disableClusteringAtZoom: 22,
+        spiderfyOnMaxZoom: true,
+        maxClusterRadius: 35,
         removeOutsideVisibleBounds: true,
       });
     },

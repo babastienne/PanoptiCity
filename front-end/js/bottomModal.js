@@ -20,12 +20,14 @@ const sheetOverlay = bottomSheet.querySelector(".sheet-overlay");
 const sheetContent = bottomSheet.querySelector(".content");
 const bodyModal = bottomSheet.querySelector(".body-modal");
 const dragIcon = bottomSheet.querySelector(".drag-icon");
+const headerModal = bottomSheet.querySelector(".header-modal");
 
-let isDragging = false,
-  allowHiding = true,
+let allowHiding = true,
   startY,
+  previousY,
   startHeight,
-  moveBehindModal = null;
+  moveBehindModal = null,
+  dragModal = null;
 
 const showBottomModal = (
   overlayClickHideModal = true,
@@ -33,42 +35,45 @@ const showBottomModal = (
   authorizeDragModal = true,
   defaultHeight = 80
 ) => {
+  allowHiding = overlayClickHideModal;
+  moveBehindModal = authorizeMoveBehindModal;
+  dragModal = authorizeDragModal;
+
   bottomSheet.classList.add("show");
   document.body.style.overflowY = "hidden";
   updateSheetHeight(defaultHeight);
+
   if (overlayClickHideModal) {
     sheetOverlay.addEventListener("click", hideBottomSheet);
-    allowHiding = true;
-  } else {
-    sheetOverlay.removeEventListener("click", hideBottomSheet);
-    allowHiding = false;
   }
-  if (authorizeMoveBehindModal) {
-    sheetOverlay.style.opacity = "0";
-    sheetOverlay.style.display = "none";
-    bottomSheet.style.maxHeight = sheetContent.style.height;
-    bottomSheet.style.top = "unset";
-    bottomSheet.style.bottom = "0";
-  } else {
-    sheetOverlay.style.opacity = "0.2";
-    sheetOverlay.style.display = "";
-    bottomSheet.style.maxHeight = "";
-    bottomSheet.style.top = "0";
-    bottomSheet.style.bottom = "unset";
-  }
+
+  // Adapt display of contents depending on authorizeMoveBehindModal value
+  sheetOverlay.style.opacity = authorizeMoveBehindModal ? "0" : "0.2";
+  sheetOverlay.style.display = authorizeMoveBehindModal ? "none" : "";
+  bottomSheet.style.maxHeight = authorizeMoveBehindModal
+    ? sheetContent.style.height
+    : "";
+  bottomSheet.style.top = authorizeMoveBehindModal ? "unset" : "0";
+  bottomSheet.style.bottom = authorizeMoveBehindModal ? "0" : "unset";
+
+  // If drag is allowed, display drag button and add events handlers
+  dragIcon.style.display = authorizeDragModal ? "" : "none";
   if (authorizeDragModal) {
-    dragIcon.style.display = "";
-  } else {
-    dragIcon.style.display = "none";
+    headerModal.addEventListener("mousedown", handleDraggingEvents);
+    headerModal.addEventListener("touchstart", handleDraggingEvents);
+    sheetContent.addEventListener("mousedown", handleDraggingContent);
+    sheetContent.addEventListener("touchstart", handleDraggingContent);
   }
-  moveBehindModal = authorizeMoveBehindModal;
 };
 
 const updateSheetHeight = (height) => {
   if (allowHiding || height > 20) {
     sheetContent.style.height = `${height}vh`;
   }
-  if (moveBehindModal) {
+  if (moveBehindModal && !dragModal) {
+    bottomSheet.style.maxHeight = sheetContent.style.maxHeight;
+    sheetContent.style.height = sheetContent.style.maxHeight;
+  } else if (moveBehindModal && dragModal) {
     bottomSheet.style.maxHeight = sheetContent.style.height;
   }
 };
@@ -79,29 +84,49 @@ const hideBottomSheet = () => {
   bottomSheet.classList.remove("show");
   document.body.style.overflowY = "auto";
   removeCameraFOVDetail();
+  if (allowHiding) {
+    sheetOverlay.removeEventListener("click", hideBottomSheet);
+  }
+  if (dragModal) {
+    headerModal.removeEventListener("mousedown", handleDraggingEvents);
+    headerModal.removeEventListener("touchstart", handleDraggingEvents);
+    sheetContent.removeEventListener("mousedown", handleDraggingContent);
+    sheetContent.removeEventListener("touchstart", handleDraggingContent);
+  }
 };
 
 const dragStart = (e) => {
-  isDragging = true;
   startY = e.pageY || e.touches?.[0].pageY;
+  previousY = startY;
   startHeight = parseInt(sheetContent.style.height);
   bottomSheet.classList.add("dragging");
 };
 
+const getEventPosition = (e) => e.pageY || e.touches?.[0].pageY;
+
+const calculateNewHeight = (e) => {
+  const delta = startY - getEventPosition(e);
+  return startHeight + (delta / window.innerHeight) * 100;
+};
+
 const dragging = (e) => {
-  if (!isDragging) return;
-  const delta = startY - (e.pageY || e.touches?.[0].pageY);
-  const newHeight = startHeight + (delta / window.innerHeight) * 100;
-  updateSheetHeight(newHeight);
+  updateSheetHeight(calculateNewHeight(e));
+};
+
+const draggingToBottom = (e) => {
+  const currentY = getEventPosition(e);
+  if (currentY > previousY) {
+    updateSheetHeight(calculateNewHeight(e));
+    previousY = currentY;
+  }
 };
 
 const dragStop = () => {
-  isDragging = false;
   bottomSheet.classList.remove("dragging");
   const sheetHeight = parseInt(sheetContent.style.height);
-  sheetHeight < 20 && allowHiding
+  sheetHeight < 25 && allowHiding
     ? hideBottomSheet()
-    : sheetHeight > 90
+    : sheetHeight > 85
     ? updateSheetHeight(100)
     : updateSheetHeight(sheetHeight);
 };
@@ -121,10 +146,26 @@ const updateBottomModalContent = (content, heightAdd = 0, adaptMap = false) => {
   }
 };
 
-dragIcon.addEventListener("mousedown", dragStart);
-document.addEventListener("mousemove", dragging);
-document.addEventListener("mouseup", dragStop);
+const addDraggingEvents = (e, moveHandler, condition = () => true) => {
+  const [moveEvent, stopEvent] =
+    e.type === "mousedown"
+      ? ["mousemove", "mouseup"]
+      : ["touchmove", "touchend"];
+  dragStart(e);
 
-dragIcon.addEventListener("touchstart", dragStart);
-document.addEventListener("touchmove", dragging);
-document.addEventListener("touchend", dragStop);
+  if (condition()) {
+    document.addEventListener(moveEvent, moveHandler);
+  }
+
+  const stopCallback = (e) => {
+    dragStop();
+    document.removeEventListener(moveEvent, moveHandler);
+    document.removeEventListener(stopEvent, stopCallback);
+  };
+
+  document.addEventListener(stopEvent, stopCallback);
+};
+
+const handleDraggingEvents = (e) => addDraggingEvents(e, dragging);
+const handleDraggingContent = (e) =>
+  addDraggingEvents(e, draggingToBottom, () => bodyModal.scrollTop === 0);

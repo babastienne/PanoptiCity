@@ -30,8 +30,12 @@ displaySelectChoicesForUser = (choices) => {
     Object.keys(choices.options).length,
     200
   );
-  updateBottomModalContent(modalContent, additionalHeight);
-  showBottomModal((overlayClickHideModal = false));
+  updateBottomModalContent(modalContent, additionalHeight - 15);
+  showBottomModal(
+    (overlayClickHideModal = false),
+    (authorizeMoveBehindModal = false),
+    (authorizeDragModal = false)
+  );
 };
 
 displaySliderForUser = (choices) => {
@@ -59,9 +63,13 @@ displaySliderForUser = (choices) => {
           </div>
         </div>
     `;
-  updateBottomModalContent(modalContent);
+  updateBottomModalContent(modalContent, (heightAdd = -15));
   updateSliderDistanceValue(choices.defaultValue);
-  showBottomModal((overlayClickHideModal = false));
+  showBottomModal(
+    (overlayClickHideModal = false),
+    (authorizeMoveBehindModal = false),
+    (authorizeDragModal = false)
+  );
 };
 
 displayDirectionFormForUser = (choices) => {
@@ -115,9 +123,13 @@ displayAngleFormForUser = (choices) => {
     </div>
   </div>
 `;
-  updateBottomModalContent(modalContent);
+  updateBottomModalContent(modalContent, (heightAdd = -15));
   rotateArrowForDirection(choices.defaultValue, choices.additionalTransform);
-  showBottomModal((overlayClickHideModal = false));
+  showBottomModal(
+    (overlayClickHideModal = false),
+    (authorizeMoveBehindModal = false),
+    (authorizeDragModal = false)
+  );
 };
 
 displayMapFormForUser = (choices) => {

@@ -61,17 +61,20 @@
   border-radius: 0;
   overflow-y: hidden;
 }
-.bottom-sheet .header {
+.bottom-sheet .header-modal {
   display: flex;
   justify-content: center;
 }
-.header .drag-icon {
+.header-modal {
+  cursor: grab;
+}
+.header-modal .drag-icon {
   cursor: grab;
   user-select: none;
   padding: 15px;
   margin-top: -15px;
 }
-.header .drag-icon span {
+.header-modal .drag-icon span {
   height: 4px;
   width: 40px;
   display: block;
