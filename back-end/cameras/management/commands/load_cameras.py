@@ -149,6 +149,7 @@ class Command(BaseCommand):
                     f"Camera #{camera.id}. Field : Angle. Expected integer, found {tags['camera:angle']}. Field kept empty."
                 )
 
+        camera.generate_computed_fields()
         camera.save()
 
         for tag in tags:
