@@ -165,7 +165,7 @@ addDirectionArrowOnMap = () => {
   map.dragging.disable();
   locateControl.remove(map);
   let overlay = document.getElementById("customOverlay");
-  overlay.innerHTML = `<img id="overlay-arrow-direction" draggable="false" src="/images/contrib/arrow-base.svg" />`;
+  overlay.innerHTML = `<img id="overlay-arrow-direction" draggable="false" oncontextmenu="return false;" src="/images/contrib/arrow-base.svg" />`;
   let arrow = document.getElementById("overlay-arrow-direction");
   arrow.style.top = `calc(${map.getSize().y / 2}px + 4rem - 100px)`;
   let mapDiv = document.getElementById("map");
