@@ -18,6 +18,7 @@ django==5.1.6
     #   django-cors-headers
     #   django-filter
     #   djangorestframework
+    #   djangorestframework-gis
 django-cors-headers==4.7.0
     # via -r requirements.in
 django-filter==24.3
@@ -26,7 +27,7 @@ djangorestframework==3.15.2
     # via
     #   -r requirements.in
     #   djangorestframework-gis
-djangorestframework-gis==1.1
+djangorestframework-gis==1.2.0
     # via -r requirements.in
 gunicorn==23.0.0
     # via -r requirements.in
