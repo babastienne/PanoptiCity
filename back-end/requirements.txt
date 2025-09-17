@@ -38,7 +38,7 @@ packaging==24.2
     # via gunicorn
 psycopg2-binary==2.9.10
     # via -r requirements.in
-requests==2.32.3
+requests==2.32.4
     # via osmium
 sqlparse==0.5.3
     # via django
