@@ -32,7 +32,7 @@ gunicorn==23.0.0
     # via -r requirements.in
 idna==3.10
     # via requests
-osmium==4.0.2
+osmium==4.1.1
     # via -r requirements.in
 packaging==24.2
     # via gunicorn
