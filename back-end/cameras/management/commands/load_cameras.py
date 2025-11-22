@@ -3,7 +3,7 @@ import osmium
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import Point
 
-from cameras.models import Camera, CameraTags
+from cameras.models import Camera, CameraTags, Tile
 
 from timeit import default_timer as timer
 from datetime import timedelta
@@ -148,6 +148,9 @@ class Command(BaseCommand):
                 self.stderr.write(
                     f"Camera #{camera.id}. Field : Angle. Expected integer, found {tags['camera:angle']}. Field kept empty."
                 )
+        
+        # FIXME: Not working when no building around (cause no tile created)
+        camera.tile = Tile.objects.get(geom__contains=camera.location).id
 
         camera.generate_computed_fields()
         camera.save()

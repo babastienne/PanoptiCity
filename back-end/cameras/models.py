@@ -96,6 +96,7 @@ class Camera(models.Model):
     # Fields stored to improve computation performances
     buffer_max_vision = models.PolygonField(null=True)  # Buffer to store max FOV for fixed directed cameras
     max_fov_distance = models.FloatField(null=True)
+    tile = models.CharField(max_length=15, db_index=True)
 
     @property
     def color(self):
@@ -234,13 +235,12 @@ class Camera(models.Model):
             levels_focus = self.compute_multiple_focus(scenario, False, 0, 63)  # 6.3 ~= 2pi = 360°
         if levels_focus:
             for level in FOCUS_LEVELS_CHOICES:
-                focus, _ = CameraFocus.objects.get_or_create(
+                focus, _ = CameraFocus.objects.update_or_create(
                     camera_id = self,
                     scenario = scenario,
-                    level = level
+                    level = level,
+                    defaults={"geom": levels_focus[level]},
                 )
-                focus.geom = levels_focus[level]
-                focus.save()
         return None
     
     def compute_levels_focus(self, scenario, fixed, min_range, max_range, buildings_intersection = True):
@@ -340,6 +340,7 @@ class Camera(models.Model):
         self.max_fov_distance = self.get_max_fov_distance()
         self.buffer_max_vision = self.compute_buffer_fov()
         self.compute_all_focus()
+        self.buffer_max_vision = None  # We don't need to keep this field after focus computation
 
     class Meta:
         verbose_name = "Camera"
@@ -372,8 +373,17 @@ class CameraTags(models.Model):
     name = models.CharField(blank=True)
     value = models.CharField(blank=True)
 
-
 class Building(models.Model):
     id = models.BigIntegerField(primary_key=True, blank=False)
     osm_id = models.BigIntegerField(blank=False, null=False)
     geom = models.PolygonField(blank=False)
+    tile = models.CharField(max_length=15, db_index=True)
+
+class Tile(models.Model):
+    id = models.CharField(max_length=15, primary_key=True, db_index=True)
+    geom = models.PolygonField(blank=False, spatial_index=True, srid=4326)
+    level = models.IntegerField(db_index=True)
+    obj_count = models.IntegerField()
+    
+    def __str__(self):
+        return f"Tile {self.tile_id} (L{self.level}) - {self.obj_count} objects"
