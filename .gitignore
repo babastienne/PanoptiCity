@@ -1,5 +1,6 @@
 __pycache__/
 *.pyc
+launch.json
 
 # Draft files
 sandbox.py
@@ -10,3 +11,5 @@ osm-data/
 # Env file
 .env
 nginx.conf
+back-end/venv*
+*.old
