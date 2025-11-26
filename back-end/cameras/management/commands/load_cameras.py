@@ -51,7 +51,8 @@ class Command(BaseCommand):
                     imported += 1
                 else:
                     if self.verbose:
-                        self.stdout.write(f"Camera #{elem.id} already exists. Skipped.")
+                        self.stdout.write(
+                            f"Camera #{elem.id} already exists. Skipped.")
                     skipped += 1
         except Exception:
             raise
@@ -71,7 +72,7 @@ class Command(BaseCommand):
         elif "direction" in tags:
             direction = tags["direction"]
 
-        if type(direction) is str:
+        if isinstance(direction, str):
             direction = direction.lower()
             if direction in ["n", "north"]:
                 direction = 0
@@ -89,14 +90,22 @@ class Command(BaseCommand):
                 direction = 270
             elif direction in ["nw"]:
                 direction = 315
+            # If the string got a trailing '°', we remove it
+            elif direction.endswith("°"):
+                direction = direction[:-1]
+            # If the direction contains ";" it means its a list of directions and there is multiple cameras
+            elif ";" in direction:
+                # FIXME: We take the first direction but we should store the fact that there is multiple
+                # cameras to alert the user on the map and suggest a way to split them
+                direction = direction.split(";")[0]
 
         try:
             direction = int(direction) if direction else None
         except Exception:
-            direction = None
             self.stderr.write(
                 f"Camera #{camera.id}. Field : Direction. Expected int, found {direction}. Field kept empty."
             )
+            direction = None
 
         return direction
 
@@ -126,7 +135,11 @@ class Command(BaseCommand):
 
         try:
             if "height" in tags:
-                camera.height = float(tags["height"])
+                height = tags["height"]
+                # If the height has a trailing "m", we remove it
+                if tags["height"].endswith("m"):
+                    height = tags["height"][:-1]
+                camera.height = float(height)
             elif "ele" in tags:
                 camera.height = float(tags["ele"])
         except Exception:
@@ -148,7 +161,7 @@ class Command(BaseCommand):
                 self.stderr.write(
                     f"Camera #{camera.id}. Field : Angle. Expected integer, found {tags['camera:angle']}. Field kept empty."
                 )
-        
+
         # FIXME: Not working when no building around (cause no tile created)
         camera.tile = Tile.objects.get(geom__contains=camera.location).id
 
