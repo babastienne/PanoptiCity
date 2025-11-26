@@ -22,27 +22,27 @@ local buildings = osm2pgsql.define_table({
             not_null = true
         }
     },
-    indexes = {
-        {
-            column = 'id',
-            name = 'cameras_building_pkey',
-            method = 'btree',
-            unique = true
-        },
-        {
-            column = 'geom',
-            method = 'gist'
-        },
-        {
-            column = 'tile',
-            name = 'cameras_building_tile_idx',
-            method = 'btree'
-        },
-        {
-            expression = 'tile varchar_pattern_ops',
-            name = 'cameras_building_tile_idx_like',
-            method = 'btree'
-        }
+    indexes = {  -- Indexes are disabled to avoid spending time building them just to be dropped later in install process
+        -- {
+        --     column = 'id',
+        --     name = 'cameras_building_pkey',
+        --     method = 'btree',
+        --     unique = true
+        -- },
+        -- {
+        --     column = 'geom',
+        --     method = 'gist'
+        -- },
+        -- {
+        --     column = 'tile',
+        --     name = 'cameras_building_tile_idx',
+        --     method = 'btree'
+        -- },
+        -- {
+        --     expression = 'tile varchar_pattern_ops',
+        --     name = 'cameras_building_tile_idx_like',
+        --     method = 'btree'
+        -- }
     }
 })
 
