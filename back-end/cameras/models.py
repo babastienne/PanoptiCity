@@ -1,90 +1,32 @@
 import math
 
+import mercantile
+from cameras.constants import (BASE_COEFICIENT, CAMERA_ANGLE_MIN,
+                               CAMERA_HEIGHT_DEFAULT, CAMERA_HEIGHT_MAX,
+                               CAMERA_HEIGHT_MIN, LEVEL_COEFFICIENTS,
+                               SCENARIOS_COEFFICIENTS, CameraTypeChoices,
+                               FocusLevelChoices, FocusScenarioChoices,
+                               MountChoices, SurveillanceChoices,
+                               SurveillanceTypeChoices, ZoneChoices)
+from cameras.services.fov_calculator import FOVCalculator
 from django.contrib.gis.db import models
-from django.contrib.gis.db.models.functions import Distance, Intersection, ClosestPoint
-from django.contrib.gis.geos import Polygon, Point, LineString, MultiPolygon
+from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.geos import MultiPolygon, Polygon
 from django.core.validators import MaxValueValidator, MinValueValidator
-
-
-MOUNT_CHOICES = {
-    "wall": "wall",
-    "pole": "pole",
-    "ceiling": "ceiling",
-    "street_lamp": "street_lamp",
-    "building": "building",
-    "traffic_signal": "traffic_signal",
-}
-
-SURVEILLANCE_TYPE_CHOICES = {
-    "camera": "camera",
-    "guard": "guard",
-    "ALPR": "ALPR",
-    "gunshot_detector": "gunshot_detector",
-}
-
-SURVEILLANCE_CHOICES = {
-    "indoor": "indoor",
-    "outdoor": "outdoor",
-    "public": "public",
-    "transportation": "transportation",
-    "traffic": "traffic",
-    "red_light": "red_light",
-    "level_crossing": "level_crossing",
-    "speed_camera": "speed_camera",
-}
-
-ZONE_CHOICES = {
-    "town": "town",
-    "parking": "parking",
-    "atm": "atm",
-    "traffic": "traffic",
-    "shop": "shop",
-    "bank": "bank",
-    "building": "building",
-    "entrance": "entrance",
-    "street": "street",
-}
-
-CAMERA_TYPE_CHOICES = {
-    "fixed": "fixed",
-    "panning": "panning",
-    "dom": "dom",
-}
-
-LEVEL_COEFFICIENTS = {
-    "identification": 1,     # By default the focus computed without any coef is the recognition one for 250ppm
-    "recognition": 3.84615,  # 3.84615 = Ratio between 250ppm and 65 ppm
-    "observation": 10,       # 25 = Ratio between 250ppm and 25 ppm
-}
-
-# Nominal coef = 25mm (focal) with 1920x1080 (resolution) = 1 x 1
-SCENARIOS_COEFFICIENTS = {
-    "fixed": {
-        "best": 0.112,   # 2.8mm (focal) x 1920x1080 (resolution) = 2.8/25 x 1 = 0.112
-        "mean": 0.3621,  # 6.8mm (focal) x 2556x1440 (resolution) = 6.8/25 x 2556/1920 = 0.272 * 1.331 = 0.3621
-        "worst": 2.08,   # 26mm (focal) x 3840x2160 (resolution) = 26/25 x 3840/1920 = 1.04 * 2 = 2.08
-    },
-    "dome/ptz": {
-        "best": 0.0746,   # 2.8mm (focal) x 1280x1024 (resolution) = 2.8/25 x 1280*1920 = 0.112 * 0.666 = 0.0746
-        "mean": 0.3621,  # 6.5mm (focal) x 2556x1440 (resolution) = 6.5/25 x 2556/1920 = 0.26 * 1.331 = 0.346
-        "worst": 5.456,   # 68.2mm (focal) x 3840x2160 (resolution) = 68.2/25 x 3840/1920 = 2.728 * 2 = 5.456
-    }
-}
-
-class ExteriorRing(models.functions.GeomOutputGeoFunc):
-    function = "ST_ExteriorRing"
 
 
 class Camera(models.Model):
     id = models.BigIntegerField(primary_key=True, blank=False)
     location = models.PointField(blank=False)
-    mount = models.CharField(choices=MOUNT_CHOICES, blank=True)
+    mount = models.CharField(choices=MountChoices.choices, blank=True)
     surveillance_type = models.CharField(
-        choices=SURVEILLANCE_TYPE_CHOICES, default="camera", blank=True
+        choices=SurveillanceTypeChoices.choices, default="camera", blank=True
     )
-    surveillance = models.CharField(choices=SURVEILLANCE_CHOICES, blank=True)
-    camera_type = models.CharField(choices=CAMERA_TYPE_CHOICES, blank=True)
-    zone = models.CharField(choices=ZONE_CHOICES, blank=True)
+    surveillance = models.CharField(
+        choices=SurveillanceChoices.choices, blank=True)
+    camera_type = models.CharField(
+        choices=CameraTypeChoices.choices, blank=True)
+    zone = models.CharField(choices=ZoneChoices.choices, blank=True)
     height = models.FloatField(blank=True, null=True)
     direction = models.IntegerField(
         blank=True, null=True, validators=[MaxValueValidator(360), MinValueValidator(0)]
@@ -92,9 +34,9 @@ class Camera(models.Model):
     angle = models.IntegerField(
         blank=True, null=True, validators=[MaxValueValidator(360), MinValueValidator(0)]
     )
-    focus =  models.PolygonField(null=True)  # This field store the recognition + identification focus for the mean scenario which is the default focus
+    # This field store the recognition + identification focus for the mean scenario which is the default focus
+    focus = models.PolygonField(null=True)
     # Fields stored to improve computation performances
-    buffer_max_vision = models.PolygonField(null=True)  # Buffer to store max FOV for fixed directed cameras
     max_fov_distance = models.FloatField(null=True)
     tile = models.CharField(max_length=15, db_index=True)
 
@@ -127,6 +69,9 @@ class Camera(models.Model):
         return "cam" + self.color
 
     def compute_camera_direction(self):
+        """
+        Compute and return the camera direction in radians
+        """
         camera_direction = 90 - self.direction
         if camera_direction > 180:
             camera_direction -= 360
@@ -136,242 +81,234 @@ class Camera(models.Model):
         return camera_direction
 
     def get_camera_height(self):
-        height = 5  # default value
+        """
+        Return the camera height in meters with min and max limits
+        Min = 1.5m (typical height of a person)
+        Max = 20m
+        """
+        height = CAMERA_HEIGHT_DEFAULT  # default value
         if self.height:
-            height = 1.5 if self.height < 1.5 else self.height
-            height = 12 if self.height > 12 else self.height
+            height = CAMERA_HEIGHT_MIN if self.height < CAMERA_HEIGHT_MIN else self.height
+            height = CAMERA_HEIGHT_MAX if self.height > CAMERA_HEIGHT_MAX else self.height
         return height
-    
+
     def compute_camera_height_coef(self):
         return 1 + self.get_camera_height() / 10
 
     def compute_camera_angle(self):
+        """
+        Compute and return the camera angle coefficient
+        """
         if self.angle:
-            if abs(self.angle) <= 17:
+            if abs(self.angle) <= CAMERA_ANGLE_MIN:
                 return 1
             else:
-                return math.cos(((abs(self.angle) - 17) * math.pi) / 180)
+                return math.cos(((abs(self.angle) - CAMERA_ANGLE_MIN) * math.pi) / 180)
         else:
             return 1  # default angle
-        
+
     def get_lat_coef(self):
+        """
+        Compute and return the latitude coefficient to use to adapt calculations for longitude axis
+        Formula is : 1 / cos(latitude in radian)
+        Used because in degrees the X-axis (Longitude) shrinks as we move away from equator
+        """
+        # Conversion in radian = x * math.pi / 180
+        # Could use math.radians instead
         return 1.0 / math.cos(self.location.y * math.pi / 180)
-    
+
     def get_max_fov_distance(self):
+        """
+        Compute and return the maximum distance in meters of the fov for fixed cameras tilted downwards
+        """
         if self.camera_type == "fixed" and self.angle:
-            if abs(self.angle) > 17:
-                return self.get_camera_height() / math.tan(((abs(self.angle) - 17) * math.pi) / 180) * self.get_lat_coef()
+            if abs(self.angle) > CAMERA_ANGLE_MIN:
+                return self.get_camera_height() / math.tan(((abs(self.angle) - CAMERA_ANGLE_MIN) * math.pi) / 180) * self.get_lat_coef()
         return None
 
-    def compute_buffer_fov(self):
-        if self.max_fov_distance:
-            location_copy = self.location.clone()
-            location_copy.transform(3857)
-            buffer_max_distance = location_copy.buffer(self.max_fov_distance)
-            buffer_max_distance.transform(4326)
-            return buffer_max_distance
-        return None
+    def get_neighboring_tiles(self):
+        tile = mercantile.quadkey_to_tile(self.tile)
+        list_tiles = [mercantile.quadkey(neighbor)
+                      for neighbor in mercantile.neighbors(tile)]
+        list_tiles.append(self.tile)
+        return list_tiles
 
-    def get_intersection_point_with_building(
-        self, end_of_vision_field, buildings_camera_is_into
-    ):
-        line_vision = LineString(
-            self.location, end_of_vision_field, srid=4326
-        )  # Build a line between the camera and its end vision
-        try:
-            intersection_field = "geom"
-            buildings_accross = (
-                Building.objects.filter(geom__intersects=line_vision)
-                .exclude(
-                    geom__touches=line_vision  # Exclude building if it only touches with one point of the line to match cases when camera is on wall
-                )
-            )
-            if self.surveillance == "indoor":
-                buildings_accross = buildings_accross.annotate(
-                    boundary=ExteriorRing("geom")
-                )
-                intersection_field = "boundary"
-            buildings_accross = (buildings_accross
-                .annotate(
-                    closest_intersection_point=ClosestPoint(
-                        Intersection(intersection_field, line_vision), self.location
-                    )
-                )
-                .annotate(
-                    distance=Distance(
-                        "closest_intersection_point", self.location
-                    )  # Add field with distance between location and intersection point of the building
-                )
-            )
-            if buildings_camera_is_into.count() and self.surveillance != "indoor":
-                buildings_accross = buildings_accross.exclude(
-                    geom__contains=self.location
-                )  # We remove building the camera is into if it is not an indoor camera
-            building_accross = buildings_accross.order_by(
-                "distance"
-            ).first()  # We sort by this distance so that new endOfVision is the closest to the camera
-            if building_accross and building_accross.closest_intersection_point is not None:
-                end_of_vision_field = building_accross.closest_intersection_point
-            # We compute end of fov for cases when camera is tilted
-            if ((building_accross and building_accross.distance and self.max_fov_distance and self.max_fov_distance < (building_accross.distance.m * self.get_lat_coef()))
-                or (self.max_fov_distance and not building_accross)):
-                intersection_line = line_vision.intersection(self.buffer_max_vision)
-                if intersection_line:
-                    end_of_vision_field = Point(intersection_line[-1], srid=4326)
-        except Exception as e:
-            # If this fails we keep the basic end_of_vision_field computed initially
-            pass
-        return end_of_vision_field
+    def get_sorted_configurations(self):
+        """
+        Generates a list of all Scenario/Level combinations, calculated in meters,
+        sorted from largest distance to smallest distance.
+        """
+        configs = []
+        is_fixed = (self.camera_type == "fixed")
+        cam_key = 'fixed' if is_fixed else 'dome/ptz'
+
+        # Base scalar calculation in Meters (approximated from original logic)
+        # Original logic: base_coef * height * level * scenario * lat_coef(for deg)
+        height_factor = self.compute_camera_height_coef()
+        base_factor = BASE_COEFICIENT * height_factor
+
+        # Angle tilt factor for fixed cameras
+        angle_factor = self.compute_camera_angle()
+
+        for scenario in FocusScenarioChoices.values:
+            for level in FocusLevelChoices.values:
+                scenario_coef = SCENARIOS_COEFFICIENTS[cam_key][scenario]
+                level_coef = LEVEL_COEFFICIENTS[level]
+
+                # Theoretical max distance in degrees
+                dist_degrees = base_factor * level_coef * scenario_coef * angle_factor
+
+                configs.append({
+                    'scenario': scenario,
+                    'level': level,
+                    'dist_degrees': dist_degrees
+                })
+
+        # Sort the configurations from largest to smallest distance
+        configs.sort(key=lambda x: x['dist_degrees'], reverse=True)
+        return configs
 
     def compute_all_focus(self):
-        for scenario in FOCUS_SCENARIOS_CHOICES:
-            self.compute_specific_focus(scenario)
+        """
+        Main entry point. Orchestrates the computation using optimized geometric sorting.
+        """
+        # Get Sorted Configurations (in meters)
+        configs = self.get_sorted_configurations()
+        if not configs:
+            # Should not happen
+            return
 
-    def compute_specific_focus(self, scenario):
-        levels_focus = None
-        if self.camera_type == "fixed" and self.direction is not None:
-            levels_focus = self.compute_multiple_focus(scenario, True, -7, 7)  # -7 to 7 = 15 iterations ~= 85°
-        if self.camera_type in ["dome", "panning"]:
-            levels_focus = self.compute_multiple_focus(scenario, False, 0, 63)  # 6.3 ~= 2pi = 360°
-        if levels_focus:
-            for level in FOCUS_LEVELS_CHOICES:
-                focus, _ = CameraFocus.objects.update_or_create(
-                    camera_id = self,
-                    scenario = scenario,
-                    level = level,
-                    defaults={"geom": levels_focus[level]},
-                )
-        return None
-    
-    def compute_levels_focus(self, scenario, fixed, min_range, max_range, buildings_intersection = True):
-        levels_focus = {
-            'identification': [self.location] if fixed else [],
-            'recognition': [self.location] if fixed else [],
-            'observation': [self.location] if fixed else [],
-        }
+        calculator = FOVCalculator(self)
 
-        if buildings_intersection:
-            buildings_camera_is_into = Building.objects.filter(geom__contains=self.location)
+        # Fetch buildings associated to the camera
+        # We need the max possible distance to filter the DB query efficiently
+        max_possible_dist = configs[0]['dist_degrees']
+        nearby_buildings_qs = Building.objects.filter(
+            tile__in=self.neighboring_tiles,
+            geom__dwithin=(self.location, max_possible_dist)
+        ).only('id', 'geom')
 
-        for x in range(min_range, max_range, 1):
-            for level in FOCUS_LEVELS_CHOICES:
-                end_of_fov = Point(
-                    [
-                        self.location.x + self.compute_coefficient(x, scenario, level, cos=True, fixed=fixed),
-                        self.location.y + self.compute_coefficient(x, scenario, level, cos=False, fixed=fixed),
-                    ], srid=4326
-                )
-                if not buildings_intersection:
-                    levels_focus[level].append(end_of_fov)
-                    continue
-                new_end_of_fov = self.get_intersection_point_with_building(
-                    end_of_fov, buildings_camera_is_into
-                )
-                if not new_end_of_fov:
-                    continue
-                levels_focus[level].append(new_end_of_fov)
-                if new_end_of_fov != end_of_fov:  # If different mean there is an obstacle on the way so don't need to compute further
-                    if level in ['recognition', 'identification']:
-                        levels_focus['observation'].append(new_end_of_fov)
-                    if level == 'identification':
-                        levels_focus['recognition'].append(new_end_of_fov)
-                    break
-        for level in FOCUS_LEVELS_CHOICES:
-            levels_focus[level].append(levels_focus[level][0])
-        return levels_focus
+        # Annotate with distance to camera and order by distance ascending
+        nearby_buildings_qs = nearby_buildings_qs.annotate(
+            distance=Distance('geom', self.location)
+        ).order_by('distance')
 
-    def compute_multiple_focus(self, scenario, fixed, min_range, max_range):
-        polygons_focus = {}
+        # Pre-calculate which buildings contains the camera (for exclusion logic)
+        buildings_camera_is_into_ids = set()
+        prepped_buildings = []
 
-        previous_polygon = None
+        for b in nearby_buildings_qs:
+            if b.geom.contains(self.location):
+                buildings_camera_is_into_ids.add(b.id)
 
-        levels_focus = self.compute_levels_focus(scenario, fixed, min_range, max_range)
+            target_geom = b.geom
+            if self.surveillance == "indoor":
+                target_geom = target_geom.exterior_ring
 
-        for level in FOCUS_LEVELS_CHOICES:
-            levels_focus[level].append(levels_focus[level][0])
-            computed_polygon = Polygon(levels_focus[level])
-            if (not computed_polygon.valid and computed_polygon.area == 0.0):
-                # In somes cases (indoor cameras attached to walls, cameras attached to walls pointed toward building)
-                # the computed polygons are empty. To display at least something we compute fov without buildings
-                levels_focus = self.compute_levels_focus(scenario, fixed, min_range, max_range, buildings_intersection=False)
-                computed_polygon = Polygon(levels_focus[level])
-            if scenario == 'mean' and level == 'recognition':
-                self.focus = computed_polygon
-            if previous_polygon:
-                polygons_focus[level] = self.compute_diffs_polygons(computed_polygon, previous_polygon)
-            else:
-                polygons_focus[level] = MultiPolygon(computed_polygon)
-            previous_polygon = computed_polygon
-        
-        return polygons_focus
+            prepped_buildings.append((b.id, target_geom.prepared, target_geom))
 
-    def compute_coefficient(self, x, scenario, level, cos=True, fixed=False):
-        height = self.compute_camera_height_coef()
-        direction = self.compute_camera_direction() if fixed else 0
-        coef = 0.00026 * height * LEVEL_COEFFICIENTS[level] * SCENARIOS_COEFFICIENTS['fixed' if fixed else 'dome/ptz'][scenario]
-        if cos:
-            coef = coef * math.cos(direction + x / 10) * self.get_lat_coef()
-        else:
-            coef = coef * math.sin(direction + x / 10)
-        if fixed:
-            coef = coef * self.compute_camera_angle()
-        return coef
+        # Compute raw polygons for each scenario/level (in 4326)
+        raw_results = calculator.compute_fov_points(
+            configs, prepped_buildings, buildings_camera_is_into_ids)
 
-    def compute_diffs_polygons(self, shapeA, shapeB):
-        if not shapeA.valid:
-            shapeA = shapeA.simplify()
-        if not shapeB.valid:
-            shapeB = shapeB.simplify()
-        diff_recognition = shapeA - shapeB
-        recognition_multipolygon = MultiPolygon()
-        if type(diff_recognition) == Polygon:
-            diff_recognition = MultiPolygon(diff_recognition)
-        elif type(diff_recognition) != MultiPolygon:
-            return recognition_multipolygon
-        for polygon in diff_recognition:
-            polygon.srid = 4326
-            polygon.transform(3857)
-            if polygon.area > 3:  # We keep only the polygons with area > 3m²
-                polygon.transform(4326)
-                recognition_multipolygon.append(polygon)
-        return recognition_multipolygon
+        # List that will contain all CameraFocus objects to create/update
+        new_focus_objects = []
+
+        # Process the raw results and create Polygons/MultiPolygons with difference logic
+        for scenario in FocusScenarioChoices.values:
+            previous_polygon = None
+
+            # Important: iterate levels from smallest (identification) -> largest (observation) for the diff logic
+            for level in ["identification", "recognition", "observation"]:
+                points_list = raw_results[scenario][level]
+
+                if len(points_list) < 3:
+                    continue  # Not a valid polygon
+
+                # Close the ring/polygon if not already closed
+                if points_list[0] != points_list[-1]:
+                    points_list.append(points_list[0])
+
+                # Create Polygon in 4326
+                poly_4326 = Polygon(points_list, srid=4326)
+
+                # Fallback for empty/invalid
+                if not poly_4326.valid or poly_4326.area == 0.0:
+                    # In somes cases (indoor cameras attached to walls, cameras attached to walls pointed toward building)
+                    # the computed polygons are empty. To display at least something we compute fov without buildings
+                    # To do so we buffer the location with the distance for this scenario/level
+                    dist_degrees = next(
+                        (c['dist_degrees'] for c in configs if c['scenario'] == scenario and c['level'] == level), 0)
+                    if dist_degrees > 0:
+                        # FIXME: This produces a oval shape on the map because of lat/lon distortion
+                        poly_4326 = self.location.buffer(dist_degrees)
+                    else:
+                        continue  # Can't do anything
+
+                # Calculate difference (to create donut shapes)
+                final_geom = None
+                if previous_polygon:
+                    # Subtract previous (smaller) from current (larger)
+                    final_geom = calculator.compute_diffs_polygons(
+                        poly_4326, previous_polygon)
+                else:
+                    # First one (identification)
+                    final_geom = MultiPolygon(poly_4326)
+
+                # Update previous for next iteration
+                previous_polygon = poly_4326
+
+                if scenario == 'mean' and level == 'recognition':
+                    # We need the full polygon 4326 for the 'focus' field, not the donut
+                    # This is our "default focus", used for quick map display
+                    self.focus = poly_4326
+
+                if final_geom:
+                    new_focus_objects.append(CameraFocus(
+                        camera_id=self,
+                        scenario=scenario,
+                        level=level,
+                        geom=final_geom
+                    ))
+
+        # Bulk write operation to DB
+        if new_focus_objects:
+            CameraFocus.objects.bulk_create(
+                new_focus_objects,
+                update_conflicts=True,
+                update_fields=['geom'],
+                unique_fields=['camera_id', 'scenario', 'level']
+            )
 
     def generate_computed_fields(self):
         self.max_fov_distance = self.get_max_fov_distance()
-        self.buffer_max_vision = self.compute_buffer_fov()
-        self.compute_all_focus()
-        self.buffer_max_vision = None  # We don't need to keep this field after focus computation
+        self.neighboring_tiles = self.get_neighboring_tiles()
+        if self.camera_type == "fixed" and (self.direction is not None):
+            self.compute_all_focus()
+        elif self.camera_type in ["dome", "panning"]:
+            self.compute_all_focus()
 
     class Meta:
         verbose_name = "Camera"
         verbose_name_plural = "Cameras"
 
 
-FOCUS_SCENARIOS_CHOICES = {
-    "best": "Best case scenario",
-    "mean": "Average",
-    "worst": "Worst case scenario",
-}
-
-FOCUS_LEVELS_CHOICES = {
-    "identification": "identification",
-    "recognition": "recognition",
-    "observation": "observation",
-}
-
 class CameraFocus(models.Model):
     camera_id = models.ForeignKey(Camera, on_delete=models.PROTECT)
-    scenario = models.CharField(choices=FOCUS_SCENARIOS_CHOICES, blank=False)
-    level = models.CharField(choices=FOCUS_LEVELS_CHOICES, blank=False)
+    scenario = models.CharField(
+        choices=FocusScenarioChoices.choices, blank=False)
+    level = models.CharField(choices=FocusLevelChoices.choices, blank=False)
     geom = models.MultiPolygonField(null=True)
 
     class Meta:
         unique_together = ('camera_id', 'scenario', 'level',)
 
+
 class CameraTags(models.Model):
     camera_id = models.ForeignKey(Camera, on_delete=models.PROTECT)
     name = models.CharField(blank=True)
     value = models.CharField(blank=True)
+
 
 class Building(models.Model):
     id = models.BigIntegerField(primary_key=True, blank=False)
@@ -379,11 +316,12 @@ class Building(models.Model):
     geom = models.PolygonField(blank=False)
     tile = models.CharField(max_length=15, db_index=True)
 
+
 class Tile(models.Model):
     id = models.CharField(max_length=15, primary_key=True, db_index=True)
     geom = models.PolygonField(blank=False, spatial_index=True, srid=4326)
     level = models.IntegerField(db_index=True)
     obj_count = models.IntegerField()
-    
+
     def __str__(self):
-        return f"Tile {self.tile_id} (L{self.level}) - {self.obj_count} objects"
+        return f"Tile {self.id} (L{self.level}) - {self.obj_count} objects"
