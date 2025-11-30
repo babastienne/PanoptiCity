@@ -136,9 +136,13 @@ class Command(BaseCommand):
         try:
             if "height" in tags:
                 height = tags["height"]
-                # If the height has a trailing "m", we remove it
-                if tags["height"].endswith("m"):
-                    height = tags["height"][:-1]
+                # If the height has a trailing "m" or "M" or "meter" or "Meter", we remove it
+                if height.lower().endswith("m"):
+                    height = height[:-1]
+                elif height.lower().endswith("meter"):
+                    height = height[:-5]
+                # If height contains ',', we replace it by '.'
+                height = height.replace(",", ".")
                 camera.height = float(height)
             elif "ele" in tags:
                 camera.height = float(tags["ele"])
