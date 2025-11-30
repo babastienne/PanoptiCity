@@ -42,18 +42,45 @@ class Command(BaseCommand):
         imported = 0
         skipped = 0
 
+        cameras_to_create = []
+        tags_to_create = []
+        focus_to_create = []
+
         try:
             for elem in osmium.FileProcessor(filename, osmium.osm.NODE).with_filter(
                 osmium.filter.TagFilter(("man_made", "surveillance"))
             ):
                 if update or not Camera.objects.filter(id=elem.id).exists():
-                    self.create_camera(elem)
+                    camera, new_or_updated_tags, new_or_updated_focus = self.create_camera(
+                        elem)
+                    cameras_to_create.append(camera)
+                    tags_to_create.extend(new_or_updated_tags)
+                    focus_to_create.extend(new_or_updated_focus)
                     imported += 1
                 else:
                     if self.verbose:
                         self.stdout.write(
                             f"Camera #{elem.id} already exists. Skipped.")
                     skipped += 1
+            Camera.objects.bulk_create(
+                cameras_to_create,
+                update_conflicts=True,
+                update_fields=['location', 'mount', 'surveillance_type',
+                               'surveillance', 'camera_type', 'zone', 'height', 'direction', 'angle', 'tile'],
+                unique_fields=['id']
+            )
+            CameraTags.objects.bulk_create(
+                new_or_updated_tags,
+                update_conflicts=True,
+                update_fields=['value'],
+                unique_fields=['camera_id', 'name']
+            )
+            CameraFocus.objects.bulk_create(
+                new_or_updated_focus,
+                update_conflicts=True,
+                update_fields=['geom'],
+                unique_fields=['camera_id', 'scenario', 'level']
+            )
         except Exception:
             raise
 
@@ -169,15 +196,13 @@ class Command(BaseCommand):
         # FIXME: Not working when no building around (cause no tile created)
         camera.tile = Tile.objects.get(geom__contains=camera.location).id
 
-        camera.generate_computed_fields()
-        camera.save()
+        new_or_updated_focus = camera.generate_focus()
 
-        for tag in tags:
-            CameraTags.objects.update_or_create(
-                camera_id=camera,
-                name=tag.k,
-                value=tag.v
-            )
+        new_or_updated_tags = [CameraTags(
+            camera_id=camera,
+            name=tag.k,
+            value=tag.v
+        ) for tag in tags]
 
         if self.verbose:
             if created:
@@ -185,4 +210,4 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(f"Camera #{camera.id} updated.")
 
-        return camera
+        return camera, new_or_updated_tags, new_or_updated_focus

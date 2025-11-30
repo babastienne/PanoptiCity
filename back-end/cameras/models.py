@@ -180,7 +180,9 @@ class Camera(models.Model):
         configs = self.get_sorted_configurations()
         if not configs:
             # Should not happen
-            return
+            return []
+        neighboring_tiles = self.get_neighboring_tiles()
+        self.max_fov_distance = self.get_max_fov_distance()
 
         calculator = FOVCalculator(self)
 
@@ -188,7 +190,7 @@ class Camera(models.Model):
         # We need the max possible distance to filter the DB query efficiently
         max_possible_dist = configs[0]['dist_degrees']
         nearby_buildings_qs = Building.objects.filter(
-            tile__in=self.neighboring_tiles,
+            tile__in=neighboring_tiles,
             geom__dwithin=(self.location, max_possible_dist)
         ).only('id', 'geom')
 
@@ -273,22 +275,17 @@ class Camera(models.Model):
                         geom=final_geom
                     ))
 
-        # Bulk write operation to DB
-        if new_focus_objects:
-            CameraFocus.objects.bulk_create(
-                new_focus_objects,
-                update_conflicts=True,
-                update_fields=['geom'],
-                unique_fields=['camera_id', 'scenario', 'level']
-            )
+        # Bulk objects for bulk update/create later
+        return new_focus_objects
 
-    def generate_computed_fields(self):
-        self.max_fov_distance = self.get_max_fov_distance()
-        self.neighboring_tiles = self.get_neighboring_tiles()
-        if self.camera_type == "fixed" and (self.direction is not None):
-            self.compute_all_focus()
+    def generate_focus(self):
+        result = []
+        if self.camera_type == "fixed":
+            if self.direction is not None:
+                result = self.compute_all_focus()
         elif self.camera_type in ["dome", "panning"]:
-            self.compute_all_focus()
+            result = self.compute_all_focus()
+        return result
 
     class Meta:
         verbose_name = "Camera"
@@ -310,6 +307,9 @@ class CameraTags(models.Model):
     camera_id = models.ForeignKey(Camera, on_delete=models.PROTECT)
     name = models.CharField(blank=True)
     value = models.CharField(blank=True)
+
+    class Meta:
+        unique_together = ('camera_id', 'name',)
 
 
 class Building(models.Model):

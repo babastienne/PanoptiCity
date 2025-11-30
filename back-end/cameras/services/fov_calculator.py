@@ -40,7 +40,7 @@ class FOVCalculator():
     def compute_fov_points(self, sorted_configs, buildings, buildings_camera_is_into_ids):
         """
         Core logic to compute each ray of the FOV of the camera and check for intersections
-        with buildings. Returns a nested dictionary of points for each scenario/level.
+        with buildings. Returns a nested dictionary of points (representing polygons) for each scenario/level.
         """
         # Initialize results structure
         results = {s: {l: [] for l in FocusLevelChoices.values}
