@@ -9,17 +9,17 @@ class FOVCalculator():
     def __init__(self, camera):
         self.camera = camera
 
-    def compute_diffs_polygons(self, shapeA, shapeB):
+    def compute_diffs_polygons(self, shape_a, shape_b):
         """
-        Subtracts shapeB from shapeA. Both inputs are in 4326.
+        Subtracts shape_b from shape_a. Both inputs are in 4326.
         Returns MultiPolygon in 4326.
         """
-        if not shapeA.valid:
-            shapeA = shapeA.simplify()
-        if not shapeB.valid:
-            shapeB = shapeB.simplify()
+        if not shape_a.valid:
+            shape_a = shape_a.simplify()
+        if not shape_b.valid:
+            shape_b = shape_b.simplify()
 
-        diff = shapeA - shapeB
+        diff = shape_a - shape_b
 
         result_poly = MultiPolygon()
 
