@@ -37,7 +37,7 @@ class FOVCalculator():
                     result_poly.append(polygon)
         return result_poly
 
-    def compute_fov_points(self, sorted_configs, prepped_buildings, buildings_camera_is_into_ids):
+    def compute_fov_points(self, sorted_configs, buildings, buildings_camera_is_into_ids):
         """
         Core logic to compute each ray of the FOV of the camera and check for intersections
         with buildings. Returns a nested dictionary of points for each scenario/level.
@@ -56,10 +56,13 @@ class FOVCalculator():
             # 6.3 ~= 2pi = 360°
             rng = range(0, 63)
         else:
-            # Can't happen because of previous check in the compute_focus method
+            # Should not happen because of previous check in the compute_focus method
             rng = []
 
         camera_dir_rad = self.camera.compute_camera_direction() if is_fixed else 0
+        camera_lat_coef = self.camera.get_lat_coef()
+        # The largest possible distance
+        max_dist_degrees = sorted_configs[0]['dist_degrees']
 
         for x in rng:
             # -- Compute end of ray point and create LineString representing the ray --
@@ -68,11 +71,8 @@ class FOVCalculator():
             cos_a = math.cos(angle_rad)
             sin_a = math.sin(angle_rad)
 
-            # The largest possible distance
-            max_dist_degrees = sorted_configs[0]['dist_degrees']
-
             # Convert meters vector to degrees vector
-            vec_x_deg = max_dist_degrees * cos_a * self.camera.get_lat_coef()
+            vec_x_deg = max_dist_degrees * cos_a * camera_lat_coef
             vec_y_deg = max_dist_degrees * sin_a
 
             dest_x = origin.x + vec_x_deg
@@ -85,15 +85,15 @@ class FOVCalculator():
             # We track the hit ratio (0.0 to 1.0) to determine if we hit a building and at what distance
             closest_hit_ratio = 1.0  # 1.0 means no hit (full distance)
 
-            for b_id, prep_geom, real_geom in prepped_buildings:
+            for b_id, real_geom in buildings:
                 # We skip buildings the camera is into if it is not an indoor camera
                 if self.camera.surveillance != "indoor" and b_id in buildings_camera_is_into_ids:
                     continue
 
-                # Fast check on prepared geoms : We keep only buildings that intersect the line
-                if prep_geom.intersects(ray_geom):
+                # Fast check on geoms : We keep only buildings that intersect the line
+                if real_geom.intersects(ray_geom):
                     # We skip touching buildings (camera mounted on wall but the ray is not directed to the wall)
-                    if not prep_geom.touches(ray_geom):
+                    if not real_geom.touches(ray_geom):
                         # This returns the part of the line inside/touching the building
                         intersection = ray_geom.intersection(real_geom)
                         # Logic to find closest point on intersection line
@@ -150,8 +150,7 @@ class FOVCalculator():
                 effective_dist = min(conf['dist_degrees'], limit_degrees)
 
                 # Project point that wwill be the end of the ray for this scenario/level
-                p_x = origin.x + (effective_dist * cos_a *
-                                  self.camera.get_lat_coef())
+                p_x = origin.x + (effective_dist * cos_a * camera_lat_coef)
                 p_y = origin.y + (effective_dist * sin_a)
 
                 results[conf['scenario']][conf['level']].append((p_x, p_y))

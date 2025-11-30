@@ -15,6 +15,10 @@ from django.contrib.gis.geos import MultiPolygon, Polygon
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
+class ExteriorRing(models.functions.GeomOutputGeoFunc):
+    function = "ST_ExteriorRing"
+
+
 class Camera(models.Model):
     id = models.BigIntegerField(primary_key=True, blank=False)
     location = models.PointField(blank=False)
@@ -139,7 +143,7 @@ class Camera(models.Model):
         sorted from largest distance to smallest distance.
         """
         configs = []
-        is_fixed = (self.camera_type == "fixed")
+        is_fixed = self.camera_type == "fixed"
         cam_key = 'fixed' if is_fixed else 'dome/ptz'
 
         # Base scalar calculation in Meters (approximated from original logic)
@@ -190,26 +194,24 @@ class Camera(models.Model):
 
         # Annotate with distance to camera and order by distance ascending
         nearby_buildings_qs = nearby_buildings_qs.annotate(
-            distance=Distance('geom', self.location)
+            distance=Distance('geom', self.location, spheroid=True)
         ).order_by('distance')
 
         # Pre-calculate which buildings contains the camera (for exclusion logic)
-        buildings_camera_is_into_ids = set()
-        prepped_buildings = []
+        buildings_camera_is_into_ids = nearby_buildings_qs.filter(
+            geom__contains=self.location
+        ).values_list('id', flat=True)
 
-        for b in nearby_buildings_qs:
-            if b.geom.contains(self.location):
-                buildings_camera_is_into_ids.add(b.id)
-
-            target_geom = b.geom
-            if self.surveillance == "indoor":
-                target_geom = target_geom.exterior_ring
-
-            prepped_buildings.append((b.id, target_geom.prepared, target_geom))
+        if self.surveillance == "indoor":
+            nearby_buildings = nearby_buildings_qs.annotate(
+                geom_ring=ExteriorRing('geom')
+            ).values_list('id', 'geom_ring')
+        else:
+            nearby_buildings = nearby_buildings_qs.values_list('id', 'geom')
 
         # Compute raw polygons for each scenario/level (in 4326)
         raw_results = calculator.compute_fov_points(
-            configs, prepped_buildings, buildings_camera_is_into_ids)
+            configs, nearby_buildings, buildings_camera_is_into_ids)
 
         # List that will contain all CameraFocus objects to create/update
         new_focus_objects = []
