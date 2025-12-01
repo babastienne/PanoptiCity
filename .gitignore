@@ -13,3 +13,4 @@ osm-data/
 nginx.conf
 back-end/venv*
 *.old
+*.prof

@@ -67,10 +67,17 @@ echo -e "\033[0;33m(Warning: This can be VERY long depending on the covered area
 docker compose exec -T postgis psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" < back-end/cameras/sql/post_install_buildings.sql
 docker compose exec -T postgis psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "CALL generate_adaptive_tiles(10000, 4, 14);"
 
+# Get number of cores on machine to speed up camera import (limit to 32 to avoid overload)
+NUM_CORES=$(nproc --all || echo 1)
+if [ "$NUM_CORES" -gt 32 ]; then
+    NUM_CORES=32
+fi
+
 # Import cameras
 echo -e "\033[0;32m--- Import cameras and compute their focus ---\033[0m"
 echo -e "\033[0;33m(Warning: This can be long depending on the covered area)\033[0m"
-docker compose run --remove-orphans --rm web ./manage.py load_cameras --detail /osm-data/$OSM_FILE_NAME
+echo -e "\033[0;33mTo speed up the process we're using multi-processing with $NUM_CORES cores.\033[0m"
+docker compose run --remove-orphans --rm web ./manage.py load_cameras -w "$NUM_CORES" /osm-data/$OSM_FILE_NAME
 
 # TODO: Create nginx configuration
 

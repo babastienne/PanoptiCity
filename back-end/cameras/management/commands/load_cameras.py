@@ -1,20 +1,23 @@
-import osmium
-
-from django.core.management.base import BaseCommand
-from django.contrib.gis.geos import Point
-
-from cameras.models import Camera, CameraTags, Tile
-
-from timeit import default_timer as timer
+from concurrent.futures import ProcessPoolExecutor
 from datetime import timedelta
+from timeit import default_timer as timer
+
+import osmium
+from cameras.services.camera_creation import process_camera_batch
+from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    help = "Load all cameras from osm file"
+    help = """
+    Load all cameras from osm file.
+    This command can also be used to update existing cameras (using --update).
+    It uses multiple processes to speed up the import. Each process handles a batch of cameras.
+    Depending of your CPU and RAM, you can adjust the number of workers and batch size.
+    """
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "camera_file", help="Mandatory parameter: path to file to import"
+            "camera_file", help="Mandatory parameter: path to file to import (osm.pbf or .osm format) [eg: /osm-data/sample-data.osm.pbf]"
         )
         parser.add_argument(
             "--update",
@@ -22,7 +25,7 @@ class Command(BaseCommand):
             action="store_true",
             default=False,
             dest="update_field",
-            help="Force update of cameras (can take some time)",
+            help="Force the update of cameras and related data",
         )
         parser.add_argument(
             "--details",
@@ -31,183 +34,87 @@ class Command(BaseCommand):
             dest="verbose_field",
             help="If parameter is set, show more logs",
         )
+        parser.add_argument(
+            "--batch-size",
+            "-b",
+            type=int,
+            default=100,
+            dest="batch_size_field",
+            help="Number of cameras to process in each batch (default: 100)",
+        )
+        parser.add_argument(
+            "--max-workers",
+            "-w",
+            type=int,
+            default=4,
+            dest="max_workers_field",
+            help="Number of worker processes to use (default: 4)",
+        )
+
+    def extract_node_data(self, elem):
+        """
+        Extracts data from osmium node into a plain python dict.
+        We cannot pass the 'elem' object to workers because it's C++.
+        """
+        return {
+            'id': elem.id,
+            'lon': elem.location.lon,
+            'lat': elem.location.lat,
+            'tags': dict(elem.tags),  # Convert osmium TagList to python dict
+        }
 
     def handle(self, *args, **options):
         start = timer()
 
         filename = options["camera_file"]
         update = options.get("update_field")
-        self.verbose = options.get("verbose_field")
+        verbose = options.get("verbose_field")
+        batch_size = options.get("batch_size_field")
+        max_workers = options.get("max_workers_field")
 
-        imported = 0
-        skipped = 0
+        total_imported = 0
+        total_skipped = 0
 
-        cameras_to_create = []
-        tags_to_create = []
-        focus_to_create = []
+        current_batch = []
+        futures = []
 
-        try:
+        print(
+            f"INFO: Starting import from {filename} with {max_workers} workers...")
+
+        with ProcessPoolExecutor(max_workers=max_workers) as executor:
             for elem in osmium.FileProcessor(filename, osmium.osm.NODE).with_filter(
                 osmium.filter.TagFilter(("man_made", "surveillance"))
             ):
-                if update or not Camera.objects.filter(id=elem.id).exists():
-                    camera, new_or_updated_tags, new_or_updated_focus = self.create_camera(
-                        elem)
-                    cameras_to_create.append(camera)
-                    tags_to_create.extend(new_or_updated_tags)
-                    focus_to_create.extend(new_or_updated_focus)
-                    imported += 1
-                else:
-                    if self.verbose:
-                        self.stdout.write(
-                            f"Camera #{elem.id} already exists. Skipped.")
-                    skipped += 1
-            Camera.objects.bulk_create(
-                cameras_to_create,
-                update_conflicts=True,
-                update_fields=['location', 'mount', 'surveillance_type',
-                               'surveillance', 'camera_type', 'zone', 'height', 'direction', 'angle', 'tile'],
-                unique_fields=['id']
-            )
-            CameraTags.objects.bulk_create(
-                new_or_updated_tags,
-                update_conflicts=True,
-                update_fields=['value'],
-                unique_fields=['camera_id', 'name']
-            )
-            CameraFocus.objects.bulk_create(
-                new_or_updated_focus,
-                update_conflicts=True,
-                update_fields=['geom'],
-                unique_fields=['camera_id', 'scenario', 'level']
-            )
-        except Exception:
-            raise
+                data = self.extract_node_data(elem)
+                current_batch.append(data)
+
+                # If batch is full, send to worker
+                if len(current_batch) >= batch_size:
+                    # Submit task
+                    future = executor.submit(
+                        process_camera_batch, current_batch, update, verbose)
+                    futures.append(future)
+                    current_batch = []  # Reset
+
+            # Handle remaining cameras in the last batch
+            if current_batch:
+                futures.append(executor.submit(
+                    process_camera_batch, current_batch, update, verbose))
+
+            for future in futures:
+                try:
+                    imported, skipped = future.result()
+                    total_imported += imported
+                    total_skipped += skipped
+                    print(
+                        f"INFO: Batch finished. +{imported} cameras (skipped {skipped}).")
+                except Exception as e:
+                    self.stderr.write(
+                        f"ERROR: Batch failed: {e}"
+                    )
 
         self.stdout.write(
-            f"--- Summary ---\n{imported} new cameras imported or updated\n{skipped} cameras skipped (already existing)"
+            f"--- Summary ---\n{total_imported} new cameras imported or updated\n{total_skipped} cameras skipped (already existing)"
         )
         end = timer()
         self.stdout.write(f"Time to execute {timedelta(seconds=end-start)}")
-
-    def compute_direction(self, tags, camera):
-        direction = None
-        if "camera:direction" in tags:
-            direction = tags["camera:direction"]
-        elif "surveillance:direction" in tags:
-            direction = tags["surveillance:direction"]
-        elif "direction" in tags:
-            direction = tags["direction"]
-
-        if isinstance(direction, str):
-            direction = direction.lower()
-            if direction in ["n", "north"]:
-                direction = 0
-            elif direction in ["ne"]:
-                direction = 45
-            elif direction in ["e", "east"]:
-                direction = 90
-            elif direction in ["se"]:
-                direction = 135
-            elif direction in ["s", "south"]:
-                direction = 180
-            elif direction in ["sw"]:
-                direction = 225
-            elif direction in ["w", "west"]:
-                direction = 270
-            elif direction in ["nw"]:
-                direction = 315
-            # If the string got a trailing '°', we remove it
-            elif direction.endswith("°"):
-                direction = direction[:-1]
-            # If the direction contains ";" it means its a list of directions and there is multiple cameras
-            elif ";" in direction:
-                # FIXME: We take the first direction but we should store the fact that there is multiple
-                # cameras to alert the user on the map and suggest a way to split them
-                direction = direction.split(";")[0]
-
-        try:
-            direction = int(direction) if direction else None
-        except Exception:
-            self.stderr.write(
-                f"Camera #{camera.id}. Field : Direction. Expected int, found {direction}. Field kept empty."
-            )
-            direction = None
-
-        return direction
-
-    def create_camera(self, camera_osm):
-        location = Point([camera_osm.lon, camera_osm.lat], srid=4326)
-        try:
-            camera = Camera.objects.get(id=camera_osm.id)
-            camera.location = location
-            created = False
-        except Camera.DoesNotExist:
-            camera, created = Camera.objects.get_or_create(
-                id=camera_osm.id, location=location
-            )
-        tags = camera_osm.tags
-        if "description" in tags:
-            camera.description = tags["description"]
-        if "camera:mount" in tags:
-            camera.mount = tags["camera:mount"]
-        if "surveillance:type" in tags:
-            camera.surveillance_type = tags["surveillance:type"]
-        if "surveillance" in tags:
-            camera.surveillance = tags["surveillance"]
-        if "camera:type" in tags:
-            camera.camera_type = tags["camera:type"]
-        if "surveillance:zone" in tags:
-            camera.zone = tags["surveillance:zone"]
-
-        try:
-            if "height" in tags:
-                height = tags["height"]
-                # If the height has a trailing "m" or "M" or "meter" or "Meter", we remove it
-                if height.lower().endswith("m"):
-                    height = height[:-1]
-                elif height.lower().endswith("meter"):
-                    height = height[:-5]
-                # If height contains ',', we replace it by '.'
-                height = height.replace(",", ".")
-                camera.height = float(height)
-            elif "ele" in tags:
-                camera.height = float(tags["ele"])
-        except Exception:
-            if "height" in tags:
-                self.stderr.write(
-                    f"Camera #{camera.id}. Field : height. Expected float, found {tags['height']}. Field kept empty."
-                )
-            elif "ele" in tags:
-                self.stderr.write(
-                    f"Camera #{camera.id}. Field : ele. Expected float, found {tags['ele']}. Field kept empty."
-                )
-
-        camera.direction = self.compute_direction(tags, camera)
-
-        if "camera:angle" in tags:
-            try:
-                camera.angle = int(tags["camera:angle"])
-            except Exception:
-                self.stderr.write(
-                    f"Camera #{camera.id}. Field : Angle. Expected integer, found {tags['camera:angle']}. Field kept empty."
-                )
-
-        # FIXME: Not working when no building around (cause no tile created)
-        camera.tile = Tile.objects.get(geom__contains=camera.location).id
-
-        new_or_updated_focus = camera.generate_focus()
-
-        new_or_updated_tags = [CameraTags(
-            camera_id=camera,
-            name=tag.k,
-            value=tag.v
-        ) for tag in tags]
-
-        if self.verbose:
-            if created:
-                self.stdout.write(f"Camera #{camera.id} created.")
-            else:
-                self.stdout.write(f"Camera #{camera.id} updated.")
-
-        return camera, new_or_updated_tags, new_or_updated_focus

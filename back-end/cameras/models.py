@@ -1,6 +1,5 @@
 import math
 
-import mercantile
 from cameras.constants import (BASE_COEFICIENT, CAMERA_ANGLE_MIN,
                                CAMERA_HEIGHT_DEFAULT, CAMERA_HEIGHT_MAX,
                                CAMERA_HEIGHT_MIN, LEVEL_COEFFICIENTS,
@@ -9,9 +8,11 @@ from cameras.constants import (BASE_COEFICIENT, CAMERA_ANGLE_MIN,
                                MountChoices, SurveillanceChoices,
                                SurveillanceTypeChoices, ZoneChoices)
 from cameras.services.fov_calculator import FOVCalculator
+from cameras.services.utils import (create_polygon, get_lat_coef,
+                                    get_neighboring_tiles)
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Distance
-from django.contrib.gis.geos import MultiPolygon, Polygon
+from django.contrib.gis.geos import MultiPolygon
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
@@ -40,8 +41,6 @@ class Camera(models.Model):
     )
     # This field store the recognition + identification focus for the mean scenario which is the default focus
     focus = models.PolygonField(null=True)
-    # Fields stored to improve computation performances
-    max_fov_distance = models.FloatField(null=True)
     tile = models.CharField(max_length=15, db_index=True)
 
     @property
@@ -72,18 +71,6 @@ class Camera(models.Model):
             return "traffic"
         return "cam" + self.color
 
-    def compute_camera_direction(self):
-        """
-        Compute and return the camera direction in radians
-        """
-        camera_direction = 90 - self.direction
-        if camera_direction > 180:
-            camera_direction -= 360
-        elif camera_direction < -180:
-            camera_direction += 360
-        camera_direction = (camera_direction * math.pi) / 180
-        return camera_direction
-
     def get_camera_height(self):
         """
         Return the camera height in meters with min and max limits
@@ -111,31 +98,15 @@ class Camera(models.Model):
         else:
             return 1  # default angle
 
-    def get_lat_coef(self):
-        """
-        Compute and return the latitude coefficient to use to adapt calculations for longitude axis
-        Formula is : 1 / cos(latitude in radian)
-        Used because in degrees the X-axis (Longitude) shrinks as we move away from equator
-        """
-        # Conversion in radian = x * math.pi / 180
-        # Could use math.radians instead
-        return 1.0 / math.cos(self.location.y * math.pi / 180)
-
     def get_max_fov_distance(self):
         """
-        Compute and return the maximum distance in meters of the fov for fixed cameras tilted downwards
+        Compute and return the maximum distance in meters of the 
+        field of view (FOV) for fixed cameras tilted downwards
         """
         if self.camera_type == "fixed" and self.angle:
             if abs(self.angle) > CAMERA_ANGLE_MIN:
-                return self.get_camera_height() / math.tan(((abs(self.angle) - CAMERA_ANGLE_MIN) * math.pi) / 180) * self.get_lat_coef()
+                return self.get_camera_height() / math.tan(((abs(self.angle) - CAMERA_ANGLE_MIN) * math.pi) / 180) * get_lat_coef(self.location)
         return None
-
-    def get_neighboring_tiles(self):
-        tile = mercantile.quadkey_to_tile(self.tile)
-        list_tiles = [mercantile.quadkey(neighbor)
-                      for neighbor in mercantile.neighbors(tile)]
-        list_tiles.append(self.tile)
-        return list_tiles
 
     def get_sorted_configurations(self):
         """
@@ -181,17 +152,17 @@ class Camera(models.Model):
         if not configs:
             # Should not happen
             return []
-        neighboring_tiles = self.get_neighboring_tiles()
-        self.max_fov_distance = self.get_max_fov_distance()
+        neighboring_tiles = get_neighboring_tiles(self.tile)
+        max_fov_distance = self.get_max_fov_distance()
 
         calculator = FOVCalculator(self)
 
         # Fetch buildings associated to the camera
         # We need the max possible distance to filter the DB query efficiently
-        max_possible_dist = configs[0]['dist_degrees']
+        # Because configs are sorted descending we take the first one
         nearby_buildings_qs = Building.objects.filter(
             tile__in=neighboring_tiles,
-            geom__dwithin=(self.location, max_possible_dist)
+            geom__dwithin=(self.location, configs[0]['dist_degrees'])
         ).only('id', 'geom')
 
         # Annotate with distance to camera and order by distance ascending
@@ -213,7 +184,9 @@ class Camera(models.Model):
 
         # Compute raw polygons for each scenario/level (in 4326)
         raw_results = calculator.compute_fov_points(
-            configs, nearby_buildings, buildings_camera_is_into_ids)
+            configs, nearby_buildings, buildings_camera_is_into_ids, max_fov_distance)
+        # Store results without buildings for fallback (computation only in case of error during treatment. See below)
+        raw_results_without_buildings = None
 
         # List that will contain all CameraFocus objects to create/update
         new_focus_objects = []
@@ -226,28 +199,18 @@ class Camera(models.Model):
             for level in ["identification", "recognition", "observation"]:
                 points_list = raw_results[scenario][level]
 
-                if len(points_list) < 3:
-                    continue  # Not a valid polygon
-
-                # Close the ring/polygon if not already closed
-                if points_list[0] != points_list[-1]:
-                    points_list.append(points_list[0])
-
-                # Create Polygon in 4326
-                poly_4326 = Polygon(points_list, srid=4326)
+                poly_4326 = None if len(
+                    points_list) < 3 else create_polygon(points_list)
 
                 # Fallback for empty/invalid
-                if not poly_4326.valid or poly_4326.area == 0.0:
+                if not poly_4326 or not poly_4326.valid or poly_4326.area == 0.0:
                     # In somes cases (indoor cameras attached to walls, cameras attached to walls pointed toward building)
                     # the computed polygons are empty. To display at least something we compute fov without buildings
-                    # To do so we buffer the location with the distance for this scenario/level
-                    dist_degrees = next(
-                        (c['dist_degrees'] for c in configs if c['scenario'] == scenario and c['level'] == level), 0)
-                    if dist_degrees > 0:
-                        # FIXME: This produces a oval shape on the map because of lat/lon distortion
-                        poly_4326 = self.location.buffer(dist_degrees)
-                    else:
-                        continue  # Can't do anything
+                    if not raw_results_without_buildings:
+                        raw_results_without_buildings = calculator.compute_fov_points(
+                            configs, [], [], max_fov_distance)
+                    points_list = raw_results_without_buildings[scenario][level]
+                    poly_4326 = create_polygon(points_list)
 
                 # Calculate difference (to create donut shapes)
                 final_geom = None

@@ -1,6 +1,7 @@
 import math
 
 from cameras.constants import FocusLevelChoices, FocusScenarioChoices
+from cameras.services.utils import degree_direction_to_radian, get_lat_coef
 from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
                                      MultiPolygon, Point, Polygon)
 
@@ -37,7 +38,7 @@ class FOVCalculator():
                     result_poly.append(polygon)
         return result_poly
 
-    def compute_fov_points(self, sorted_configs, buildings, buildings_camera_is_into_ids):
+    def compute_fov_points(self, sorted_configs, buildings, buildings_camera_is_into_ids, max_fov_distance=None):
         """
         Core logic to compute each ray of the FOV of the camera and check for intersections
         with buildings. Returns a nested dictionary of points (representing polygons) for each scenario/level.
@@ -46,6 +47,8 @@ class FOVCalculator():
         results = {s: {l: [] for l in FocusLevelChoices.values}
                    for s in FocusScenarioChoices.values}
         origin = self.camera.location
+        ori_x = origin.x
+        ori_y = origin.y
 
         # Determine angular range
         is_fixed = self.camera.camera_type == "fixed"
@@ -59,8 +62,9 @@ class FOVCalculator():
             # Should not happen because of previous check in the compute_focus method
             rng = []
 
-        camera_dir_rad = self.camera.compute_camera_direction() if is_fixed else 0
-        camera_lat_coef = self.camera.get_lat_coef()
+        camera_dir_rad = degree_direction_to_radian(
+            self.camera.direction) if is_fixed else 0
+        camera_lat_coef = get_lat_coef(origin)
         # The largest possible distance
         max_dist_degrees = sorted_configs[0]['dist_degrees']
 
@@ -75,8 +79,8 @@ class FOVCalculator():
             vec_x_deg = max_dist_degrees * cos_a * camera_lat_coef
             vec_y_deg = max_dist_degrees * sin_a
 
-            dest_x = origin.x + vec_x_deg
-            dest_y = origin.y + vec_y_deg
+            dest_x = ori_x + vec_x_deg
+            dest_y = ori_y + vec_y_deg
 
             ray_geom = LineString(origin, Point(
                 dest_x, dest_y, srid=4326), srid=4326)
@@ -132,16 +136,18 @@ class FOVCalculator():
                             if closest_hit_ratio < 1.0:
                                 break
 
+            # Limit hit_ratio = 0 means we hit a building at the origin. We don't add any point in this case.
+            if closest_hit_ratio == 0.0:
+                continue
+
             limit_degrees = max_dist_degrees * closest_hit_ratio
 
-            # Limit degrees = 0 means we hit a building at the origin. We don't add any point in this case.
-            # if limit_degrees > 0:
             # We compute max distance of fov for cases when camera is tilted
             # This happens if the building is further than the max_fov, or no building found but we have a max_fov
-            if self.camera.max_fov_distance:
+            if max_fov_distance:
                 # Approx conversion from meters to degrees
                 # FIXME: This is an approximation that works for small distances. To improve
-                max_fov_degrees = self.camera.max_fov_distance / 111320.0
+                max_fov_degrees = max_fov_distance / 111320.0
                 limit_degrees = min(limit_degrees, max_fov_degrees)
 
             # -- Distribute results to all scenarios based on limit --
@@ -150,8 +156,8 @@ class FOVCalculator():
                 effective_dist = min(conf['dist_degrees'], limit_degrees)
 
                 # Project point that wwill be the end of the ray for this scenario/level
-                p_x = origin.x + (effective_dist * cos_a * camera_lat_coef)
-                p_y = origin.y + (effective_dist * sin_a)
+                p_x = ori_x + (effective_dist * cos_a * camera_lat_coef)
+                p_y = ori_y + (effective_dist * sin_a)
 
                 results[conf['scenario']][conf['level']].append((p_x, p_y))
 
@@ -159,6 +165,6 @@ class FOVCalculator():
         if is_fixed:
             for s in results:
                 for l in results[s]:
-                    results[s][l].insert(0, (origin.x, origin.y))
+                    results[s][l].insert(0, (ori_x, ori_y))
 
         return results
