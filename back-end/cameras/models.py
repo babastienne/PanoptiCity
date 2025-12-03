@@ -230,12 +230,13 @@ class Camera(models.Model):
                     # This is our "default focus", used for quick map display
                     self.focus = poly_4326
 
-                new_focus_objects.append(CameraFocus(
-                    camera_id=self,
-                    scenario=scenario,
-                    level=level,
-                    geom=final_geom
-                ))
+                if final_geom:
+                    new_focus_objects.append(CameraFocus(
+                        camera_id=self,
+                        scenario=scenario,
+                        level=level,
+                        geom=final_geom
+                    ))
 
         # Bulk objects for bulk update/create later
         return new_focus_objects

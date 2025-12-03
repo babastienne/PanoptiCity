@@ -50,13 +50,15 @@ def process_camera_batch(camera_data_list, update=False, verbose=False, log_file
 
     batch_ids = [d['id'] for d in camera_data_list]
 
-    existing_ids = set()
+    skip_ids = set()
+    existing_ids = set(Camera.objects.filter(
+        id__in=batch_ids).values_list('id', flat=True))
+
     if not update:
-        existing_ids = set(Camera.objects.filter(
-            id__in=batch_ids).values_list('id', flat=True))
+        skip_ids = existing_ids
 
     for data in camera_data_list:
-        if data['id'] in existing_ids:
+        if data['id'] in skip_ids:
             skipped += 1
             if verbose:
                 logger.debug(
@@ -74,6 +76,10 @@ def process_camera_batch(camera_data_list, update=False, verbose=False, log_file
         except Exception as e:
             logger.error(f"Error processing camera {data['id']}: {e}")
             continue
+
+    if update:
+        CameraFocus.objects.filter(camera_id__in=existing_ids).delete()
+        CameraTags.objects.filter(camera_id__in=existing_ids).delete()
 
     # We save inside the worker to reduce memory overhead in the main process
     if cameras_to_create:
