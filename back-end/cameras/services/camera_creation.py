@@ -205,8 +205,11 @@ def create_camera(camera_osm, verbose=False, logger=None):
             logger.info(
                 f"INFO: Camera #{camera.id}. Field : Angle. Expected integer, found {tags['camera:angle']}. Field kept empty.")
 
-    # FIXME: Not working when no building around (cause no tile created)
-    camera.tile = Tile.objects.get(geom__contains=camera.location).id
+    try:
+        camera.tile = Tile.objects.get(geom__contains=camera.location).id
+    except Tile.DoesNotExist:
+        camera.tile = Tile.objects.filter(
+            geom__intersects=camera.location).first().id
 
     new_or_updated_focus = camera.generate_focus()
 
