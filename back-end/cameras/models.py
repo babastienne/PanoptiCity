@@ -90,13 +90,13 @@ class Camera(models.Model):
         """
         Compute and return the camera angle coefficient
         """
+        result = 1  # default angle
         if self.angle:
-            if abs(self.angle) <= CAMERA_ANGLE_MIN:
-                return 1
-            else:
-                return math.cos(((abs(self.angle) - CAMERA_ANGLE_MIN) * math.pi) / 180)
-        else:
-            return 1  # default angle
+            if abs(self.angle) >= CAMERA_ANGLE_MIN:
+                result = math.cos(
+                    ((abs(self.angle) - CAMERA_ANGLE_MIN) * math.pi) / 180)
+            result = 1 if result <= 0 else result
+        return result
 
     def get_max_fov_distance(self):
         """
