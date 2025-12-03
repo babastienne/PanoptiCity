@@ -1,13 +1,43 @@
+import logging
+import os
+
 from cameras.models import Camera, CameraFocus, CameraTags, Tile
 from django.contrib.gis.geos import Point
 from django.db import connections
 
 
-def process_camera_batch(camera_data_list, update=False, verbose=False):
+def get_worker_logger(log_file_path, verbose):
+    """
+    Configures a logger for the current worker process.
+    """
+    # Use the Process ID (PID) to ensure unique identification in debug
+    logger_name = f"camera_worker_{os.getpid()}"
+    logger = logging.getLogger(logger_name)
+
+    # Only configure if it hasn't been configured yet (ProcessPool reuses workers)
+    if not logger.handlers:
+        logger.setLevel(logging.DEBUG if verbose else logging.INFO)
+
+        fh = logging.FileHandler(log_file_path, mode='a')
+        formatter = logging.Formatter(
+            '%(asctime)s - [Worker %(process)d] - %(levelname)s - %(message)s')
+        fh.setFormatter(formatter)
+        logger.addHandler(fh)
+
+        # Prevent propagation to root logger to avoid console spam if Django configures root
+        logger.propagate = False
+
+    return logger
+
+
+def process_camera_batch(camera_data_list, update=False, verbose=False, log_file=None):
     """
     Worker function executed in a separate process.
     Receives a list of dictionaries containing raw OSM data.
     """
+    # Init logger for worker
+    logger = get_worker_logger(log_file, verbose)
+
     # Close any existing connections to force a fresh connection
     for conn in connections.all():
         conn.close()
@@ -27,21 +57,22 @@ def process_camera_batch(camera_data_list, update=False, verbose=False):
 
     for data in camera_data_list:
         if data['id'] in existing_ids:
+            skipped += 1
             if verbose:
-                print(f"DEBUG: Camera #{data['id']} already exists. Skipped.")
-                skipped += 1
+                logger.debug(
+                    f"DEBUG: Camera #{data['id']} already exists. Skipped.")
             continue
 
         try:
             camera, new_or_updated_tags, new_or_updated_focus = create_camera(
-                data, verbose
+                data, verbose, logger
             )
             cameras_to_create.append(camera)
             tags_to_create.extend(new_or_updated_tags)
             focus_to_create.extend(new_or_updated_focus)
 
         except Exception as e:
-            print(f"Error processing camera {data['id']}: {e}")
+            logger.error(f"Error processing camera {data['id']}: {e}")
             continue
 
     # We save inside the worker to reduce memory overhead in the main process
@@ -75,7 +106,7 @@ def process_camera_batch(camera_data_list, update=False, verbose=False):
     return len(cameras_to_create), skipped
 
 
-def compute_direction(tags, camera):
+def compute_direction(tags, camera, logger=None):
     direction = None
     if "camera:direction" in tags:
         direction = tags["camera:direction"]
@@ -114,15 +145,14 @@ def compute_direction(tags, camera):
     try:
         direction = int(direction) if direction else None
     except Exception:
-        # Print warning and set direction to None
-        print(
+        logger.info(
             f"INFO: Camera #{camera.id}. Field : Direction. Expected int, found {direction}. Field kept empty.")
         direction = None
 
     return direction
 
 
-def create_camera(camera_osm, verbose=False):
+def create_camera(camera_osm, verbose=False, logger=None):
     location = Point([camera_osm['lon'], camera_osm['lat']], srid=4326)
     camera = Camera(id=camera_osm['id'], location=location)
     tags = camera_osm['tags']
@@ -155,19 +185,19 @@ def create_camera(camera_osm, verbose=False):
             camera.height = float(height)
     except Exception:
         if "height" in tags:
-            print(
+            logger.info(
                 f"INFO: Camera #{camera.id}. Field : height. Expected float, found {tags['height']}. Field kept empty.")
         elif "ele" in tags:
-            print(
+            logger.info(
                 f"INFO: Camera #{camera.id}. Field : ele. Expected float, found {tags['ele']}. Field kept empty.")
 
-    camera.direction = compute_direction(tags, camera)
+    camera.direction = compute_direction(tags, camera, logger)
 
     if "camera:angle" in tags:
         try:
             camera.angle = int(tags["camera:angle"])
         except Exception:
-            print(
+            logger.info(
                 f"INFO: Camera #{camera.id}. Field : Angle. Expected integer, found {tags['camera:angle']}. Field kept empty.")
 
     # FIXME: Not working when no building around (cause no tile created)
@@ -182,6 +212,6 @@ def create_camera(camera_osm, verbose=False):
     ) for tag_name in tags]
 
     if verbose:
-        print(f"DEBUG: Camera #{camera.id} processed.")
+        logger.debug(f"DEBUG: Camera #{camera.id} processed.")
 
     return camera, new_or_updated_tags, new_or_updated_focus

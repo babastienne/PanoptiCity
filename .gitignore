@@ -14,3 +14,4 @@ nginx.conf
 back-end/venv*
 *.old
 *.prof
+*.log

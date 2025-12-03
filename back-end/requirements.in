@@ -7,3 +7,4 @@ gunicorn
 psycopg2-binary
 mercantile
 debugpy
+tqdm
