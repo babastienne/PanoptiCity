@@ -1,3 +1,9 @@
+local tiles = osm2pgsql.define_locator({ name = 'tiles' })
+tiles:add_from_db("SELECT id, geom FROM cameras_tile")
+
+local cameras = osm2pgsql.define_locator({ name = 'cameras' })
+cameras:add_from_db("SELECT id, geom from cameras_camerafocus as cf where cf.scenario = 'worst' and cf.level = 'observation'")
+
 local buildings = osm2pgsql.define_table({
     name = 'cameras_building',
     ids = {
@@ -22,49 +28,54 @@ local buildings = osm2pgsql.define_table({
             not_null = true
         }
     },
-    indexes = {  -- Indexes are disabled to avoid spending time building them just to be dropped later in install process
-        -- {
-        --     column = 'id',
-        --     name = 'cameras_building_pkey',
-        --     method = 'btree',
-        --     unique = true
-        -- },
-        -- {
-        --     column = 'geom',
-        --     method = 'gist'
-        -- },
-        -- {
-        --     column = 'tile',
-        --     name = 'cameras_building_tile_idx',
-        --     method = 'btree'
-        -- },
-        -- {
-        --     expression = 'tile varchar_pattern_ops',
-        --     name = 'cameras_building_tile_idx_like',
-        --     method = 'btree'
-        -- }
+    indexes = {
+        {
+            column = 'id',
+            name = 'cameras_building_pkey',
+            method = 'btree',
+            unique = true
+        },
+        {
+            column = 'geom',
+            method = 'gist'
+        },
+        {
+            column = 'tile',
+            name = 'cameras_building_tile_idx',
+            method = 'btree'
+        },
+        {
+            expression = 'tile varchar_pattern_ops',
+            name = 'cameras_building_tile_idx_like',
+            method = 'btree'
+        }
     }
 })
 
 function osm2pgsql.process_way(object)
     if object.is_closed and object.tags.building and object.tags.building ~= 'roof' then
-        buildings:insert({
-            geom = object:as_polygon(),
-            tile = "x"
-        })
+        if cameras:first_intersecting(object:as_polygon()) then
+            buildings:insert({
+                geom = object:as_polygon(),
+                tile = tiles:first_intersecting(object:as_polygon())
+            })
+        end
     end
 end
 
 function osm2pgsql.process_relation(object)
+    -- FIXME: Handle use case chen the multipolygon contains a roof and a building (filter when iterating geometries?)
     if object.tags.type == 'multipolygon' and object.tags.building then
         -- From the relation we get multipolygons...
         local mp = object:as_multipolygon()
-        -- ...and split them into polygons which we insert into the table
-        for geom in mp:geometries() do
-            buildings:insert({
-                geom = geom,
-                tile = "x"
-            })
+        if cameras:first_intersecting(mp) then
+            -- ...and split them into polygons which we insert into the table
+            for geom in mp:geometries() do
+                buildings:insert({
+                    geom = geom,
+                    tile = tiles:first_intersecting(geom)
+                })
+            end
         end
     end
 end

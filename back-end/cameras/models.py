@@ -286,7 +286,6 @@ class Tile(models.Model):
     id = models.CharField(max_length=15, primary_key=True, db_index=True)
     geom = models.PolygonField(blank=False, spatial_index=True, srid=4326)
     level = models.IntegerField(db_index=True)
-    obj_count = models.IntegerField()
 
     def __str__(self):
-        return f"Tile {self.id} (L{self.level}) - {self.obj_count} objects"
+        return f"Tile {self.id} (L{self.level})"

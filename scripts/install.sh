@@ -26,7 +26,14 @@ set +o allexport
 
 # Ensure required postgres variables are set and provide sensible defaults if not.
 : "${POSTGRES_USER:=postgres}"
+: "${POSTGRES_PASSWORD:=postgres}"
 : "${POSTGRES_DB:=postgres}"
+
+# Get number of cores on machine to speed up camera import (limit to 32 to avoid overload)
+NUM_CORES=$(nproc --all || echo 1)
+if [ "$NUM_CORES" -gt 32 ]; then
+    NUM_CORES=32
+fi
 
 # TODO: Ask user and auto-generate the front-end configuration file
 
@@ -43,6 +50,10 @@ if [ ! -f "osm-data/$OSM_FILE_NAME" ]; then
     exit
 fi
 
+# Build backend container
+echo -e "\033[0;32m--- Building the docker image for backend container ---\033[0m"
+docker compose build
+
 # Build and start the docker containers
 echo -e "\033[0;32m--- Building the database and the containers ---\033[0m"
 # Run postgis until it displays "database system is ready to accept connections"
@@ -57,27 +68,23 @@ done
 echo -e "\033[0;32m--- Creating the database structure ---\033[0m"
 docker compose run --remove-orphans --rm web ./manage.py migrate
 
+echo -e "\033[0;32m--- Importing tile structure ---\033[0m"
+zcat back-end/cameras/sql/tiles.sql.gz | docker compose run --rm -e PGPASSWORD=$POSTGRES_PASSWORD postgis psql -h postgis -p 5432 -U $POSTGRES_USER -d $POSTGRES_DB
+
+echo -e "\033[0;32m--- Load cameras (without buildings to speed up focus computation) ---\033[0m"
+docker compose run --remove-orphans --rm web ./manage.py load_cameras -w "$NUM_CORES" /osm-data/$OSM_FILE_NAME
+
 # Import buildings and create tile structure to optimize queries
 echo -e "\033[0;32m--- Importing buildings from osm-data/$OSM_FILE_NAME ---\033[0m"
 echo -e "\033[0;33m(Warning: This can be long depending on the covered area)\033[0m"
 docker compose run --remove-orphans osm2pgsql -O flex -S /data/buildings.lua /osm-data/$OSM_FILE_NAME
-
-echo -e "\033[0;32m--- Optimize data structure to split buildings in tiles ---\033[0m"
-echo -e "\033[0;33m(Warning: This can be VERY long depending on the covered area)\033[0m"
-docker compose exec -T postgis psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" < back-end/cameras/sql/post_install_buildings.sql
-docker compose exec -T postgis psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "CALL generate_adaptive_tiles(10000, 4, 14);"
-
-# Get number of cores on machine to speed up camera import (limit to 32 to avoid overload)
-NUM_CORES=$(nproc --all || echo 1)
-if [ "$NUM_CORES" -gt 32 ]; then
-    NUM_CORES=32
-fi
+# docker compose exec -T postgis psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "CREATE EXTENSION IF NOT EXISTS postgis_sfcgal;"
 
 # Import cameras
 echo -e "\033[0;32m--- Import cameras and compute their focus ---\033[0m"
 echo -e "\033[0;33m(Warning: This can be long depending on the covered area)\033[0m"
 echo -e "\033[0;33mTo speed up the process we're using multi-processing with $NUM_CORES cores.\033[0m"
-docker compose run --remove-orphans --rm web ./manage.py load_cameras -w "$NUM_CORES" /osm-data/$OSM_FILE_NAME
+docker compose run --remove-orphans --rm web ./manage.py load_cameras --update -w "$NUM_CORES" /osm-data/$OSM_FILE_NAME
 
 # TODO: Create nginx configuration
 
