@@ -49,12 +49,20 @@ class CameraTypeChoices(TextChoices):
 
 
 class FocusScenarioChoices(TextChoices):
+    """
+    The different scenarios for focus calculation.
+    Order is important: from best case to worst case.
+    """
     BEST = "best", "Best case scenario"
     MEAN = "mean", "Average"
     WORST = "worst", "Worst case scenario"
 
 
 class FocusLevelChoices(TextChoices):
+    """
+    The different focus levels.
+    Order is important: from smallest to largest focus.
+    """
     IDENTIFICATION = "identification", "identification"
     RECOGNITION = "recognition", "recognition"
     OBSERVATION = "observation", "observation"

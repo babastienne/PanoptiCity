@@ -196,7 +196,7 @@ class Camera(models.Model):
             previous_polygon = None
 
             # Important: iterate levels from smallest (identification) -> largest (observation) for the diff logic
-            for level in ["identification", "recognition", "observation"]:
+            for level in FocusLevelChoices.values:
                 points_list = raw_results[scenario][level]
 
                 poly_4326 = None if len(
