@@ -143,7 +143,12 @@ def compute_direction(tags, camera, logger=None):
             direction = direction.split(";")[0]
 
     try:
-        direction = int(direction) if direction else None
+        if direction:
+            direction = int(direction)
+            if direction < -1000 or direction > 1000:
+                raise ValueError("Direction out of range")
+        else:
+            direction = None
     except Exception:
         logger.info(
             f"INFO: Camera #{camera.id}. Field : Direction. Expected int, found {direction}. Field kept empty.")
