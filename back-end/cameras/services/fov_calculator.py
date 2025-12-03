@@ -68,6 +68,9 @@ class FOVCalculator():
         # The largest possible distance
         max_dist_degrees = sorted_configs[0]['dist_degrees']
 
+        p_x = None  # Value x of the projected point on the ray
+        p_y = None  # Value y of the projected point on the ray
+
         for x in rng:
             # -- Compute end of ray point and create LineString representing the ray --
             angle_rad = camera_dir_rad + (x / 10.0)
@@ -88,6 +91,7 @@ class FOVCalculator():
             # -- Check intersection with buildings --
             # We track the hit ratio (0.0 to 1.0) to determine if we hit a building and at what distance
             closest_hit_ratio = 1.0  # 1.0 means no hit (full distance)
+            add_origin_to_list = False
 
             for b_id, real_geom in buildings:
                 # We skip buildings the camera is into if it is not an indoor camera
@@ -136,28 +140,41 @@ class FOVCalculator():
                             if closest_hit_ratio < 1.0:
                                 break
 
-            # Limit hit_ratio = 0 means we hit a building at the origin. We don't add any point in this case.
+            # Limit hit_ratio = 0 means we hit a building at the origin.
             if closest_hit_ratio == 0.0:
-                continue
+                if p_x == ori_x and p_y == ori_y:
+                    # Last added point to the list was origin, no need to add it again
+                    # We skip the rest of the processing for this ray
+                    continue
+                # Otherwise we add the origin point
+                # There is two use cases for this:
+                # - This is the first point we compute, we add it to the list of points
+                # - Last added point was not origin, we add it
+                add_origin_to_list = True
 
-            limit_degrees = max_dist_degrees * closest_hit_ratio
+            if not add_origin_to_list:
+                limit_degrees = max_dist_degrees * closest_hit_ratio
 
-            # We compute max distance of fov for cases when camera is tilted
-            # This happens if the building is further than the max_fov, or no building found but we have a max_fov
-            if max_fov_distance:
-                # Approx conversion from meters to degrees
-                # FIXME: This is an approximation that works for small distances. To improve
-                max_fov_degrees = max_fov_distance / 111320.0
-                limit_degrees = min(limit_degrees, max_fov_degrees)
+                # We compute max distance of fov for cases when camera is tilted
+                # This happens if the building is further than the max_fov, or no building found but we have a max_fov
+                if max_fov_distance:
+                    # Approx conversion from meters to degrees
+                    # FIXME: This is an approximation that works for small distances. To improve
+                    max_fov_degrees = max_fov_distance / 111320.0
+                    limit_degrees = min(limit_degrees, max_fov_degrees)
 
             # -- Distribute results to all scenarios based on limit --
             # Because configs are sorted max -> min, we can just take min(config_dist, closest_hit_dist)
             for conf in sorted_configs:
-                effective_dist = min(conf['dist_degrees'], limit_degrees)
+                if add_origin_to_list:
+                    p_x = ori_x
+                    p_y = ori_y
+                else:
+                    effective_dist = min(conf['dist_degrees'], limit_degrees)
 
-                # Project point that wwill be the end of the ray for this scenario/level
-                p_x = ori_x + (effective_dist * cos_a * camera_lat_coef)
-                p_y = ori_y + (effective_dist * sin_a)
+                    # Project point that will be the end of the ray for this scenario/level
+                    p_x = ori_x + (effective_dist * cos_a * camera_lat_coef)
+                    p_y = ori_y + (effective_dist * sin_a)
 
                 results[conf['scenario']][conf['level']].append((p_x, p_y))
 
