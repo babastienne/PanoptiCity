@@ -21,11 +21,10 @@ In details, the command will create multuple process and dispatch to them batche
 
 When running manually, you can call the `load_cameras` command with arguments to optimize processing :
 
-|----|------|--------------|---|
-| Command argument | Given parameter | Description                                                                                         | Default          |
-| ---------------- | --------------- | --------------------------------------------------------------------------------------------------- | ---------------- |
-| --batch-size     | integer         | Number of cameras to process in each batch.                                                         | --batch-size 100 |
-| --max-workers    | integer         | Number of worker processes to use. Do not go further than you number of cores. Maximum value is 32. | --max-workers 4  |
+| Command argument | Given parameter | Description                                                                                         | Default            |
+| ---------------- | --------------- | --------------------------------------------------------------------------------------------------- | ------------------ |
+| `--batch-size`   | integer         | Number of cameras to process in each batch.                                                         | `--batch-size 100` |
+| `--max-workers`  | integer         | Number of worker processes to use. Do not go further than you number of cores. Maximum value is 32. | `--max-workers 4`  |
 
 ### Keep only necessary buildings
 
@@ -359,12 +358,23 @@ When loading the buildings from the osm.pbf datasource file to the database, we'
 
 ## Import time and database size
 
-Using a computer with 8 cores, those are the computation time and database size I got:
+**Database size: what you should expect**
 
-|---|---|---|---|---|---|
-| Original file size (.osm.pbf)    | Number of buildings in original file | Import time                         | Number of buildings in final DB | Number of cameras imported | DB size |
-| -------------------------------- | ------------------------------------ | ----------------------------------- | ------------------------------- | -------------------------- | ------- |
-| `haute_garonne.osm.pbf` ~ 107 Mb | ???                                  | 3m40s (including 2m46s for cameras) | 353 741                         | 2377                       | 505 Mb  |
-| `france.osm.pbf` ~ 5.3 Gb        | ~50 millions                         | 1h18m (including 53m for cameras)   | ~14 millions                    | 69 053                     | 5.8 Gb  |
+| Original file size (.osm.pbf)    | Number of buildings in original file | Number of buildings in final DB | Number of cameras imported | DB size |
+| -------------------------------- | ------------------------------------ | ------------------------------- | -------------------------- | ------- |
+| `haute_garonne.osm.pbf` ~ 111 Mo | ???                                  | 353 741                         | 2377                       | 505 Mo  |
+| `france.osm.pbf` ~ 5.6 Go        | ~50 millions                         | ~14 millions                    | 69 053                     | 5.8 Go  |
 
 When handling large PBF files, you should expect to get in the end a database the size of your original PBF file. It is of course depending of your area specificities (number of buildings / cameras / repartition).
+
+**Computation time for the install procedure**
+
+| Machine used                        | Original file                    | Computation time for cameras only | Computation time total |
+| ----------------------------------- | -------------------------------- | --------------------------------- | ---------------------- |
+| 2015 computer. 8 cores. 32 Gb ram.  | `haute_garonne.osm.pbf` ~ 111 Mo | 2m46s                             | 3m40s                  |
+| 2024 computer. 16 cores. 32 Gb ram. | `haute_garonne.osm.pbf` ~ 111 Mo | **42s**                           | **1m13s**              |
+| 2015 computer. 8 cores. 32 Gb ram.  | `france.osm.pbf` ~ 5.6 Go        | 53m                               | 1h18m                  |
+| 2024 computer. 16 cores. 32 Gb ram. | `france.osm.pbf` ~ 5.6 Go        | **13m12s**                        | **26m02s**             |
+
+Using another much recent computer with 16 cores, I got results 2x to 3x faster.
+
