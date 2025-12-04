@@ -4,3 +4,6 @@ delete_database:
 
 install:
 	/bin/bash ./scripts/install.sh
+
+update:
+	/bin/bash ./scripts/update-cameras.sh

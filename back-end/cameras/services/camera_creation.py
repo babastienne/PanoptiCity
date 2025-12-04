@@ -60,14 +60,12 @@ def process_camera_batch(camera_data_list, update=False, verbose=False, log_file
     for data in camera_data_list:
         if data['id'] in skip_ids:
             skipped += 1
-            if verbose:
-                logger.debug(
-                    f"DEBUG: Camera #{data['id']} already exists. Skipped.")
+            logger.debug("Camera #%s already exists. Skipped.", data['id'])
             continue
 
         try:
             camera, new_or_updated_tags, new_or_updated_focus = create_camera(
-                data, verbose, logger
+                data, logger
             )
             cameras_to_create.append(camera)
             tags_to_create.extend(new_or_updated_tags)
@@ -78,6 +76,7 @@ def process_camera_batch(camera_data_list, update=False, verbose=False, log_file
             continue
 
     if update:
+        Camera.objects.filter(id__in=existing_ids).delete()
         CameraFocus.objects.filter(camera_id__in=existing_ids).delete()
         CameraTags.objects.filter(camera_id__in=existing_ids).delete()
 
@@ -157,13 +156,13 @@ def compute_direction(tags, camera, logger=None):
             direction = None
     except Exception:
         logger.info(
-            f"INFO: Camera #{camera.id}. Field : Direction. Expected int, found {direction}. Field kept empty.")
+            f"Camera #{camera.id}. Field : Direction. Expected int, found {direction}. Field kept empty.")
         direction = None
 
     return direction
 
 
-def create_camera(camera_osm, verbose=False, logger=None):
+def create_camera(camera_osm, logger=None, nearby_buildings_qs=None):
     location = Point([camera_osm['lon'], camera_osm['lat']], srid=4326)
     camera = Camera(id=camera_osm['id'], location=location)
     tags = camera_osm['tags']
@@ -217,7 +216,7 @@ def create_camera(camera_osm, verbose=False, logger=None):
         camera.tile = Tile.objects.filter(
             geom__intersects=camera.location).first().id
 
-    new_or_updated_focus = camera.generate_focus()
+    new_or_updated_focus = camera.generate_focus(nearby_buildings_qs)
 
     new_or_updated_tags = [CameraTags(
         camera_id=camera,

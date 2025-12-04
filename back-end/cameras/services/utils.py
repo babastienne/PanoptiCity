@@ -1,7 +1,40 @@
+import logging
 import math
 
 import mercantile
 from django.contrib.gis.geos import Polygon
+
+
+def setup_logger(log_file, verbose):
+    """Configures a file logger."""
+    logger = logging.getLogger("camera_import")
+    logger.setLevel(logging.DEBUG if verbose else logging.INFO)
+
+    # Create file handler
+    fh = logging.FileHandler(log_file, mode='a')
+    formatter = logging.Formatter(
+        '%(asctime)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+
+    # Clear existing handlers to avoid duplicates if run multiple times in shell
+    if logger.hasHandlers():
+        logger.handlers.clear()
+
+    logger.addHandler(fh)
+    return logger
+
+
+def extract_node_data(elem):
+    """
+    Extracts data from osmium node into a plain python dict.
+    Usefull when multi-processing as we cannot pass object to workers because it's C++.
+    """
+    return {
+        'id': elem.id,
+        'lon': elem.location.lon,
+        'lat': elem.location.lat,
+        'tags': dict(elem.tags),  # Convert osmium TagList to python dict
+    }
 
 
 def create_polygon(points_list):

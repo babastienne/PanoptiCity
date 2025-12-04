@@ -5,6 +5,7 @@ from timeit import default_timer as timer
 
 import osmium
 from cameras.services.camera_creation import process_camera_batch
+from cameras.services.utils import extract_node_data, setup_logger
 from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
@@ -12,7 +13,7 @@ from tqdm import tqdm
 class Command(BaseCommand):
     help = """
     Load all cameras from osm file.
-    This command can also be used to update existing cameras (using --update).
+    This command can also be used to recreate existing cameras (using --recreate).
     It uses multiple processes to speed up the import. Each process handles a batch of cameras.
     Depending of your CPU and RAM, you can adjust the number of workers and batch size.
     Logs are written to a file (default: import_cameras.log) to keep track of progress and errors.
@@ -63,36 +64,6 @@ class Command(BaseCommand):
             help="Path to the output log file (default: load_cameras.log)",
         )
 
-    def extract_node_data(self, elem):
-        """
-        Extracts data from osmium node into a plain python dict.
-        We cannot pass the 'elem' object to workers because it's C++.
-        """
-        return {
-            'id': elem.id,
-            'lon': elem.location.lon,
-            'lat': elem.location.lat,
-            'tags': dict(elem.tags),  # Convert osmium TagList to python dict
-        }
-
-    def setup_logger(self, log_file, verbose):
-        """Configures a file logger."""
-        logger = logging.getLogger("camera_import")
-        logger.setLevel(logging.DEBUG if verbose else logging.INFO)
-
-        # Create file handler
-        fh = logging.FileHandler(log_file, mode='a')
-        formatter = logging.Formatter(
-            '%(asctime)s - %(levelname)s - %(message)s')
-        fh.setFormatter(formatter)
-
-        # Clear existing handlers to avoid duplicates if run multiple times in shell
-        if logger.hasHandlers():
-            logger.handlers.clear()
-
-        logger.addHandler(fh)
-        return logger
-
     def handle(self, *args, **options):
         start = timer()
 
@@ -125,7 +96,7 @@ class Command(BaseCommand):
                 for elem in osmium.FileProcessor(filename, osmium.osm.NODE).with_filter(
                     osmium.filter.TagFilter(("man_made", "surveillance"))
                 ):
-                    data = self.extract_node_data(elem)
+                    data = extract_node_data(elem)
                     current_batch.append(data)
                     pbar_read.update(1)
 

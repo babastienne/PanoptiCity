@@ -143,7 +143,7 @@ class Camera(models.Model):
         configs.sort(key=lambda x: x['dist_degrees'], reverse=True)
         return configs
 
-    def compute_all_focus(self):
+    def compute_all_focus(self, nearby_buildings_qs=None):
         """
         Main entry point. Orchestrates the computation using optimized geometric sorting.
         """
@@ -152,18 +152,19 @@ class Camera(models.Model):
         if not configs:
             # Should not happen
             return []
-        neighboring_tiles = get_neighboring_tiles(self.tile)
         max_fov_distance = self.get_max_fov_distance()
 
         calculator = FOVCalculator(self)
 
-        # Fetch buildings associated to the camera
-        # We need the max possible distance to filter the DB query efficiently
-        # Because configs are sorted descending we take the first one
-        nearby_buildings_qs = Building.objects.filter(
-            tile__in=neighboring_tiles,
-            geom__dwithin=(self.location, configs[0]['dist_degrees'])
-        ).only('id', 'geom')
+        if not nearby_buildings_qs:
+            neighboring_tiles = get_neighboring_tiles(self.tile)
+            # Fetch buildings associated to the camera
+            # We need the max possible distance to filter the DB query efficiently
+            # Because configs are sorted descending we take the first one
+            nearby_buildings_qs = Building.objects.filter(
+                tile__in=neighboring_tiles,
+                geom__dwithin=(self.location, configs[0]['dist_degrees'])
+            ).only('id', 'geom')
 
         # Annotate with distance to camera and order by distance ascending
         nearby_buildings_qs = nearby_buildings_qs.annotate(
@@ -241,13 +242,13 @@ class Camera(models.Model):
         # Bulk objects for bulk update/create later
         return new_focus_objects
 
-    def generate_focus(self):
+    def generate_focus(self, nearby_buildings_qs=None):
         result = []
         if self.camera_type == "fixed":
             if self.direction is not None:
-                result = self.compute_all_focus()
+                result = self.compute_all_focus(nearby_buildings_qs)
         elif self.camera_type in ["dome", "panning"]:
-            result = self.compute_all_focus()
+            result = self.compute_all_focus(nearby_buildings_qs)
         return result
 
     class Meta:

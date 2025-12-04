@@ -88,5 +88,22 @@ docker compose run --remove-orphans --rm web ./manage.py load_cameras --update -
 
 # TODO: Create nginx configuration
 
+echo -e "\033[0;32m--- Configuration of replication and update of data ---\033[0m"
+# Generation of the sequence state and grep the replication server URL at the same time
+REPLICATION_SERVER_URL=$(docker compose run --rm web pyosmium-get-changes -O /osm-data/$OSM_FILE_NAME  -f /osm-data/sequence.state.txt -v 2>&1 | grep -oP 'Using replication server at \K\S+')
+# Add this variable to .env file so it can be used during update command
+if grep -q "^REPLICATION_SERVER_URL=" .env; then
+    sed -i.bak "s|^REPLICATION_SERVER_URL=.*|REPLICATION_SERVER_URL=$REPLICATION_SERVER_URL|" .env
+else
+    # Check if the file ends with a newline.
+    if [ -n "$(tail -c1 .env 2>/dev/null)" ]; then
+        echo "" >> .env
+    fi
+    echo "REPLICATION_SERVER_URL=$REPLICATION_SERVER_URL" >> .env
+fi
+echo -e "\033[0;32m-> Replication URL has been added to .env file\033[0m"
+
+
 # TODO: Run the website and configure the auto-update of cameras
 echo -e "\033[0;32m--- Installation complete! You can now run the application using 'docker compose up -d' ---\033[0m"
+echo -e "\033[0;32m--- To update the database with latests changes from OSM you can run 'make update' ---\033[0m"

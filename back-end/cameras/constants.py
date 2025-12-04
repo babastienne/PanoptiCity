@@ -1,7 +1,8 @@
 from django.db.models import TextChoices
 
-# --- Choices and constants for Camera and Focus models fields ---
+OVERPASS_URL = "https://overpass-api.de/api/interpreter"
 
+# --- Choices and constants for Camera and Focus models fields ---
 
 class MountChoices(TextChoices):
     WALL = "wall", "wall"
