@@ -10,11 +10,59 @@ fi
 
 # Check if .env file exists. If not exit with an error.
 if [ ! -f .env ]; then
-    echo -e "\033[0;31mError: .env file not found. Please create a .env file based on .env.dist and fill it before running this script.\033[0m" >&2
-    exit
+    # Echo warning : ".env file not found, creating it..."
+    echo -e "\033[0;33mWarning: .env file not found. Creating a new one\033[0m" >&2
+    cp .env.dist .env
 fi
 
-# TODO: If no .env file ask user questions about it's instance and create it
+# Generic function to check if a var is set in .env and if not ask the user for value
+ensure_env_var() {
+    local key="$1"
+    local default_value="$2"
+    local prompt_msg="$3"
+    local env_file=".env"
+
+    # Check if the key exists and has at least one character after '='
+    if ! grep -qE "^${key}=.+" "$env_file"; then
+
+        # Ask user for input
+        read -rp "${prompt_msg} (default: ${default_value}): " user_input
+
+        # Use default if input is empty
+        user_input=${user_input:-$default_value}
+
+        # Check if the key exists in the file (but is empty)
+        if grep -q "^${key}=" "$env_file"; then
+            # Replace the existing empty line
+            sed -i.bak "s|^${key}=.*|${key}=${user_input}|" "$env_file"
+        else
+            # Key is completely missing, append it
+
+            # Ensure file ends with a newline before appending
+            if [ -n "$(tail -c1 "$env_file" 2>/dev/null)" ]; then
+                echo "" >> "$env_file"
+            fi
+
+            echo "${key}=${user_input}" >> "$env_file"
+        fi
+
+        echo -e "\033[0;32m-> ${key} has been added to ${env_file}\033[0m"
+    else
+        echo -e "\033[0;32m${key} already set in ${env_file}\033[0m"
+    fi
+}
+
+ensure_env_var "POSTGRES_DB" "postgres" "Enter the name of the Postgres database to create"
+ensure_env_var "POSTGRES_USER" "postgres" "Enter the name of the database user to create"
+ensure_env_var "POSTGRES_PASSWORD" "postgres" "Enter the password for the database user to create"
+ensure_env_var "POSTGRES_PORT" "5452" "Enter the port you want to use to access your database"
+ensure_env_var "ALLOWED_HOSTS" "example.org" "Enter the domain name that will be used for your frontend application"
+ensure_env_var "SERVER_NAME" "api.example.org" "Enter the domain name that will be used for the backend application"
+
+# Generate a secret key and add it in .env file
+GENERATED_SECRET=$(openssl rand -hex 32)
+ensure_env_var "SECRET_KEY" "$GENERATED_SECRET" "Do you want to override the generated secret key ?"
+
 
 # Load environment variables from .env into the script
 set -o allexport
@@ -23,11 +71,6 @@ if ! source .env; then
     exit 1
 fi
 set +o allexport
-
-# Ensure required postgres variables are set and provide sensible defaults if not.
-: "${POSTGRES_USER:=postgres}"
-: "${POSTGRES_PASSWORD:=postgres}"
-: "${POSTGRES_DB:=postgres}"
 
 # Get number of cores on machine to speed up camera import (limit to 32 to avoid overload)
 NUM_CORES=$(nproc --all || echo 1)
