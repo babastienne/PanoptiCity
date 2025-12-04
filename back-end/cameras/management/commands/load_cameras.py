@@ -25,12 +25,12 @@ class Command(BaseCommand):
             help="Mandatory parameter: path to file to import (osm.pbf or .osm format) [eg: /osm-data/sample-data.osm.pbf]",
         )
         parser.add_argument(
-            "--update",
-            "-u",
+            "--recreate",
+            "-r",
             action="store_true",
             default=False,
             dest="update_field",
-            help="Force the update of cameras and related data",
+            help="Force the recreation of existing cameras and related data",
         )
         parser.add_argument(
             "--details",
@@ -87,7 +87,7 @@ class Command(BaseCommand):
         self.stdout.write(
             f"Starting import from {filename} with {max_workers} workers...")
         logger.info(
-            f"Starting import from {filename} with {max_workers} workers.")
+            "Starting import from %s with %s workers.", filename, max_workers)
 
         with ProcessPoolExecutor(max_workers=max_workers) as executor:
             with tqdm(desc="Reading OSM file", unit=" cameras found") as pbar_read:
@@ -126,7 +126,7 @@ class Command(BaseCommand):
                         total_skipped += skipped
 
                         logger.info(
-                            f"Batch finished. +{imported} cameras (skipped {skipped}).")
+                            "Batch finished. +%s cameras (skipped %s).", imported, skipped)
 
                         # Update progress bar description with live stats
                         pbar_process.set_postfix(

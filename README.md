@@ -118,7 +118,7 @@ We will refer at your downloaded pbf file as `<my-pbf-file>` and in the next com
 - This last command should have prompted something an URL on the terminal. Probably in the format `INFO: Using replication server at <URL_OF_THE_REPLICATION_SERVER>` This is the URL that will be used to get diffs. Copy it and then you can run the following lines to update your cameras (replace with your url):
 
 1. `docker compose run --rm web pyosmium-get-changes --server <URL_OF_THE_REPLICATION_SERVER> -f /osm-data/sequence.state.txt -o /osm-data/diff.osc.gz` > This command creates a diff file (the file `osm-data/diff.osc.gz`) that contains every differences between the original data file and the last version of OSM data on the replication server. The command also edit the sequence.state.txt file to update the sequence number with the last version fetched on the server.
-2. `docker compose run --rm web ./manage.py load_cameras -d -u /osm-data/diff.osc.gz` > This command updates the camera database with the differences.
+2. `docker compose run --rm web ./manage.py load_cameras -d -r /osm-data/diff.osc.gz` > This command updates the camera database with the differences.
 3. (Optionnal) the `osm-data/diff.osc.gz` can be removed. It will otherwise be overwrite next time so this is not mandatory.
 
 > Note: If you want to stay up to date, the last three commands can easily by put into a bash script and then launched regularly with a cron depending of your update frequency (minute, hour, day). The file `update-cameras.sh` is an example of something that can be done to automatize the process (it could be improved with log monitoring).

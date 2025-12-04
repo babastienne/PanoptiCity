@@ -72,7 +72,7 @@ def process_camera_batch(camera_data_list, update=False, verbose=False, log_file
             focus_to_create.extend(new_or_updated_focus)
 
         except Exception as e:
-            logger.error(f"Error processing camera {data['id']}: {e}")
+            logger.error("Error processing camera %s: %s", data['id'], e)
             continue
 
     if update:
@@ -196,10 +196,10 @@ def create_camera(camera_osm, logger=None, nearby_buildings_qs=None):
     except Exception:
         if "height" in tags:
             logger.info(
-                f"INFO: Camera #{camera.id}. Field : height. Expected float, found {tags['height']}. Field kept empty.")
+                f"Camera #{camera.id}. Field : height. Expected float, found {tags['height']}. Field kept empty.")
         elif "ele" in tags:
             logger.info(
-                f"INFO: Camera #{camera.id}. Field : ele. Expected float, found {tags['ele']}. Field kept empty.")
+                f"Camera #{camera.id}. Field : ele. Expected float, found {tags['ele']}. Field kept empty.")
 
     camera.direction = compute_direction(tags, camera, logger)
 
@@ -208,7 +208,7 @@ def create_camera(camera_osm, logger=None, nearby_buildings_qs=None):
             camera.angle = int(tags["camera:angle"])
         except Exception:
             logger.info(
-                f"INFO: Camera #{camera.id}. Field : Angle. Expected integer, found {tags['camera:angle']}. Field kept empty.")
+                f"Camera #{camera.id}. Field : Angle. Expected integer, found {tags['camera:angle']}. Field kept empty.")
 
     try:
         camera.tile = Tile.objects.get(geom__contains=camera.location).id
@@ -224,7 +224,6 @@ def create_camera(camera_osm, logger=None, nearby_buildings_qs=None):
         value=tags[tag_name]
     ) for tag_name in tags]
 
-    if verbose:
-        logger.debug(f"DEBUG: Camera #{camera.id} processed.")
+    logger.debug(f"Camera #{camera.id} processed.")
 
     return camera, new_or_updated_tags, new_or_updated_focus

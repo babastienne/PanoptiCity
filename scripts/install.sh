@@ -127,7 +127,7 @@ docker compose run --remove-orphans osm2pgsql -O flex -S /data/buildings.lua /os
 echo -e "\033[0;32m--- Import cameras and compute their focus ---\033[0m"
 echo -e "\033[0;33m(Warning: This can be long depending on the covered area)\033[0m"
 echo -e "\033[0;33mTo speed up the process we're using multi-processing with $NUM_CORES cores.\033[0m"
-docker compose run --remove-orphans --rm web ./manage.py load_cameras --update -w "$NUM_CORES" /osm-data/$OSM_FILE_NAME
+docker compose run --remove-orphans --rm web ./manage.py load_cameras --recreate -w "$NUM_CORES" /osm-data/$OSM_FILE_NAME
 
 # TODO: Create nginx configuration
 
