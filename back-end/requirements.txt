@@ -50,5 +50,5 @@ sqlparse==0.5.3
     # via django
 tqdm==4.67.1
     # via -r requirements.in
-urllib3==2.3.0
+urllib3==2.6.0
     # via requests
