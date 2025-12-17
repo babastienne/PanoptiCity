@@ -76,9 +76,9 @@ def process_camera_batch(camera_data_list, update=False, verbose=False, log_file
             continue
 
     if update:
-        Camera.objects.filter(id__in=existing_ids).delete()
         CameraFocus.objects.filter(camera_id__in=existing_ids).delete()
         CameraTags.objects.filter(camera_id__in=existing_ids).delete()
+        Camera.objects.filter(id__in=existing_ids).delete()
 
     # We save inside the worker to reduce memory overhead in the main process
     if cameras_to_create:
