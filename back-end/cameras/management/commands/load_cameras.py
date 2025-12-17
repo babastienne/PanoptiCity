@@ -75,7 +75,7 @@ class Command(BaseCommand):
         log_file = options.get("log_file")
 
         # Setup logging
-        logger = self.setup_logger(log_file, verbose)
+        logger = setup_logger(log_file, verbose)
         self.stdout.write(f"Logs will be written to: {log_file}")
 
         total_imported = 0
