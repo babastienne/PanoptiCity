@@ -150,7 +150,7 @@ class Command(BaseCommand):
                 CameraFocus.objects.bulk_create(
                     computed_focus,
                     update_conflicts=True,
-                    update_fields=['geom'],
+                    update_fields=['geom', 'with_intersection'],
                     unique_fields=['camera_id', 'scenario', 'level']
                 )
 

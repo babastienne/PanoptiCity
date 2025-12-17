@@ -100,7 +100,7 @@ def process_camera_batch(camera_data_list, update=False, verbose=False, log_file
         CameraFocus.objects.bulk_create(
             focus_to_create,
             update_conflicts=True,
-            update_fields=['geom'],
+            update_fields=['geom', 'with_intersection'],
             unique_fields=['camera_id', 'scenario', 'level']
         )
 

@@ -198,6 +198,7 @@ class Camera(models.Model):
 
             # Important: iterate levels from smallest (identification) -> largest (observation) for the diff logic
             for level in FocusLevelChoices.values:
+                with_intersection = True
                 points_list = raw_results[scenario][level]
 
                 poly_4326 = None if len(
@@ -212,6 +213,7 @@ class Camera(models.Model):
                             configs, [], [], max_fov_distance)
                     points_list = raw_results_without_buildings[scenario][level]
                     poly_4326 = create_polygon(points_list)
+                    with_intersection = False
 
                 # Calculate difference (to create donut shapes)
                 final_geom = None
@@ -236,7 +238,8 @@ class Camera(models.Model):
                         camera_id=self,
                         scenario=scenario,
                         level=level,
-                        geom=final_geom
+                        geom=final_geom,
+                        with_intersection=with_intersection
                     ))
 
         # Bulk objects for bulk update/create later
@@ -262,6 +265,7 @@ class CameraFocus(models.Model):
         choices=FocusScenarioChoices.choices, blank=False)
     level = models.CharField(choices=FocusLevelChoices.choices, blank=False)
     geom = models.MultiPolygonField(null=True)
+    with_intersection = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('camera_id', 'scenario', 'level',)
