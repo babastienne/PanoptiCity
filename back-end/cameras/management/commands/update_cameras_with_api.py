@@ -115,7 +115,7 @@ class Command(BaseCommand):
 
             # Step 1: Simulate camera creation without buildings to get the max focus possible
             logger.debug("Simulate camera creation to get maximum focus")
-            camera_to_create, computed_tags, computed_focus = create_camera(camera, logger)
+            camera_to_create, computed_tags, computed_focus = create_camera(camera, logger, [])
             if computed_focus:
                 logger.debug("Got focus, converting it to polygon")
                 largest_focus = computed_focus[-1].geom  # We do not take the largest focus as we want the request not to be too heavy
