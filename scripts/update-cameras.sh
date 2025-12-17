@@ -32,8 +32,8 @@ fi
 echo -e "\033[0;32m--- Applying diffs on the database ---\033[0m"
 docker compose run --rm web ./manage.py load_cameras -d -r /osm-data/diff.osc.gz
 
-echo -e "\033[0;32m--- Saving the new state file sequence ---\033[0m"
-docker compose run --rm web pyosmium-get-changes -O /osm-data/diff.osc.gz  -f /osm-data/sequence.state.txt
+# echo -e "\033[0;32m--- Saving the new state file sequence ---\033[0m"
+# docker compose run --rm web pyosmium-get-changes -O /osm-data/diff.osc.gz  -f /osm-data/sequence.state.txt
 
 echo -e "\033[0;32m--- Clearing diff file ---\033[0m"
 rm -f osm-data/diff.osc.gz
