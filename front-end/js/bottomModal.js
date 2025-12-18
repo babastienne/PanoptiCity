@@ -4,11 +4,8 @@ const computeRenderedImageWidth = (minWidth, gap, numberImages, maxWidth) => {
   if (numberOfDisaplyedImagesByRow > numberImages) {
     numberOfDisaplyedImagesByRow = numberImages;
   }
-  let widthModalWithoutGaps =
-    widthModal - (numberOfDisaplyedImagesByRow - 1) * gap;
-  let widthImage = Math.floor(
-    widthModalWithoutGaps / numberOfDisaplyedImagesByRow
-  );
+  let widthModalWithoutGaps = widthModal - (numberOfDisaplyedImagesByRow - 1) * gap;
+  let widthImage = Math.floor(widthModalWithoutGaps / numberOfDisaplyedImagesByRow);
   if (maxWidth < widthImage) {
     return maxWidth;
   }
@@ -50,9 +47,7 @@ const showBottomModal = (
   // Adapt display of contents depending on authorizeMoveBehindModal value
   sheetOverlay.style.opacity = authorizeMoveBehindModal ? "0" : "0.2";
   sheetOverlay.style.display = authorizeMoveBehindModal ? "none" : "";
-  bottomSheet.style.maxHeight = authorizeMoveBehindModal
-    ? sheetContent.style.height
-    : "";
+  bottomSheet.style.maxHeight = authorizeMoveBehindModal ? sheetContent.style.height : "";
   bottomSheet.style.top = authorizeMoveBehindModal ? "unset" : "0";
   bottomSheet.style.bottom = authorizeMoveBehindModal ? "0" : "unset";
 
@@ -148,18 +143,13 @@ const updateBottomModalContent = (content, heightAdd = 0, adaptMap = false) => {
   }
   sheetContent.style.maxHeight = `${maxHeightModal}px`;
   if (adaptMap) {
-    document
-      .getElementById("map")
-      .style.setProperty("height", `calc(100vh - 4rem - ${maxHeightModal}px)`);
+    document.getElementById("map").style.setProperty("height", `calc(100vh - 4rem - ${maxHeightModal}px)`);
     map.invalidateSize();
   }
 };
 
 const addDraggingEvents = (e, moveHandler, condition = () => true) => {
-  const [moveEvent, stopEvent] =
-    e.type === "mousedown"
-      ? ["mousemove", "mouseup"]
-      : ["touchmove", "touchend"];
+  const [moveEvent, stopEvent] = e.type === "mousedown" ? ["mousemove", "mouseup"] : ["touchmove", "touchend"];
   dragStart(e);
 
   if (condition()) {
@@ -176,5 +166,4 @@ const addDraggingEvents = (e, moveHandler, condition = () => true) => {
 };
 
 const handleDraggingEvents = (e) => addDraggingEvents(e, dragging);
-const handleDraggingContent = (e) =>
-  addDraggingEvents(e, draggingToBottom, () => bodyModal.scrollTop === 0);
+const handleDraggingContent = (e) => addDraggingEvents(e, draggingToBottom, () => bodyModal.scrollTop === 0);
