@@ -14,6 +14,8 @@ from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import MultiPolygon
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models import Case, F, Q, Value, When
+from django.db.models.functions import Concat
 
 
 class ExteriorRing(models.functions.GeomOutputGeoFunc):
@@ -43,33 +45,45 @@ class Camera(models.Model):
     focus = models.PolygonField(null=True)
     tile = models.CharField(max_length=15, db_index=True)
 
-    @property
-    def color(self):
-        if self.surveillance == "public":
-            return "Red"
-        elif self.surveillance == "indoor":
-            return "Green"
-        elif self.surveillance == "outdoor":
-            return "Blue"
-        return "Black"
+    COLOR_EXPRESSION = Case(
+        When(surveillance="public", then=Value("Red")),
+        When(surveillance="indoor", then=Value("Green")),
+        When(surveillance="outdoor", then=Value("Blue")),
+        default=Value("Black"),
+        output_field=models.CharField()
+    )
 
-    @property
-    def marker(self):
-        if self.camera_type == "fixed":
-            return "fixed" + self.color
-        elif self.camera_type == "panning":
-            return "panning" + self.color
-        elif self.camera_type == "dome":
-            return "dome" + self.color
-        elif self.surveillance_type == "guard":
-            return "guard" + self.color
-        elif self.surveillance_type == "ALPR" or self.surveillance in [
-            "red_light",
-            "level_crossing",
-            "speed_camera",
-        ]:
-            return "traffic"
-        return "cam" + self.color
+    MARKER_EXPRESSION = Case(
+        When(
+            Q(surveillance_type="ALPR") |
+            Q(surveillance__in=["red_light",
+              "level_crossing", "speed_camera"]),
+            then=Value("traffic")
+        ),
+        default=Concat(
+            Case(
+                When(camera_type="fixed", then=Value("fixed")),
+                When(camera_type="panning", then=Value("panning")),
+                When(camera_type="dome", then=Value("dome")),
+                When(surveillance_type="guard", then=Value("guard")),
+                default=Value("cam"),
+            ),
+            COLOR_EXPRESSION  # Re-using the color logic defined above
+        ),
+        output_field=models.CharField()
+    )
+
+    color = models.GeneratedField(
+        expression=COLOR_EXPRESSION,
+        output_field=models.CharField(max_length=10),
+        db_persist=True
+    )
+
+    marker = models.GeneratedField(
+        expression=MARKER_EXPRESSION,
+        output_field=models.CharField(max_length=20),
+        db_persist=True
+    )
 
     def get_camera_height(self):
         """
