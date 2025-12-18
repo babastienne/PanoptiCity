@@ -15,40 +15,31 @@ function initMap() {
     }
   );
 
-  var CartoDB_DarkVoyage = L.tileLayer(
-    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-    {
-      maxNativeZoom: 19,
-      maxZoom: 21,
-      subdomains: "abc",
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      // className: "dark-map-tiles",
-      label: "Map",
-    }
-  );
+  var CartoDB_DarkVoyage = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxNativeZoom: 19,
+    maxZoom: 21,
+    subdomains: "abc",
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    className: "dark-map-tiles",
+    label: "Map",
+  });
 
-  var CartoDB_Voyager = L.tileLayer(
-    "//{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
-    {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: "abcd",
-      maxNativeZoom: 20,
-      maxZoom: 21,
-      label: "Map",
-    }
-  );
+  var CartoDB_Voyager = L.tileLayer("//{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: "abcd",
+    maxNativeZoom: 20,
+    maxZoom: 21,
+    label: "Map",
+  });
 
-  var OpenStreetMap_HOT = L.tileLayer(
-    "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
-    {
-      maxZoom: 21,
-      maxNativeZoom: 19,
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | <a href="https://www.hotosm.org/" target="_blank">Humanitarian OSM Team</a>',
-    }
-  );
+  var OpenStreetMap_HOT = L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
+    maxZoom: 21,
+    maxNativeZoom: 19,
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | <a href="https://www.hotosm.org/" target="_blank">Humanitarian OSM Team</a>',
+  });
 
   // Define dark map theme
   var baseDarkMaps = [CartoDB_DarkVoyage, OpenStreetMap_HOT, esriTiles];
@@ -133,11 +124,9 @@ function getInitialBBox() {
 // Function called when user move the map: it updates the local storage with current BBox
 function updateBBox() {
   let currentBounds = map.getBounds();
-  let stringBBox = `[[${currentBounds.getSouthWest().lat},${
-    currentBounds.getSouthWest().lng
-  }],[${currentBounds.getNorthEast().lat},${
-    currentBounds.getNorthEast().lng
-  }]]`;
+  let stringBBox = `[[${currentBounds.getSouthWest().lat},${currentBounds.getSouthWest().lng}],[${
+    currentBounds.getNorthEast().lat
+  },${currentBounds.getNorthEast().lng}]]`;
   localStorage.setItem("map-bbox", stringBBox);
   window.location.hash = `mapBBox=${stringBBox}`;
 }

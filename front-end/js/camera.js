@@ -285,9 +285,7 @@ function addCameraDetailsData(plotMarker, plot) {
         <tr>
           <th>${TEXTS.identifier}</th>
           <th>
-              <a target="blank" href="https://www.openstreetmap.org/node/${
-                plot.id
-              }">${plot.id}</a>
+              <a target="blank" href="https://www.openstreetmap.org/node/${plot.id}">${plot.id}</a>
           </th>
         </tr>
       </thead>
@@ -303,15 +301,9 @@ function addCameraDetailsData(plotMarker, plot) {
       if (tagsListCamera[x].display) {
         if (tagsListCamera[x]?.options?.[plot.tags[x]]) {
           popupDataTable =
-            popupDataTable +
-            _createTableEntry(
-              tagsListCamera[x].name,
-              tagsListCamera[x].options[plot.tags[x]].name
-            );
+            popupDataTable + _createTableEntry(tagsListCamera[x].name, tagsListCamera[x].options[plot.tags[x]].name);
         } else {
-          popupDataTable =
-            popupDataTable +
-            _createTableEntry(tagsListCamera[x].name, plot.tags[x]);
+          popupDataTable = popupDataTable + _createTableEntry(tagsListCamera[x].name, plot.tags[x]);
         }
       }
     } else {
@@ -320,9 +312,7 @@ function addCameraDetailsData(plotMarker, plot) {
     listAttributes.push(x);
   }
 
-  popupDataTable += `</tbody></table>${_displayEditionButton(
-    listAttributes
-  )}</div>`;
+  popupDataTable += `</tbody></table>${_displayEditionButton(listAttributes)}</div>`;
 
   cancelCameraCreation();
   updateBottomModalContent(popupDataTable);
@@ -340,8 +330,7 @@ function _displayEditionButton(listAttributes) {
   if (OSM.isLoggedIn()) {
     if (
       listAttributes.length < 7 ||
-      (["fixed", "panning"].includes(cameraDetails["camera_type"]) &&
-        listAttributes.length < 9)
+      (["fixed", "panning"].includes(cameraDetails["camera_type"]) && listAttributes.length < 9)
     ) {
       content = `
         <div class="modal-flex-buttons">
@@ -398,9 +387,7 @@ function removeCameraFOVDetail() {
     cameraDetailsPlots = [];
   }
   try {
-    let button = document.getElementById(
-      `button-${cameraDetailsSelectedScenario}`
-    );
+    let button = document.getElementById(`button-${cameraDetailsSelectedScenario}`);
     button.classList.add("secondary");
   } catch (e) {}
 }

@@ -52,8 +52,7 @@ let translatedTexts = {
     cameraMountTrafficSignal: "Traffic signal",
     cameraMountDoorbell: "Doorbell",
     cameraMountAtm: "ATM",
-    cameraDirectionQuestion:
-      "Indicate the direction where the camera is pointed",
+    cameraDirectionQuestion: "Indicate the direction where the camera is pointed",
     cameraDirectionName: "Camera direction",
     cameraZoneQuestion: "What is the surveillance zone ?",
     cameraZoneName: "Surveillance zone",
@@ -73,10 +72,8 @@ let translatedTexts = {
     cameraAngleName: "Angle d'inclinaison de la caméra",
     cameracheckDateName: "Last verification",
     cameraWebcamName: "Webcam",
-    successCreationCameraMsg:
-      "Camera sucessfully created. It will appears on the map in few minutes ...",
-    successUpdateCameraMsg:
-      "Camera sucessfully updated. Map will be updated soon. Thanks for your help.",
+    successCreationCameraMsg: "Camera sucessfully created. It will appears on the map in few minutes ...",
+    successUpdateCameraMsg: "Camera sucessfully updated. Map will be updated soon. Thanks for your help.",
     menuContent: {
       "About this site": `This project's purpose is to help display information about CCTV, cameras, to easily map where they are, what they can see, and get data about their usage in cities. The website also gives you an easy way to contribute into the OpenStreetMap database if you want to add cameras when you see some that are not already known or improve the attributes of existing ones.\nPanoptiCity is a way to act and try to raise awareness about mass surveillance in all cities, to make people realize the amount of cameras around us that they usually not even see. In a time were artifical intelligence is generalizing, it is more than ever the moment to ask ourselves, is it really the model of society we want to build collectively ?`,
       "Why this name ?":
@@ -115,8 +112,7 @@ let translatedTexts = {
     worstScenario: "Élevé",
     noFOV:
       "Il manque des informations sur cette caméra pour pouvoir afficher son champ de vision. N'hésitez pas à contribuer pour enrichir la base de données.",
-    cameraLocationQuestion:
-      "Déplacez la carte pour choisir la position de la caméra",
+    cameraLocationQuestion: "Déplacez la carte pour choisir la position de la caméra",
     cameraLocationName: "Localisation",
     cameraSurveillanceQuestion: "Quel est le type de surveillance ?",
     cameraSurveillanceName: "Type de surveillance",
@@ -137,8 +133,7 @@ let translatedTexts = {
     cameraMountTrafficSignal: "Feu de signalisation",
     cameraMountDoorbell: "Interphone",
     cameraMountAtm: "Distributeur",
-    cameraDirectionQuestion:
-      "Indiquez la direction vers laquelle la caméra est dirigée",
+    cameraDirectionQuestion: "Indiquez la direction vers laquelle la caméra est dirigée",
     cameraDirectionName: "Orientation de la camera",
     cameraZoneQuestion: "Quelle est la zone surveillée ?",
     cameraZoneName: "Zone surveillée",
@@ -158,10 +153,8 @@ let translatedTexts = {
     cameraAngleName: "Angle d'inclinaison de la caméra",
     cameracheckDateName: "Dernière verification",
     cameraWebcamName: "Webcam",
-    successCreationCameraMsg:
-      "Camera créée. La carte sera mise à jour dans quelques minutes ...",
-    successUpdateCameraMsg:
-      "Camera mise à jour. La carte sera rafraichie bientôt. Merci pour votre aide.",
+    successCreationCameraMsg: "Camera créée. La carte sera mise à jour dans quelques minutes ...",
+    successUpdateCameraMsg: "Camera mise à jour. La carte sera rafraichie bientôt. Merci pour votre aide.",
     menuContent: {
       "À propos de ce site": `L'objectif de ce projet est de simplifier l'affichage d'informations autour des caméras de surveillance, afin de les cartographier, savoir ce qu'elles peuvent voir, et avoir des informations à propos de leur usage en ville. Ce site internet offre également un moyen simple pour contribuer des informations dans la base de données d'OpenStreetMap si vous souhaitez ajouter des caméras quand vous en voyez qui ne sont pas sur la plateforme ou si vous souhaitez enrichir leurs attributs.\n PanoptiCity est une manière d'agir et d'essayer de sensibiliser à propos de la surveillance de masse dans toutes les villes, pour que les gens réalisent le volume de caméras autour d'eux qu'on ne voit plus. Dans une ère où l'intelligence artificielle se généralise, c'est plus que jamais le moment de nous demander, si c'est bien ce modèle de société que nous souhaitons construire collectivement ?`,
       "Pourquoi ce nom ?":
