@@ -63,6 +63,13 @@ const showBottomModal = (
     headerModal.addEventListener("touchstart", handleDraggingEvents);
     sheetContent.addEventListener("mousedown", handleDraggingContent);
     sheetContent.addEventListener("touchstart", handleDraggingContent);
+    // Add event listener on escpe key to call hideBottomSheet if pressed
+    document.onkeydown = function (evt) {
+      evt = evt || window.event;
+      if (evt.key === "Escape" || evt.key === "Esc") {
+        hideBottomSheet();
+      }
+    };
   }
 };
 
@@ -93,6 +100,8 @@ const hideBottomSheet = () => {
     sheetContent.removeEventListener("mousedown", handleDraggingContent);
     sheetContent.removeEventListener("touchstart", handleDraggingContent);
   }
+  // Remove on key down listener
+  document.onkeydown = null;
 };
 
 const dragStart = (e) => {
