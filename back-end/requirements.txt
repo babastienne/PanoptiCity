@@ -4,51 +4,52 @@
 #
 #    pip-compile --strip-extras requirements.in
 #
-asgiref==3.8.1
+asgiref==3.11.0
     # via
     #   django
     #   django-cors-headers
-certifi==2025.1.31
+certifi==2025.11.12
     # via requests
-charset-normalizer==3.4.1
+charset-normalizer==3.4.4
     # via requests
 click==8.3.1
     # via mercantile
-debugpy==1.8.17
+debugpy==1.8.19
     # via -r requirements.in
-django==5.1.6
+django==6.0
     # via
     #   -r requirements.in
     #   django-cors-headers
     #   django-filter
     #   djangorestframework
-django-cors-headers==4.7.0
+    #   djangorestframework-gis
+django-cors-headers==4.9.0
     # via -r requirements.in
-django-filter==24.3
+django-filter==25.2
     # via djangorestframework-gis
-djangorestframework==3.15.2
+djangorestframework==3.16.1
     # via
     #   -r requirements.in
     #   djangorestframework-gis
-djangorestframework-gis==1.1
+djangorestframework-gis==1.2.0
     # via -r requirements.in
 gunicorn==23.0.0
     # via -r requirements.in
-idna==3.10
+idna==3.11
     # via requests
 mercantile==1.2.1
     # via -r requirements.in
-osmium==4.0.2
+osmium==4.2.0
     # via -r requirements.in
-packaging==24.2
+packaging==25.0
     # via gunicorn
-psycopg2-binary==2.9.10
+psycopg2-binary==2.9.11
     # via -r requirements.in
-requests==2.32.3
+requests==2.32.5
     # via osmium
-sqlparse==0.5.3
+sqlparse==0.5.4
     # via django
 tqdm==4.67.1
     # via -r requirements.in
-urllib3==2.3.0
+urllib3==2.6.2
     # via requests
