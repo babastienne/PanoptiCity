@@ -23,6 +23,7 @@ jobs:
             **/__init__.py
 
       - name: Install System Dependencies (GDAL)
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y binutils libproj-dev gdal-bin libgdal-dev
