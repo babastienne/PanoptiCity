@@ -4,6 +4,7 @@ OVERPASS_URL = "https://overpass-api.de/api/interpreter"
 
 # --- Choices and constants for Camera and Focus models fields ---
 
+
 class MountChoices(TextChoices):
     WALL = "wall", "wall"
     POLE = "pole", "pole"
@@ -106,3 +107,5 @@ SCENARIOS_COEFFICIENTS = {
         "worst": 5.456,
     }
 }
+
+MAX_CLUSTER_ZOOM = 15

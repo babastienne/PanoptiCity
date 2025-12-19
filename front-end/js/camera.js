@@ -235,11 +235,11 @@ async function getCameraDetails(idCamera) {
   }
 }
 
-async function displayCameraDetails(e) {
+async function displayCameraDetails(marker) {
   // Function called onClick on a camera Marker
-  idCamera = e.target.options.id;
+  idCamera = marker.options.id;
   cameraDetails = await getCameraDetails(idCamera);
-  addCameraDetailsData(e.target, cameraDetails);
+  addCameraDetailsData(marker, cameraDetails);
   _displayCameraFOV("mean");
 }
 

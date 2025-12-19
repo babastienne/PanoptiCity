@@ -79,20 +79,15 @@ function initMap() {
   map.on("moveend", updateBBox);
   // Manage attributions
   map.attributionControl.setPosition("bottomright");
-  map.attributionControl.setPrefix(
-    '<a href="https://github.com/babastienne" target="_blank">Babastienne</a>'
-  );
+  map.attributionControl.setPrefix('<a href="https://github.com/babastienne" target="_blank">Babastienne</a>');
 
   // By default add light switcher (override after by themeSwitcher)
   map.addControl(layerSwitcherLight);
 
   // Create overlay layer with cameras
-  const tilesCams = new L.dataTileLayerCamera(
-    `${BASE_URL_API}/cameras.json?tile={z}/{x}/{y}`,
-    {
-      display: true,
-    }
-  );
+  const tilesCams = new L.dataTileLayerCamera(`${BASE_URL_API}/cameras.json?tile={z}/{x}/{y}`, {
+    display: true,
+  });
   // const overlayMaps = {
   //   Cameras: tilesCams,
   // };
