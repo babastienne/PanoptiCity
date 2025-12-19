@@ -7,10 +7,7 @@
       name="description"
       content="Display the location of surveillance cameras (CCTV) and their field of view. Easily contribute data to OpenStreetMap through a simplified interface"
     />
-    <meta
-      name="keywords"
-      content="CCTV, surveillance, camera, panopticon, cartography, OpenStreetMap"
-    />
+    <meta name="keywords" content="CCTV, surveillance, camera, panopticon, cartography, OpenStreetMap" />
     <meta name="author" content="Babastienne" />
     <link rel="manifest" href="manifest.json" />
     <title>PanoptiCity - A life under surveillance</title>
@@ -40,10 +37,7 @@
                 </label>
 
                 <ul class="menu__box">
-                  <button
-                    class="outline menu__connection"
-                    id="loginButton"
-                  ></button>
+                  <button class="outline menu__connection" id="loginButton"></button>
                   <hr class="menu__hr" />
                   <div id="sideMenuContent"></div>
                 </ul>
@@ -52,11 +46,7 @@
           </ul>
           <ul>
             <li>
-              <img
-                class="logo-img"
-                src="favicon-32x32.png"
-                alt="PanoptiCity Logo"
-              />
+              <img class="logo-img" src="favicon-32x32.png" alt="PanoptiCity Logo" />
               <strong>
                 <h1 id="tr-titleApp">PanoptiCity</h1>
               </strong>
@@ -86,12 +76,7 @@
               </a>
             </li>
             <li class="secondary">
-              <div
-                class="theme-toggle pico"
-                id="tr-themeToggle"
-                data-theme-switcher="true"
-                title="Toggle theme"
-              >
+              <div class="theme-toggle pico" id="tr-themeToggle" data-theme-switcher="true" title="Toggle theme">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   aria-hidden="true"
@@ -141,37 +126,16 @@
     <link rel="stylesheet" href="libs/leaflet/leaflet.css" />
     <script src="libs/leaflet/leaflet.js"></script>
     <!-- Leaflet locate -->
-    <link
-      rel="stylesheet"
-      href="libs/leaflet-locate/L.Control.Locate.min.css"
-    />
-    <script
-      src="libs/leaflet-locate/L.Control.Locate.min.js"
-      charset="utf-8"
-    ></script>
+    <link rel="stylesheet" href="libs/leaflet-locate/L.Control.Locate.min.css" />
+    <script src="libs/leaflet-locate/L.Control.Locate.min.js" charset="utf-8"></script>
     <!-- Leaflet BaseMaps -->
-    <link
-      rel="stylesheet"
-      href="libs/Leaflet.Basemaps/L.Control.Basemaps.css"
-    />
+    <link rel="stylesheet" href="libs/Leaflet.Basemaps/L.Control.Basemaps.css" />
     <!-- Using this local version, modified on L45 until https://github.com/consbio/Leaflet.Basemaps/pull/28 is merged and released -->
-    <script
-      src="libs/Leaflet.Basemaps/L.Control.Basemaps.js"
-      charset="utf-8"
-    ></script>
-    <!-- Leaflet MarkerCluster -->
-    <link
-      rel="stylesheet"
-      href="libs/Leaflet.markercluster-1.4.1/MarkerCluster.css"
-    />
-    <link
-      rel="stylesheet"
-      href="libs/Leaflet.markercluster-1.4.1/MarkerCluster.Default.css"
-    />
-    <script
-      src="libs/Leaflet.markercluster-1.4.1/leaflet.markercluster.js"
-      charset="utf-8"
-    ></script>
+    <script src="libs/Leaflet.Basemaps/L.Control.Basemaps.js" charset="utf-8"></script>
+    <!-- Leaflet OverlappingMarkerSpiderfier -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OverlappingMarkerSpiderfier-Leaflet/0.2.6/oms.min.js"></script>
+    <!-- Load LeafletVectorGrid -->
+    <script src="https://unpkg.com/leaflet.vectorgrid@latest/dist/Leaflet.VectorGrid.bundled.js"></script>
     <!-- Load OSM API JS (https://github.com/k-yle/osm-api-js) -->
     <script src="libs/osm-api-js.js"></script>
 

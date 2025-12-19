@@ -1,12 +1,6 @@
+from cameras.models import Camera
 from rest_framework import serializers
 
-from cameras.models import Camera
-
-MATCHING_LEVEL_COLORS = {
-    'identification': 'purple',
-    'recognition': 'red',
-    'observation': 'green',
-}
 
 class CameraListSerializer(serializers.HyperlinkedModelSerializer):
     lat = serializers.SerializerMethodField()
@@ -50,10 +44,11 @@ class CameraDetailSerializer(serializers.HyperlinkedModelSerializer):
         list_focus = {'best': {}, 'mean': {}, 'worst': {}}
         for elem in obj.camerafocus_set.all():
             list_focus[elem.scenario][elem.level] = (
-                    [[[[round(point[1], 6), round(point[0], 6)] for point in elem] for elem in poly] for poly in elem.geom]
-                    if elem.geom
-                    else None
-                )
+                [[[[round(point[1], 6), round(point[0], 6)] for point in elem]
+                  for elem in poly] for poly in elem.geom]
+                if elem.geom
+                else None
+            )
         return list_focus
 
     class Meta:
@@ -71,3 +66,13 @@ class CameraDetailSerializer(serializers.HyperlinkedModelSerializer):
             "angle",
             "fov",
         ]
+
+
+class CameraClusterSerializer(serializers.Serializer):
+    lat = serializers.FloatField()
+    lon = serializers.FloatField()
+    count = serializers.IntegerField(required=False)
+    is_cluster = serializers.BooleanField(required=False)
+    # FIXME: When https://github.com/encode/django-rest-framework/pull/9775/changes is release change to BigIntegerField
+    id = serializers.IntegerField(required=False)
+    marker = serializers.CharField(required=False)

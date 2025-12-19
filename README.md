@@ -389,7 +389,7 @@ If you notice that I've used your project but don't see it in this list feel fre
 - [Leaflet v1.9.4](https://github.com/Leaflet/Leaflet/releases/tag/v1.9.4) - _BSD 2-Clause License_
 - [Leaflet.Locate v0.83.1](https://github.com/domoritz/leaflet-locatecontrol) - _MIT license_
 - [Leaflet.Basemaps v0.2.1](https://github.com/consbio/Leaflet.Basemaps/releases/tag/0.2.1) - _ISC license_ (used a [forked version](https://github.com/consbio/Leaflet.Basemaps/pull/28))
-- [Leaflet.markercluster v1.5.3](https://github.com/Leaflet/Leaflet.markercluster) - _MIT license_
+- [OverlappingMarkerSpiderfier-Leaflet](https://github.com/jawj/OverlappingMarkerSpiderfier-Leaflet) - No license
 - Map background attributions can be seen directly on map on the website
 
 #### OpenStreetMap
