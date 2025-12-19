@@ -14,7 +14,7 @@ from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import MultiPolygon
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db.models import Case, F, Q, Value, When
+from django.db.models import Case, Q, Value, When
 from django.db.models.functions import Concat
 
 
