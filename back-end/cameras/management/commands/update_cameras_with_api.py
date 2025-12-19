@@ -2,12 +2,10 @@ from datetime import timedelta
 from timeit import default_timer as timer
 
 import osmium
-import requests
 from cameras.models import Building, Camera, CameraFocus, CameraTags
 from cameras.services.camera_creation import create_camera
 from cameras.services.overpass import get_buildings_in_polygon
 from cameras.services.utils import extract_node_data, setup_logger
-from django.contrib.gis.geos import GEOSGeometry, Polygon
 from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
@@ -65,7 +63,8 @@ class Command(BaseCommand):
                 "Are you sure you want to proceed? Type 'YES' to continue: "
             )
             if confirm != "YES":
-                self.stdout.write(self.style.ERROR("Operation cancelled by user."))
+                self.stdout.write(self.style.ERROR(
+                    "Operation cancelled by user."))
                 return 1
         return 0
 
@@ -108,33 +107,40 @@ class Command(BaseCommand):
         success = True
         try:
             # Step 0: Destroying possible existing camera, tags and focus
-            logger.debug("Destroying existing camera, focus and tags if they exists")
+            logger.debug(
+                "Destroying existing camera, focus and tags if they exists")
             CameraFocus.objects.filter(camera_id=camera['id']).delete()
             CameraTags.objects.filter(camera_id=camera['id']).delete()
             Camera.objects.filter(id=camera['id']).delete()
 
             # Step 1: Simulate camera creation without buildings to get the max focus possible
             logger.debug("Simulate camera creation to get maximum focus")
-            camera_to_create, computed_tags, computed_focus = create_camera(camera, logger, [])
+            camera_to_create, computed_tags, computed_focus = create_camera(
+                camera, logger, [])
             if computed_focus:
                 logger.debug("Got focus, converting it to polygon")
-                largest_focus = computed_focus[-1].geom  # We do not take the largest focus as we want the request not to be too heavy
+                # We do not take the largest focus as we want the request not to be too heavy
+                largest_focus = computed_focus[-1].geom
                 # As the computed focus are converted to MultiPolygon to fit with DB, we transform it to a Polgon
                 largest_focus = largest_focus.buffer(0)
 
                 # Step 2: We fetch from overpass the buildings intersecting the focus
                 logger.debug("Fetching buildings intersecting the polygon")
-                intersecting_building = get_buildings_in_polygon(largest_focus, logger)
+                intersecting_building = get_buildings_in_polygon(
+                    largest_focus, logger)
                 logger.debug("Got a response from Overpass")
 
                 # Step 3: We create the fetched buildings in the database and then create for good the camera and tags / focus
                 logger.debug("Creating the buildings in database")
                 Building.objects.bulk_create(intersecting_building)
                 nearby_buildings_qs = Building.objects.all().only('id', 'geom')
-                logger.debug("Computation of the new camera with surrounding buildings")
-                camera_to_create, computed_tags, computed_focus = create_camera(camera, logger, nearby_buildings_qs)
+                logger.debug(
+                    "Computation of the new camera with surrounding buildings")
+                camera_to_create, computed_tags, computed_focus = create_camera(
+                    camera, logger, nearby_buildings_qs)
             else:
-                logger.debug("Focus was empty, camera cannot compute focus. Skipping...")
+                logger.debug(
+                    "Focus was empty, camera cannot compute focus. Skipping...")
             logger.debug(f"Saving the camera {camera['id']} in database")
             camera_to_create.save()
             if computed_tags:
@@ -185,7 +191,8 @@ class Command(BaseCommand):
         logger.info("*************** NEW COMMAND ***************")
         logger.info("Destroying Building database...")
         Building.objects.all().delete()
-        logger.debug("All buildings has been deleted from database. Building table is now empty.")
+        logger.debug(
+            "All buildings has been deleted from database. Building table is now empty.")
 
         cameras_to_import = self.get_cameras_from_file(logger, filename)
 
@@ -194,7 +201,7 @@ class Command(BaseCommand):
 
         with tqdm(total=len(cameras_to_import), desc="Processing cameras", unit=" cameras imported") as pbar_process:
             for camera in cameras_to_import:
-                logger.debug(f"Working on {camera['id']}...")
+                logger.debug("Working on %s...", camera['id'])
                 if self.camera_creation_using_overpass(camera, logger):
                     total_imported += 1
                 else:

@@ -1,4 +1,3 @@
-import logging
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from datetime import timedelta
 from timeit import default_timer as timer

@@ -10,7 +10,7 @@ def get_buildings_in_polygon(search_area_polygon, logger):
     """
     Fetches buildings (excluding roofs) from Overpass API that fall within 
     the given Django Polygon.
-    
+
     :param search_area_polygon: A Django GEOSGeometry (Polygon) object.
     :return: A list of Buildings
     """
@@ -43,26 +43,29 @@ def get_buildings_in_polygon(search_area_polygon, logger):
 
     for attempt in range(1, max_retries + 1):
         try:
-            logger.debug(f"Querying Overpass API (Attempt {attempt}/{max_retries})...")
-            
-            # timeout=60 will raise a requests.exceptions.Timeout if 
+            logger.debug(
+                f"Querying Overpass API (Attempt {attempt}/{max_retries})...")
+
+            # timeout=60 will raise a requests.exceptions.Timeout if
             # the server does not send data for 60 seconds
-            response = requests.post(OVERPASS_URL, data={'data': query}, timeout=60)
+            response = requests.post(
+                OVERPASS_URL, data={'data': query}, timeout=60)
             response.raise_for_status()
-            
+
             # If successful, parse json and break the loop
             data = response.json()
-            break 
+            break
 
         except requests.exceptions.RequestException as e:
             logger.info(f"Attempt {attempt} failed when fetching overpas: {e}")
-            
-            # If we have reached the maximum number of retries, 
+
+            # If we have reached the maximum number of retries,
             # we re-raise the exception to stop the program/command.
             if attempt == max_retries:
-                logger.error("Max retries reached when trying to reach overpass. Raising error.")
+                logger.error(
+                    "Max retries reached when trying to reach overpass. Raising error.")
                 raise e
-            
+
             # It is best practice (especially with Overpass)
             # to wait a few seconds to let the server cool down.
             # We wait 5 seconds, then 10 seconds, etc.
@@ -93,9 +96,10 @@ def get_buildings_in_polygon(search_area_polygon, logger):
 
                 results.append(Building(
                     id=element['id'], osm_id=element['id'], geom=django_poly, tile='xxx'
-                )) # We don't care about the tile in those conditions
+                ))  # We don't care about the tile in those conditions
             except Exception as e:
                 # Sometimes OSM returns self-intersecting or invalid geometries
-                print(f"Skipping invalid geometry for Way {element['id']}: {e}")
+                print(
+                    f"Skipping invalid geometry for Way {element['id']}: {e}")
 
     return results
