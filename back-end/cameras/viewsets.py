@@ -13,9 +13,8 @@ from rest_framework_gis.filters import InBBoxFilter, TMSTileFilter
 
 # ViewSets define the view behavior.
 class CameraViewSet(viewsets.ModelViewSet):
-    queryset = Camera.objects.all().prefetch_related("camerafocus_set")
+    queryset = Camera.objects.all()
     serializer_class = CameraListSerializer
-    detail_serializer_class = CameraDetailSerializer
     bbox_filter_field = "location"
     filter_backends = (InBBoxFilter, TMSTileFilter)
     bbox_filter_include_overlapping = True
