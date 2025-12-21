@@ -5,17 +5,17 @@ var cameraDetailsSelectedScenario = "mean";
 levelsCameraConfiguration = {
   identification: {
     color: "red",
-    weight: 0.5,
+    weight: 0,
     fill: 0.4,
   },
   recognition: {
     color: "orange",
-    weight: 0.5,
+    weight: 0,
     fill: 0.4,
   },
   observation: {
     color: "green",
-    weight: 0.5,
+    weight: 0,
     fill: 0.4,
   },
 };
@@ -403,15 +403,23 @@ function _displayCameraFOV(scenario) {
     button.classList.remove("secondary");
   } catch (e) {}
   let plotDetail;
+  let previousPolygon = [];
   for (elem in cameraDetails.fov[scenario]) {
     if (cameraDetails.fov[scenario][elem]) {
-      plotDetail = new L.Polygon(cameraDetails.fov[scenario][elem], {
-        color: levelsCameraConfiguration[elem].color,
-        weight: levelsCameraConfiguration[elem].weight,
-        fillOpacity: levelsCameraConfiguration[elem].fill,
-      });
+      plotDetail = new L.Polygon(
+        [
+          previousPolygon, // Outer ring substraction
+          cameraDetails.fov[scenario][elem], // Polygon to display
+        ],
+        {
+          color: levelsCameraConfiguration[elem].color,
+          weight: levelsCameraConfiguration[elem].weight,
+          fillOpacity: levelsCameraConfiguration[elem].fill,
+        }
+      );
       map.addLayer(plotDetail);
       cameraDetailsPlots.push(plotDetail);
+      previousPolygon = cameraDetails.fov[scenario][elem];
     }
   }
 }
