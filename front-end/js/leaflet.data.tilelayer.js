@@ -3,6 +3,7 @@
     includes: L.Evented.prototype,
 
     url: null,
+    _abortControllers: {}, // Track controllers per tile
 
     // Layers and tracking
     markersLayer: null, // Standard LayerGroup replacing MarkerClusterGroup
@@ -43,22 +44,41 @@
       var tile = L.DomUtil.create("div", "leaflet-tile");
       var url = L.Util.template(this.url, coords);
 
+      // Handle abortion of request in case of tile removing
+      const key = this._tileCoordsToKey(coords);
+      const controller = new AbortController();
+      this._abortControllers[key] = controller;
+
       // Use fetch for modern implementation
       fetch(url)
         .then((response) => response.json())
         .then((data) => {
+          // If the map moved/zoomed while we were fetching, DISCARD this data.
+          if (!this._map || coords.z !== this._map.getZoom()) {
+            return;
+          }
           this._processData(data, coords.z);
           done(null, tile);
         })
         .catch((err) => {
+          if (err.name === "AbortError") {
+            // Silent catch for intended cancellations
+            return;
+          }
           console.error("Error loading tile data", err);
           done(err, tile);
+        })
+        .finally(() => {
+          delete this._abortControllers[key];
         });
 
       return tile;
     },
 
     _processData(responseData, zoom) {
+      // Extra safety: double check zoom again before looping
+      if (zoom !== this._map.getZoom()) return;
+
       responseData.forEach((item) => {
         if (item.count) {
           this._displayCluster(item, zoom);
@@ -109,10 +129,25 @@
       }
     },
 
+    _removeTile(key) {
+      if (this._abortControllers[key]) {
+        this._abortControllers[key].abort();
+        delete this._abortControllers[key];
+      }
+      L.GridLayer.prototype._removeTile.call(this, key);
+    },
+
     _clearLayers() {
+      // Abort all pending fetches
+      Object.values(this._abortControllers).forEach((c) => c.abort());
+      this._abortControllers = {};
       // Clean everything
       this.markersLayer.clearLayers();
       this.displayedCamerasList.clear();
+
+      if (this.oms) {
+        this.oms.clearMarkers();
+      }
     },
   });
 
