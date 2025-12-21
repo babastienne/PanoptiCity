@@ -241,6 +241,9 @@ async function displayCameraDetails(marker) {
   cameraDetails = await getCameraDetails(idCamera);
   addCameraDetailsData(marker, cameraDetails);
   _displayCameraFOV("mean");
+  if (map.hasLayer(fovLayer)) {
+    fovLayer.removeFrom(map);
+  }
 }
 
 function _transformTagContentInHtml(content) {

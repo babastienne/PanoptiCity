@@ -85,6 +85,9 @@ const hideBottomSheet = () => {
   map.invalidateSize();
   bottomSheet.classList.remove("show");
   document.body.style.overflowY = "auto";
+  if (!map.hasLayer(fovLayer)) {
+    fovLayer.addTo(map);
+  }
   removeCameraFOVDetail();
   if (allowHiding) {
     sheetOverlay.removeEventListener("click", hideBottomSheet);

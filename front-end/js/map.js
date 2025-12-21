@@ -10,14 +10,14 @@ const FOV_STYLES = {
 const LEGEND_GRADES = [
   { label: "Identification", color: FOV_STYLES[1].fillColor },
   { label: "Recognition", color: FOV_STYLES[2].fillColor },
-  { label: "Surveillance", color: FOV_STYLES[3].fillColor },
+  { label: "Observation", color: FOV_STYLES[3].fillColor },
 ];
 
 /**
  * STATE MANAGEMENT (Map Instance & Controls)
  */
 let map;
-let layerSwitcherLight, layerSwitcherDark, zoomControl, locateControl;
+let layerSwitcherLight, layerSwitcherDark, zoomControl, locateControl, fovLayer, tilesCams;
 
 /**
  * LAYER FACTORIES
@@ -164,6 +164,10 @@ function initMap() {
     .setPosition("bottomright");
 
   // 4. Add UI Controls
+  map.attributionControl
+    .setPosition("bottomright")
+    .setPrefix('<a href="https://github.com/babastienne" target="_blank">Babastienne</a>');
+
   zoomControl = L.control
     .zoom({
       zoomOutTitle: TEXTS.mapZoomOut,
@@ -177,14 +181,10 @@ function initMap() {
     })
     .addTo(map);
 
-  map.attributionControl
-    .setPosition("bottomright")
-    .setPrefix('<a href="https://github.com/babastienne" target="_blank">Babastienne</a>');
-
   map.addControl(layerSwitcherLight);
 
   // 5. Add Data Layers
-  const fovLayer = L.vectorGrid
+  fovLayer = L.vectorGrid
     .protobuf(`${BASE_URL_API}/focus/{z}/{x}/{y}/mean/`, {
       minZoom: 14,
       maxNativeZoom: 16,
@@ -199,7 +199,7 @@ function initMap() {
     })
     .addTo(map);
 
-  const tilesCams = new L.dataTileLayerCamera(`${BASE_URL_API}/cameras.json?tile={z}/{x}/{y}`, {
+  tilesCams = new L.dataTileLayerCamera(`${BASE_URL_API}/cameras.json?tile={z}/{x}/{y}`, {
     display: true,
   });
   map.addLayer(tilesCams);
