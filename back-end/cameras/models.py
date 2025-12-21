@@ -208,9 +208,6 @@ class Camera(models.Model):
 
         # Process the raw results and create Polygons/MultiPolygons with difference logic
         for scenario in FocusScenarioChoices.values:
-            previous_polygon = None
-
-            # Important: iterate levels from smallest (identification) -> largest (observation) for the diff logic
             for level in FocusLevelChoices.values:
                 with_intersection = True
                 points_list = raw_results[scenario][level]
@@ -230,9 +227,6 @@ class Camera(models.Model):
                     with_intersection = False
 
                 final_geom = MultiPolygon(poly_4326)
-
-                # Update previous for next iteration
-                previous_polygon = poly_4326
 
                 if scenario == 'mean' and level == 'recognition':
                     # We need the full polygon 4326 for the 'focus' field, not the donut
