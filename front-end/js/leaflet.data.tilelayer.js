@@ -3,18 +3,15 @@
     includes: L.Evented.prototype,
 
     url: null,
-    MIN_ZOOM_TO_DISPLAY_FOCUS: 16,
 
     // Layers and tracking
     markersLayer: null, // Standard LayerGroup replacing MarkerClusterGroup
     displayedCamerasList: null, // Set to prevent duplicates across tiles
-    displayedFocusList: null, // Array to track polygons
     oms: null, // Overlapping Marker Spiderfier instance
 
     initialize(url, options) {
       this.url = url;
       this.displayedCamerasList = new Set();
-      this.displayedFocusList = [];
       this.markersLayer = L.layerGroup();
       L.GridLayer.prototype.initialize.call(this, options);
     },
@@ -44,7 +41,7 @@
 
     createTile(coords, done) {
       var tile = L.DomUtil.create("div", "leaflet-tile");
-      var url = this._expandUrl(this.url, coords);
+      var url = L.Util.template(this.url, coords);
 
       // Use fetch for modern implementation
       fetch(url)
@@ -107,18 +104,6 @@
 
         marker.addTo(this.markersLayer);
         this.displayedCamerasList.add(camera.id);
-
-        // andle focus display
-        if (zoom >= this.MIN_ZOOM_TO_DISPLAY_FOCUS && camera.focus) {
-          const focusPolygon = L.polygon(camera.focus, {
-            color: camera.color || "red",
-            weight: 1,
-            fillOpacity: 0.1,
-            interactive: false, // Don't block camera clicks
-          }).addTo(this._map);
-
-          this.displayedFocusList.push(focusPolygon);
-        }
       } catch (e) {
         console.error(`Error displaying camera ${camera.id}`, e);
       }
@@ -128,20 +113,6 @@
       // Clean everything
       this.markersLayer.clearLayers();
       this.displayedCamerasList.clear();
-
-      this.displayedFocusList.forEach((polygon) => {
-        this._map.removeLayer(polygon);
-      });
-      this.displayedFocusList = [];
-    },
-
-    _expandUrl(template, coords) {
-      let url = L.Util.template(template, coords);
-      // Add focus param if high zoom
-      if (coords.z >= this.MIN_ZOOM_TO_DISPLAY_FOCUS) {
-        url += (url.includes("?") ? "&" : "?") + "focus=1";
-      }
-      return url;
     },
   });
 
