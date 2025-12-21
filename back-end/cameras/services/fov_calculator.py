@@ -10,34 +10,6 @@ class FOVCalculator():
     def __init__(self, camera):
         self.camera = camera
 
-    def compute_diffs_polygons(self, shape_a, shape_b):
-        """
-        Subtracts shape_b from shape_a. Both inputs are in 4326.
-        Returns MultiPolygon in 4326.
-        """
-        if not shape_a.valid:
-            shape_a = shape_a.simplify()
-        if not shape_b.valid:
-            shape_b = shape_b.simplify()
-
-        diff = shape_a - shape_b
-
-        result_poly = MultiPolygon()
-
-        if isinstance(diff, Polygon):
-            diff = MultiPolygon(diff)
-
-        if isinstance(diff, MultiPolygon):
-            for polygon in diff:
-                polygon.srid = 4326
-                # We only want the polygons with area > 3m²...
-                # but area in 4326 is in square degrees
-                # 1 sq degree ~ 1.2e10 sq meters.
-                # 3 sq meters is approx 2.4e-10 sq degrees.
-                if polygon.area > 2.4e-10:
-                    result_poly.append(polygon)
-        return result_poly
-
     def compute_fov_points(self, sorted_configs, buildings, buildings_camera_is_into_ids, max_fov_distance=None):
         """
         Core logic to compute each ray of the FOV of the camera and check for intersections

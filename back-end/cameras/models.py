@@ -229,15 +229,7 @@ class Camera(models.Model):
                     poly_4326 = create_polygon(points_list)
                     with_intersection = False
 
-                # Calculate difference (to create donut shapes)
-                final_geom = None
-                if previous_polygon:
-                    # Subtract previous (smaller) from current (larger)
-                    final_geom = calculator.compute_diffs_polygons(
-                        poly_4326, previous_polygon)
-                else:
-                    # First one (identification)
-                    final_geom = MultiPolygon(poly_4326)
+                final_geom = MultiPolygon(poly_4326)
 
                 # Update previous for next iteration
                 previous_polygon = poly_4326
