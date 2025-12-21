@@ -3,12 +3,54 @@ import math
 from cameras.constants import FocusLevelChoices, FocusScenarioChoices
 from cameras.services.utils import degree_direction_to_radian, get_lat_coef
 from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
-                                     MultiPolygon, Point, Polygon)
+                                     MultiPolygon, Point)
 
 
 class FOVCalculator():
     def __init__(self, camera):
         self.camera = camera
+
+    def _find_closest_intersection_point(self, intersection, origin):
+        """
+        Given an intersection and an origin point, returns the closest intersection
+        point to the origin on the intersection. Usefull to iterate over multi geometries.
+        """
+        hit_point = None
+        if isinstance(intersection, Point):
+            hit_point = intersection
+        elif isinstance(intersection, LineString):
+            hit_point = Point(
+                intersection.coords[0], srid=4326)
+        elif isinstance(intersection, (MultiPoint, MultiLineString, MultiPolygon)):
+            closest_dist = None
+            for geom in intersection:
+                candidate_point = None
+                if isinstance(geom, Point):
+                    candidate_point = geom
+                elif isinstance(geom, LineString):
+                    candidate_point = Point(
+                        geom.coords[0], srid=4326)
+                if candidate_point:
+                    dist = origin.distance(candidate_point)
+                    if closest_dist is None or dist < closest_dist:
+                        closest_dist = dist
+                        hit_point = candidate_point
+        return hit_point
+
+    def _get_camera_rng(self, is_fixed):
+        """
+        Given a camera, returns the range to  compute FOV
+        """
+        if is_fixed and self.camera.direction is not None:
+            # -7 to 7 = 15 iterations ~= 85°
+            rng = range(-7, 8)
+        elif self.camera.camera_type in ["dome", "panning"]:
+            # 6.3 ~= 2pi = 360°
+            rng = range(0, 63)
+        else:
+            # Should not happen because of previous check in the compute_focus method
+            rng = []
+        return rng
 
     def compute_fov_points(self, sorted_configs, buildings, buildings_camera_is_into_ids, max_fov_distance=None):
         """
@@ -24,15 +66,6 @@ class FOVCalculator():
 
         # Determine angular range
         is_fixed = self.camera.camera_type == "fixed"
-        if is_fixed and self.camera.direction is not None:
-            # -7 to 7 = 15 iterations ~= 85°
-            rng = range(-7, 8)
-        elif self.camera.camera_type in ["dome", "panning"]:
-            # 6.3 ~= 2pi = 360°
-            rng = range(0, 63)
-        else:
-            # Should not happen because of previous check in the compute_focus method
-            rng = []
 
         camera_dir_rad = degree_direction_to_radian(
             self.camera.direction) if is_fixed else 0
@@ -43,7 +76,7 @@ class FOVCalculator():
         p_x = None  # Value x of the projected point on the ray
         p_y = None  # Value y of the projected point on the ray
 
-        for x in rng:
+        for x in self._get_camera_rng(is_fixed):
             # -- Compute end of ray point and create LineString representing the ray --
             angle_rad = camera_dir_rad + (x / 10.0)
 
@@ -79,26 +112,8 @@ class FOVCalculator():
                         # Logic to find closest point on intersection line
                         if not intersection.empty:
                             # Find closest point
-                            hit_point = None
-                            if isinstance(intersection, Point):
-                                hit_point = intersection
-                            elif isinstance(intersection, LineString):
-                                hit_point = Point(
-                                    intersection.coords[0], srid=4326)
-                            elif isinstance(intersection, (MultiPoint, MultiLineString, MultiPolygon)):
-                                closest_dist = None
-                                for geom in intersection:
-                                    candidate_point = None
-                                    if isinstance(geom, Point):
-                                        candidate_point = geom
-                                    elif isinstance(geom, LineString):
-                                        candidate_point = Point(
-                                            geom.coords[0], srid=4326)
-                                    if candidate_point:
-                                        dist = origin.distance(candidate_point)
-                                        if closest_dist is None or dist < closest_dist:
-                                            closest_dist = dist
-                                            hit_point = candidate_point
+                            hit_point = self._find_closest_intersection_point(
+                                intersection, origin)
 
                             if hit_point:
                                 # Calculate ratio of distance traveled
