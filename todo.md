@@ -4,7 +4,7 @@
 - [x] OSM Attributions
 - [x] Style for mobile / RWD
 - [ ] ~~Move front code to django app ?~~
-- [ ] Remove "zoom min" frontend map popup ?
+- [x] Remove "zoom min" frontend map popup ?
 
 # Performances
 
@@ -46,9 +46,9 @@
 # Improve field of view for cameras
 
 - [x] Do something with panning cameras > Panning cameras are considered as domes for their FOV
-- [ ] Compute focus depending on the lens / type of camera.
-- [ ] Improve compute of FOV depending on tilt
-- [ ] Adapt angle of FOV depending on focal
+- [x] Compute focus depending on the lens / type of camera.
+- [x] Improve compute of FOV depending on tilt
+- [x] Adapt angle of FOV depending on focal
 
 - Wide-Angle Camera : Lens 2.8mm. Angle 110°. Distance 10m.
 - Standard Camera : Lens 3.6mm. Angle 80°. Distance 15m.
@@ -65,7 +65,7 @@ Ressources :
 # Data
 
 - [x] Import all tags for "brut" object(to enable edition)
-- [ ] Handle nodes containing several cameras (split by : or ;)
+- [~] Handle nodes containing several cameras (split by : or ;)
 
 ## Data import performance
 
@@ -74,12 +74,12 @@ Ressources :
 
 ## Front-end performance
 
-- [ ] Invalidate on-going requests before to deal with movement on the map
+- [x] Invalidate on-going requests before to deal with movement on the map
 - [ ] Storage limit / Size of localStorage > store data via indexDb
 
 ## miscellaneous performance
 
-- [ ] Optim front : Debounce : https://www.freecodecamp.org/news/javascript-debounce-example/
+- [x] Optim front : Debounce : https://www.freecodecamp.org/news/javascript-debounce-example/
 - [x] Optimize localstorage : do not store everything
 - [x] When Z < 16 : don't send focus
 - [x] Never send attributes except on click
