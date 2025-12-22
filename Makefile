@@ -7,3 +7,9 @@ install:
 
 update:
 	/bin/bash ./scripts/update-cameras.sh
+
+start:
+	docker compose up -d
+
+stop:
+	docker compose down

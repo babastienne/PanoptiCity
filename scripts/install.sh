@@ -56,8 +56,10 @@ ensure_env_var "POSTGRES_DB" "postgres" "Enter the name of the Postgres database
 ensure_env_var "POSTGRES_USER" "postgres" "Enter the name of the database user to create"
 ensure_env_var "POSTGRES_PASSWORD" "postgres" "Enter the password for the database user to create"
 ensure_env_var "POSTGRES_PORT" "5452" "Enter the port you want to use to access your database"
-ensure_env_var "ALLOWED_HOSTS" "example.org" "Enter the domain name that will be used for your frontend application"
-ensure_env_var "SERVER_NAME" "api.example.org" "Enter the domain name that will be used for the backend application"
+ensure_env_var "FRONTEND_DOMAIN_NAME" "example.org" "Enter the domain name that will be used for your frontend application"
+ensure_env_var "BACKEND_DOMAIN_NAME" "api.example.org" "Enter the domain name that will be used for the backend application"
+ensure_env_var "CERTBOT_EMAIL" "NO DEFAULT" "Enter the email address that will be associated with the SSL certificates"
+ensure_env_var "CLIENT_ID_OSM_APP" "NO DEFAULT" "Enter the client ID of your OSM app to allow users to connect to OSM"
 
 # Generate a secret key and add it in .env file
 GENERATED_SECRET=$(openssl rand -hex 32)
@@ -77,8 +79,6 @@ NUM_CORES=$(nproc --all || echo 1)
 if [ "$NUM_CORES" -gt 32 ]; then
     NUM_CORES=32
 fi
-
-# TODO: Ask user and auto-generate the front-end configuration file
 
 # Ensure the directory from which this script is run is the project root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -145,6 +145,50 @@ else
     echo "REPLICATION_SERVER_URL=$REPLICATION_SERVER_URL" >> .env
 fi
 echo -e "\033[0;32m-> Replication URL has been added to .env file\033[0m"
+
+# Nginx configuration section
+echo -e "\033[0;32m--- Working on server configuration (NGINX) ---\033[0m"
+echo -e "\033[0;32m-> Starting Nginx in HTTP mode for challenge...\033[0m"
+cp templates/nginx.http.template nginx.conf.template
+docker compose up -d nginx web postgis
+
+sleep 5
+
+echo -e "\033[0;32m-> Requesting Let's Encrypt certificate for $FRONTEND_DOMAIN_NAME and $BACKEND_DOMAIN_NAME...\033[0m"
+
+# Join domains for certbot
+domains="-d $FRONTEND_DOMAIN_NAME -d $BACKEND_DOMAIN_NAME"
+if docker compose run --rm --entrypoint "certbot" certbot certonly \
+    --webroot --webroot-path=/var/www/certbot \
+    --email "$CERTBOT_EMAIL" --agree-tos --no-eff-email \
+    --non-interactive \
+    -d "$FRONTEND_DOMAIN_NAME" -d "$BACKEND_DOMAIN_NAME"; then
+    CERT_SUCCESS=0
+else
+    CERT_SUCCESS=$?
+fi
+
+if [ "$CERT_SUCCESS" -eq 0 ]; then
+    echo -e "\033[0;32m-> SUCCESS: Certificates obtained.\033[0m"
+    echo -e "\033[0;32m-> Switching to SSL configuration...\033[0m"
+    cp templates/nginx.ssl.template nginx.conf.template
+else
+    echo -e "\033[0;32m-> FAILURE: Certbot could not obtain certificates.\033[0m"
+    echo -e "\033[0;32m-> KEEPING HTTP-ONLY configuration as fallback...\033[0m"
+    cp templates/nginx.http.template nginx.conf.template
+fi
+docker compose down
+
+echo -e "\033[0;32m--- Generating the config.js file ---\033[0m"
+if [ "$CERT_SUCCESS" -eq 0 ]; then
+    API_PROTOCOL="https"
+else
+    API_PROTOCOL="http"
+fi
+export API_PROTOCOL
+envsubst '$BACKEND_DOMAIN_NAME $FRONTEND_DOMAIN_NAME $CLIENT_ID_OSM_APP $API_PROTOCOL' \
+    < templates/config.js.template \
+    > front-end/CONFIG.js
 
 
 # TODO: Run the website and configure the auto-update of cameras

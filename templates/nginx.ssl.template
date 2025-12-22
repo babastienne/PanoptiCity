@@ -1,0 +1,53 @@
+proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=my_api_cache:10m max_size=1g inactive=60m use_temp_path=off;
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name ${FRONTEND_DOMAIN_NAME} ${BACKEND_DOMAIN_NAME};
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name ${BACKEND_DOMAIN_NAME};
+
+    ssl_certificate /etc/letsencrypt/live/${FRONTEND_DOMAIN_NAME}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${FRONTEND_DOMAIN_NAME}/privkey.pem;
+
+    location / {
+        proxy_pass http://web:8000;
+        proxy_cache my_api_cache;
+        proxy_cache_valid 200 302 10m;
+        add_header X-Proxy-Cache $upstream_cache_status;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        add_header Access-Control-Allow-Origin * always;
+    }
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name ${FRONTEND_DOMAIN_NAME};
+
+    ssl_certificate /etc/letsencrypt/live/${FRONTEND_DOMAIN_NAME}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${FRONTEND_DOMAIN_NAME}/privkey.pem;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
