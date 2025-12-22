@@ -15,3 +15,4 @@ back-end/venv*
 *.old
 *.prof
 *.log
+nginx.conf.template
