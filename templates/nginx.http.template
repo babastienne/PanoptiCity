@@ -1,16 +1,46 @@
-proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=my_api_cache:10m max_size=1g inactive=60m use_temp_path=off;
+proxy_cache_path /var/cache/nginx/cameras levels=1:2 keys_zone=cameras_cache:20m max_size=5g;
+proxy_cache_path /var/cache/nginx/focus levels=1:2 keys_zone=focus_cache:20m max_size=5g;
 
 server {
     listen 80;
     server_name ${BACKEND_DOMAIN_NAME};
 
+    location /api/cameras {
+        proxy_pass http://web:8000;
+
+        proxy_cache cameras_cache;
+        proxy_cache_key "$host$request_uri";
+        proxy_cache_valid 200 204 365d;
+        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+        add_header X-Cache-Status $upstream_cache_status;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        add_header Access-Control-Allow-Origin * always;
+    }
+
+    location /api/focus {
+        proxy_pass http://web:8000;
+
+        proxy_cache focus_cache;
+        proxy_cache_key "$host$request_uri";
+        proxy_cache_valid 200 204 365d;
+        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+        add_header X-Cache-Status $upstream_cache_status;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        add_header Access-Control-Allow-Origin * always;
+    }
+
     location / {
         proxy_pass http://web:8000;
-        
-        proxy_cache my_api_cache;
-        proxy_cache_valid 200 302 10m;
-        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
-        add_header X-Proxy-Cache $upstream_cache_status;
 
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
