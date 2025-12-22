@@ -3,6 +3,7 @@ import math
 
 import mercantile
 from django.contrib.gis.geos import Polygon
+from django.db.models import Q
 
 
 def setup_logger(log_file, verbose):
@@ -59,15 +60,38 @@ def get_lat_coef(point):
     return 1.0 / math.cos(point.y * math.pi / 180)
 
 
-def get_neighboring_tiles(tile):
+def get_neighboring_tiles(tile_quadkey, tile_model):
     """
     Given a tile (quadkey string), return a list of neighboring tiles including itself.
+    This take into account the fact that we work with an adaptive grid.
+    s
+    :param tile_quadkey: The quadkey string to find neighbors for.
+    :param tile_model: The Tile model to use for querying.
     """
-    mercan_tile = mercantile.quadkey_to_tile(tile)
-    list_tiles = [mercantile.quadkey(neighbor)
-                  for neighbor in mercantile.neighbors(mercan_tile)]
-    list_tiles.append(tile)
-    return list_tiles
+    tile = mercantile.quadkey_to_tile(tile_quadkey)
+
+    # Get the 8 standard neighbors at the SAME level + the tile itself
+    theoretical_neighbors = [mercantile.quadkey(n)
+                             for n in mercantile.neighbors(tile)]
+    theoretical_neighbors.append(tile_quadkey)
+
+    # Build a set of all possible ancestors for these 9 tiles
+    # If a neighbor is '120222', ancestors are {'1', '12', '120', '1202', '12022'}
+    ancestors_and_exact = set()
+    for qk in theoretical_neighbors:
+        for i in range(1, len(qk) + 1):
+            ancestors_and_exact.add(qk[:i])
+
+    # Construct the query
+    # We look for tiles whose id is in our ancestor list
+    # OR tiles that start with any of our 9 theoretical neighbors (= childrens)
+    query = Q(id__in=ancestors_and_exact)
+
+    # Children checks (id starts with theoretical_neighbor)
+    for qk in theoretical_neighbors:
+        query |= Q(id__startswith=qk)
+
+    return tile_model.objects.filter(query).distinct().values_list('id', flat=True)
 
 
 def degree_direction_to_radian(direction_degrees):

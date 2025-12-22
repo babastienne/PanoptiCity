@@ -171,7 +171,7 @@ class Camera(models.Model):
         calculator = FOVCalculator(self)
 
         if not nearby_buildings_qs:
-            neighboring_tiles = get_neighboring_tiles(self.tile)
+            neighboring_tiles = get_neighboring_tiles(self.tile, Tile)
             # Fetch buildings associated to the camera
             # We need the max possible distance to filter the DB query efficiently
             # Because configs are sorted descending we take the first one
