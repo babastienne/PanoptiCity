@@ -37,7 +37,7 @@ class FOVCalculator():
                         hit_point = candidate_point
         return hit_point
 
-    def _get_camera_rng(self, is_fixed):
+    def _get_camera_range(self, is_fixed):
         """
         Given a camera, returns the range to  compute FOV
         """
@@ -76,7 +76,7 @@ class FOVCalculator():
         p_x = None  # Value x of the projected point on the ray
         p_y = None  # Value y of the projected point on the ray
 
-        for x in self._get_camera_rng(is_fixed):
+        for x in self._get_camera_range(is_fixed):
             # -- Compute end of ray point and create LineString representing the ray --
             angle_rad = camera_dir_rad + (x / 10.0)
 
