@@ -1,0 +1,39 @@
+title: PanoptiCity
+description: All you wan learn about the PanoptiCity project !
+remote_theme: just-the-docs/just-the-docs
+favicon_ico: "/images/favicon.ico"
+
+url: https://babastienne.github.io/PanoptiCity
+baseurl: "/PanoptiCity"
+repository: babastienne/panopticity
+
+aux_links:
+  Go to PanoptiCity.fr: https://panopticity.fr
+aux_links_new_tab: true
+
+# Back to top link
+back_to_top: true
+back_to_top_text: "Back to top"
+
+footer_content: 'Copyright &copy; 2025 Babastienne. Distributed by a <a href="https://github.com/babastienne/PanoptiCity/blob/main/LICENSE">Cooperative Non-Violent Non-AI Public Software license.</a>'
+
+mermaid:
+  # Version of mermaid library
+  # Pick an available version from https://cdn.jsdelivr.net/npm/mermaid/
+  version: "9.1.3"
+
+callouts:
+  highlight:
+    color: yellow
+  important:
+    title: Important
+    color: blue
+  new:
+    title: New
+    color: green
+  note:
+    title: Note
+    color: purple
+  warning:
+    title: Warning
+    color: red

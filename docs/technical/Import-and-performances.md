@@ -1,15 +1,25 @@
-- [Performances for the import procedure](#performances-for-the-import-procedure)
-  - [Performances and optimizations](#performances-and-optimizations)
-    - [Multi-processing when loading cameras](#multi-processing-when-loading-cameras)
-    - [Keep only necessary buildings](#keep-only-necessary-buildings)
-    - [QuadTiles usage](#quadtiles-usage)
-  - [Import time and database size](#import-time-and-database-size)
+---
+title: Import procedure and performances
+parent: Development and architecture
+nav_order: 1
+---
 
-# Performances for the import procedure
+# Import performances
+{: .no_toc }
+
+
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 Loading data for a specific area (ctiy, region, even country) can be pretty quick. To do so, multiple optimization has been made to save time but still computing field of views for each camera, depending on surrounding buildings.
 
-> **Warning**: If you want to load the entire planet be aware that it will take multiple hours to load and consume a large amount of space on your server, mainly because we need to store a lot of buildings. We strongly advise you to start with small areas and build your way up with bigger files later, to avoid bad surprises.
+{: .warning }
+If you want to load the entire planet be aware that it will take multiple hours to load and consume a large amount of space on your server, mainly because we need to store a lot of buildings. We strongly advise you to start with small areas and build your way up with bigger files later, to avoid bad surprises.
 
 ## Performances and optimizations
 
@@ -42,7 +52,7 @@ To handle data, we store a tiles table. Buildings and cameras are all associated
 
 We use the [QuadTiles system](https://wiki.openstreetmap.org/wiki/QuadTiles). To avoid having millions of tiles, the system used is an adaptative grid that covers desertic areas (oceans, forest, etc.) with large tiles while urban areas with a lot of buildings are using small tiles. In total the world has been splitted into 101 191 squares covering the entire planet.
 
-![QuadTiles visualization in Qgis](/docs/images/quadtiles.png)
+![QuadTiles visualization in Qgis](/PanoptiCity/images/quadtiles.png)
 _Visualization of the created and imported tiles in QGis_
 
 The generated tiles used in this project had been computed using the _GHS-BUILT-S_ dataset representing the built up surface in a grid where 1 pixel = 1 square kilometer. This is an open an free dataset created by the European Union ([source](https://data.europa.eu/data/datasets/9f06f36f-4b11-47ec-abb0-4f8b7b1d72ea)).
@@ -51,7 +61,7 @@ To transform this dataset into tiles, multiple steps were involved including: tr
 
 You don't need to adapt the QuadTiles used for your project. Except if you are really looking to optimize your database and then it might be interesting to generate a Tile table covering only your area, but it is probably not worth the effort.
 
-<details><sumary>Detailed steps and scripts used</sumary>
+<details markdown="block"><sumary>Detailed steps and scripts used</sumary>
 
 1. Download the dataset from the [official site](https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/). You can choose between different years and projections. I choose the 2030 scenario with the 4326 projection (`GHS_BUILT_S_E2030_GLOBE_R2023A_4326_30ss`).
 2. Transform the dataset into a quadtiles gpkg. You can use the following script and adapt it depending on the number of tiles or the max zoom level you want. Be aware that when computing field of view for cameras, only the buildings from the camera tiles and it's 8 neighbourgs will be retrieve from the database. So if you choose too small tiles it might not work well with very long focus, but it might speed up the process.

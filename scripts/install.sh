@@ -54,13 +54,13 @@ ensure_env_var() {
 
 ensure_env_var "POSTGRES_DB" "postgres" "Enter the name of the Postgres database to create"
 ensure_env_var "POSTGRES_USER" "postgres" "Enter the name of the database user to create"
-ensure_env_var "POSTGRES_PASSWORD" "postgres" "Enter the password for the database user to create"
+POSTGRES_GENERATED_PWD=$(openssl rand -hex 32)
+ensure_env_var "POSTGRES_PASSWORD" "$POSTGRES_GENERATED_PWD" "Enter the password for the database user to create"
 ensure_env_var "POSTGRES_PORT" "5452" "Enter the port you want to use to access your database"
 ensure_env_var "FRONTEND_DOMAIN_NAME" "example.org" "Enter the domain name that will be used for your frontend application"
 ensure_env_var "BACKEND_DOMAIN_NAME" "api.example.org" "Enter the domain name that will be used for the backend application"
 ensure_env_var "CERTBOT_EMAIL" "NO DEFAULT" "Enter the email address that will be associated with the SSL certificates"
 ensure_env_var "CLIENT_ID_OSM_APP" "NO DEFAULT" "Enter the client ID of your OSM app to allow users to connect to OSM"
-ensure_env_var "UPDATE_WITH_OVERPASS" "y" "Do you want to make your cameras updates with overpass API (longer but smaller DB) ? (y/n)"
 
 # Generate a secret key and add it in .env file
 GENERATED_SECRET=$(openssl rand -hex 32)
@@ -154,12 +154,8 @@ fi
 echo -e "\033[0;32m-> Replication URL has been added to .env file\033[0m"
 
 
-# If UPDATE_WITH_OVERPASS is 'y' or 'yes' we drop the building table
-if [[ "$UPDATE_WITH_OVERPASS" =~ ^[Yy](es)?$ ]]; then
-    echo -e "\033[0;32m--- Dropping buildings table to reduce database size ---\033[0m"
-    docker compose exec -T postgis psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "TRUNCATE cameras_building;"
-fi
-
+echo -e "\033[0;32m--- Dropping buildings table to reduce database size ---\033[0m"
+docker compose exec -T postgis psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "TRUNCATE cameras_building;"
 
 # Nginx configuration section
 echo -e "\033[0;32m--- Working on server configuration (NGINX) ---\033[0m"
