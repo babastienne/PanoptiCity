@@ -23,14 +23,23 @@ server {
     ssl_certificate /etc/letsencrypt/live/${FRONTEND_DOMAIN_NAME}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/${FRONTEND_DOMAIN_NAME}/privkey.pem;
 
+    set $bypass_cache 0;
+    if ($http_x_purge_token = ${NGINX_CACHE_SECRET_KEY}) {
+        set $bypass_cache 1;
+    }
+
     location /api/cameras {
         proxy_pass http://web:8000;
 
         proxy_cache cameras_cache;
-        proxy_cache_key "$host$request_uri";
+        proxy_cache_key "$request_uri";
         proxy_cache_valid 200 204 365d;
         proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
         add_header X-Cache-Status $upstream_cache_status;
+
+        # If bypass_cache is 1, Nginx fetches from Django and overwrites the cache
+        proxy_cache_bypass $bypass_cache;
+        proxy_ignore_headers Vary;
 
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -44,10 +53,14 @@ server {
         proxy_pass http://web:8000;
 
         proxy_cache focus_cache;
-        proxy_cache_key "$host$request_uri";
+        proxy_cache_key "$request_uri";
         proxy_cache_valid 200 204 365d;
         proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
         add_header X-Cache-Status $upstream_cache_status;
+
+        # If bypass_cache is 1, Nginx fetches from Django and overwrites the cache
+        proxy_cache_bypass $bypass_cache;
+        proxy_ignore_headers Vary;
 
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
