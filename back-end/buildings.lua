@@ -64,17 +64,18 @@ function osm2pgsql.process_way(object)
 end
 
 function osm2pgsql.process_relation(object)
-    -- FIXME: Handle use case chen the multipolygon contains a roof and a building (filter when iterating geometries?)
     if object.tags.type == 'multipolygon' and object.tags.building then
         -- From the relation we get multipolygons...
         local mp = object:as_multipolygon()
         if cameras:first_intersecting(mp) then
             -- ...and split them into polygons which we insert into the table
             for geom in mp:geometries() do
-                buildings:insert({
-                    geom = geom,
-                    tile = tiles:first_intersecting(geom)
-                })
+                if object.tags.building ~= 'roof' then
+                    buildings:insert({
+                        geom = geom,
+                        tile = tiles:first_intersecting(geom)
+                    })
+                end
             end
         end
     end
