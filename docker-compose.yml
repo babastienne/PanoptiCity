@@ -58,6 +58,7 @@ services:
     environment:
       - BACKEND_DOMAIN_NAME=${BACKEND_DOMAIN_NAME}
       - FRONTEND_DOMAIN_NAME=${FRONTEND_DOMAIN_NAME}
+      - NGINX_CACHE_SECRET_KEY=${NGINX_CACHE_SECRET_KEY}
     volumes:
       # Mount the active config as a template (envsubst will put it in /etc/nginx/conf.d/default.conf)
       - ./nginx.conf.template:/etc/nginx/templates/default.conf.template:ro

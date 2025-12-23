@@ -1,6 +1,6 @@
 delete_database:
 	docker compose down
-	docker volume rm panopticity_postgis_data
+	docker volume rm panopticity_postgis_data panopticity_certbot_etc panopticity_nginx_cache panopticity_certbot_var
 
 install:
 	/bin/bash ./scripts/install.sh

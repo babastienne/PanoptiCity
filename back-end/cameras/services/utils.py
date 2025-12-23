@@ -1,7 +1,9 @@
 import logging
 import math
+import os
 
 import mercantile
+import requests
 from django.contrib.gis.geos import Polygon
 from django.db.models import Q
 
@@ -92,6 +94,80 @@ def get_neighboring_tiles(tile_quadkey, tile_model):
         query |= Q(id__startswith=qk)
 
     return tile_model.objects.filter(query).distinct().values_list('id', flat=True)
+
+
+def get_containing_tiles(lat, lon, min_zoom=4, max_zoom=21):
+    """
+    Returns a list of (z, x, y) tuples representing all tiles containing a point.
+    """
+    return [(*mercantile.tile(lon, lat, z),) for z in range(min_zoom, max_zoom + 1)]
+
+
+def get_tiles_for_polygon(polygon, min_zoom=14, max_zoom=16):
+    """
+    Returns a set of (x, y, z) tuples for all tiles covering a polygon's extent.
+    """
+    # .extent returns (xmin, ymin, xmax, ymax) -> (west, south, east, north)
+    west, south, east, north = polygon.extent
+
+    affected_tiles = set()
+
+    for z in range(min_zoom, max_zoom + 1):
+        # mercantile.tiles returns a generator of Tile(x, y, z) objects
+        tiles = mercantile.tiles(west, south, east, north, z)
+        for t in tiles:
+            affected_tiles.add((t.x, t.y, t.z))
+
+    return affected_tiles
+
+
+def purge_camera_tiles(camera):
+    """
+    Given a camera, compute associated tiles and invalidate the
+    nginx cache for those tiles
+    """
+    lat, lon = camera.location.y, camera.location.x
+
+    affected = get_containing_tiles(lat, lon)
+
+    base_url = "http://nginx/api/cameras"
+    headers = {
+        "Host": os.getenv('BACKEND_DOMAIN_NAME', 'localhost'),
+        "X-Purge-Token": os.getenv('NGINX_CACHE_SECRET_KEY', '')
+    }
+
+    for x, y, z in affected:
+        tile_url = f"{base_url}.json?tile={z}/{x}/{y}"
+        try:
+            requests.get(tile_url, headers=headers, timeout=0.5)
+        except requests.RequestException:
+            pass
+    cam_url = f"{base_url}/{camera.id}.json"
+    try:
+        requests.get(cam_url, headers=headers, timeout=0.5)
+    except requests.RequestException:
+        pass
+
+
+def purge_focus_tiles(tiles_with_scenario):
+    """
+    tiles_with_scenario: a set of tuples (x, y, z, scenario)
+    """
+    base_url = "http://nginx/api/focus"
+    headers = {
+        "Host": os.getenv('BACKEND_DOMAIN_NAME', 'localhost'),
+        "X-Purge-Token": os.getenv('NGINX_CACHE_SECRET_KEY', '')
+    }
+
+    for x, y, z, scenario in tiles_with_scenario:
+        tile_url = f"{base_url}/{z}/{x}/{y}/{scenario}/"
+        try:
+            # Using a short timeout is good practice
+            requests.get(tile_url, headers=headers, timeout=0.5)
+        except requests.RequestException as e:
+            # Log the error instead of just printing
+            print(f"Purge failed for {tile_url}: {e}")
+            pass
 
 
 def degree_direction_to_radian(direction_degrees):

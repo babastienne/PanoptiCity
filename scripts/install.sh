@@ -60,10 +60,15 @@ ensure_env_var "FRONTEND_DOMAIN_NAME" "example.org" "Enter the domain name that 
 ensure_env_var "BACKEND_DOMAIN_NAME" "api.example.org" "Enter the domain name that will be used for the backend application"
 ensure_env_var "CERTBOT_EMAIL" "NO DEFAULT" "Enter the email address that will be associated with the SSL certificates"
 ensure_env_var "CLIENT_ID_OSM_APP" "NO DEFAULT" "Enter the client ID of your OSM app to allow users to connect to OSM"
+ensure_env_var "UPDATE_WITH_OVERPASS" "y" "Do you want to make your cameras updates with overpass API (longer but smaller DB) ? (y/n)"
 
 # Generate a secret key and add it in .env file
 GENERATED_SECRET=$(openssl rand -hex 32)
-ensure_env_var "SECRET_KEY" "$GENERATED_SECRET" "Do you want to override the generated secret key ?"
+ensure_env_var "SECRET_KEY" "$GENERATED_SECRET" "Do you want to override the generated secret key ? (enter to skip)"
+
+# Generate a secret key and add it in .env file
+NGINX_GENERATED_SECRET=$(openssl rand -hex 32)
+ensure_env_var "NGINX_CACHE_SECRET_KEY" "$NGINX_GENERATED_SECRET" "Do you want to override the generated secret key for invalidating cache in nginx ? (enter to skip)"
 
 
 # Load environment variables from .env into the script
@@ -125,9 +130,11 @@ docker compose run --remove-orphans osm2pgsql -O flex -S /data/buildings.lua /os
 
 # Import cameras
 echo -e "\033[0;32m--- Import cameras and compute their focus ---\033[0m"
+docker compose exec -T postgis psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "TRUNCATE cameras_cameratags CASCADE; TRUNCATE cameras_camerafocus CASCADE; TRUNCATE cameras_camera CASCADE;"
 echo -e "\033[0;33m(Warning: This can be long depending on the covered area)\033[0m"
 echo -e "\033[0;33mTo speed up the process we're using multi-processing with $NUM_CORES cores.\033[0m"
-docker compose run --remove-orphans --rm web ./manage.py load_cameras --recreate -w "$NUM_CORES" /osm-data/$OSM_FILE_NAME
+echo -e "\033[0;33m->You can follow logs in back-end/update_cameras.log\033[0m"
+docker compose run --remove-orphans --rm web ./manage.py load_cameras -w "$NUM_CORES" /osm-data/$OSM_FILE_NAME
 
 # TODO: Create nginx configuration
 
@@ -145,6 +152,14 @@ else
     echo "REPLICATION_SERVER_URL=$REPLICATION_SERVER_URL" >> .env
 fi
 echo -e "\033[0;32m-> Replication URL has been added to .env file\033[0m"
+
+
+# If UPDATE_WITH_OVERPASS is 'y' or 'yes' we drop the building table
+if [[ "$UPDATE_WITH_OVERPASS" =~ ^[Yy](es)?$ ]]; then
+    echo -e "\033[0;32m--- Dropping buildings table to reduce database size ---\033[0m"
+    docker compose exec -T postgis psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "TRUNCATE cameras_building;"
+fi
+
 
 # Nginx configuration section
 echo -e "\033[0;32m--- Working on server configuration (NGINX) ---\033[0m"

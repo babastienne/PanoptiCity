@@ -10,6 +10,7 @@ osm-data/
 
 # Env file
 .env
+.env.bak
 nginx.conf
 back-end/venv*
 *.old

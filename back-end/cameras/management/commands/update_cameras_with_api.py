@@ -5,7 +5,9 @@ import osmium
 from cameras.models import Building, Camera, CameraFocus, CameraTags
 from cameras.services.camera_creation import create_camera
 from cameras.services.overpass import get_buildings_in_polygon
-from cameras.services.utils import extract_node_data, setup_logger
+from cameras.services.utils import (extract_node_data, get_tiles_for_polygon,
+                                    purge_camera_tiles, purge_focus_tiles,
+                                    setup_logger)
 from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
@@ -96,6 +98,7 @@ class Command(BaseCommand):
         - Creation inthe DB of the returned buildings from overpass
         - Computation of the real objects (camera, tags, focus)
         - Saving everything in DB and dropping buildings
+        - Updating nginx cache
 
         This is far from optimal but given the low number of cameras to update it is
         good enough.
@@ -107,6 +110,20 @@ class Command(BaseCommand):
         success = True
         try:
             # Step 0: Destroying possible existing camera, tags and focus
+            logger.debug(
+                "Storing existing focus location to update cache")
+            observation_focuses_to_delete = CameraFocus.objects.filter(
+                camera_id=camera['id'],
+                level="observation"
+            )
+            tiles_to_purge = set()
+            # We need to track which scenario each tile belongs to
+            # Using a set of tuples: (x, y, z, scenario)
+            for focus in observation_focuses_to_delete:
+                tiles = get_tiles_for_polygon(focus.geom)
+                for x, y, z in tiles:
+                    tiles_to_purge.add((x, y, z, focus.scenario))
+
             logger.debug(
                 "Destroying existing camera, focus and tags if they exists")
             CameraFocus.objects.filter(camera_id=camera['id']).delete()
@@ -151,17 +168,29 @@ class Command(BaseCommand):
                     update_fields=['value'],
                     unique_fields=['camera_id', 'name']
                 )
+            purge_camera_tiles(camera_to_create)
             if computed_focus:
                 logger.debug("Saving the computed focus in database")
-                CameraFocus.objects.bulk_create(
-                    computed_focus,
-                    update_conflicts=True,
-                    update_fields=['geom', 'with_intersection'],
-                    unique_fields=['camera_id', 'scenario', 'level']
-                )
+                for focus in computed_focus:
+                    new_obj = CameraFocus.objects.create(
+                        camera_id=focus.camera_id,
+                        scenario=focus.scenario,
+                        level=focus.level,
+                        geom=focus.geom,
+                        with_intersection=focus.with_intersection
+                    )
+
+                    if new_obj.level == "observation":
+                        new_tiles = get_tiles_for_polygon(new_obj.geom)
+                        for x, y, z in new_tiles:
+                            tiles_to_purge.add((x, y, z, new_obj.scenario))
 
             # Step 4: We flush the building database again
             Building.objects.all().delete()
+
+            # Step 5: Updating nginx cache
+            if tiles_to_purge:
+                purge_focus_tiles(tiles_to_purge)
 
         except Exception as e:
             error_message = f"CRITICAL: Error while trying to handle camera creation.\nSkipping a camera...\nError: {e}"

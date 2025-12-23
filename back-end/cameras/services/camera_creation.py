@@ -2,6 +2,8 @@ import logging
 import os
 
 from cameras.models import Camera, CameraFocus, CameraTags, Tile
+from cameras.services.utils import (get_tiles_for_polygon, purge_camera_tiles,
+                                    purge_focus_tiles)
 from django.contrib.gis.geos import Point
 from django.db import connections
 
@@ -75,7 +77,21 @@ def process_camera_batch(camera_data_list, update=False, verbose=False, log_file
             logger.error("Error processing camera %s: %s", data['id'], e)
             continue
 
+    tiles_to_purge = set()
     if update:
+        logger.debug(
+            "Storing existing focus location to update cache")
+        observation_focuses_to_delete = CameraFocus.objects.filter(
+            camera_id__in=existing_ids,
+            level="observation"
+        )
+        # We need to track which scenario each tile belongs to
+        # Using a set of tuples: (x, y, z, scenario)
+        for focus in observation_focuses_to_delete:
+            tiles = get_tiles_for_polygon(focus.geom)
+            for x, y, z in tiles:
+                tiles_to_purge.add((x, y, z, focus.scenario))
+
         CameraFocus.objects.filter(camera_id__in=existing_ids).delete()
         CameraTags.objects.filter(camera_id__in=existing_ids).delete()
         Camera.objects.filter(id__in=existing_ids).delete()
@@ -96,6 +112,9 @@ def process_camera_batch(camera_data_list, update=False, verbose=False, log_file
             update_fields=['value'],
             unique_fields=['camera_id', 'name']
         )
+    if update:
+        for cam in Camera.objects.filter(id__in=existing_ids):
+            purge_camera_tiles(cam)
     if focus_to_create:
         CameraFocus.objects.bulk_create(
             focus_to_create,
@@ -103,6 +122,19 @@ def process_camera_batch(camera_data_list, update=False, verbose=False, log_file
             update_fields=['geom', 'with_intersection'],
             unique_fields=['camera_id', 'scenario', 'level']
         )
+        if update:
+            observation_focuses_to_update = CameraFocus.objects.filter(
+                camera_id__in=existing_ids,
+                level="observation"
+            )
+            for focus in observation_focuses_to_update:
+                tiles = get_tiles_for_polygon(focus.geom)
+                for x, y, z in tiles:
+                    tiles_to_purge.add((x, y, z, focus.scenario))
+    if tiles_to_purge:
+        logger.debug(
+            "Purging nginx cache for focuses")
+        purge_focus_tiles(tiles_to_purge)
 
     # Cleanup
     for conn in connections.all():
