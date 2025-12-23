@@ -31,12 +31,7 @@ fi
 
 echo -e "\033[0;32m--- Applying diffs on the database ---\033[0m"
 echo -e "\033[0;33m->You can follow logs in back-end/update_cameras.log\033[0m"
-# If UPDATE_WITH_OVERPASS is 'y' or 'yes' we call update, else load_cameras
-if [[ "$UPDATE_WITH_OVERPASS" =~ ^[Yy](es)?$ ]]; then
-    docker compose run --rm web ./manage.py update_cameras_with_api /osm-data/diff.osc.gz -y -d
-else
-    docker compose run --rm web ./manage.py load_cameras -d -r /osm-data/diff.osc.gz
-fi
+docker compose run --rm web ./manage.py update_cameras_with_api /osm-data/diff.osc.gz -y -d
 
 # echo -e "\033[0;32m--- Saving the new state file sequence ---\033[0m"
 # docker compose run --rm web pyosmium-get-changes -O /osm-data/diff.osc.gz  -f /osm-data/sequence.state.txt
