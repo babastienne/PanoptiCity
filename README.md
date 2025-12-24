@@ -41,18 +41,6 @@ To discover all the features, go to [panopticity.fr](https://panopticity.fr/) !
 
 ## Installation
 
-Thank you for your interest in this project. This section will guide you to facilitate the installation, configuration and run of the project on your server.
-
-If you encounter any problem feel free to [open an issue](https://github.com/babastienne/PanoptiCity/issues/new) to ask for support.
-
-### Download the project and requirements
-
-To run this application you'll need docker.
-
-1. If not done already, [install docker](https://docs.docker.com/engine/install/) on the server.
-2. Download this project : `git clone https://github.com/babastienne/panopticity`
-3. Go to the downloaded folder : `cd panopticity`
-
 ### Set project environement
 
 Define some variables used by the application by editing environment variables :
@@ -68,34 +56,6 @@ It is now time to launch the project for the first time :
 1. Initialize the database by running `docker compose run --rm postgis`. When you see `database system is ready to accept connections` you can exit by doing `ctr+c` (should not take more than a few seconds).
 2. Then create the database structure by applying Django migration. To do so run: `docker compose run --rm web ./manage.py migrate`
 
-### Import initial data and update
-
-To import data to your project, you need to download file corresponding to the area you want to cover. This file will be used to import cameras as well as buildings (needed to compute the field of view of each camera). After this initial update you have two options :
-
-1. Keep on your server the original file : it'll be used to replicate future modifications done in OpenStreetMap. Usefull if you want to keep your building database up to date with new modifications.
-2. Remove the original file : you'll still have the possiblity to get updates for cameras but not for the buildings.
-
-> By default this project come with sample data so you can follow the import procedure without having to download any file (usefull if you just want to test or develop on the project).
-
-In OpenStreetMap, there is multiple ways of keeping informations up to date. On this project we choose to import data from [PBF files](https://wiki.openstreetmap.org/wiki/PBF_Format). To keep change of the updates we use [diff files](https://wiki.openstreetmap.org/wiki/Planet.osm/diffs) that are generated regularly. It can by : daily / hourly / minutely.
-
-Depending on the frequency of updates you want and the area you wish to cover, you'll need to choose where to download your data file. Few suggestions :
-
-- https://planet.openstreetmap.org/ : Official source with possiblity to keep change daily / hourly / minutely. It is only for the entire planet therefore the file size can be important and the database for buldings may not be able to keep up without good resources.
-- https://download.openstreetmap.fr/ : Daily extracts and minutely diffs. Files are splits into continents / countries / states. Very usefull to download specific region and keep up with the changes almost in real time.
-
-You can find an up to date list of mirrors on the [OpenStreetMap dedicated wiki page](https://wiki.openstreetmap.org/wiki/Planet.osm) to explore more options. If you want to keep your data up to date you'll need to find one that handle diffs.
-
-<!-- This mechanism is fundamental for this project to work. In the following sections we will need two files to work with:
-
-- One data file, in pbf format (usually formated as `<region>.osm.pbf`)
-- One sequence state file, in txt format (usually formated as `<region>.state.txt`) -->
-
-We will refer at your downloaded pbf file as `<my-pbf-file>` and in the next commands.
-
-#### Steps to import data
-
-1. Download both your desired pbf and state files and put them in the `osm-data` folder. (_If you want to use sample data you can skip this step_)
 
 2. Import the buildings in the database (can take some time depending of your area. For loading entire France it took 12 minutes) by running the following command:
 
@@ -375,49 +335,3 @@ Finally, in a rising AI age, this really asks more about what we want to do coll
   - Or physicaly (paint, stickers, rocks ... be creative)
 
 ... and **add cameras that you spot in your daily life on OpenStreetMap !** The best way to fight back is to know your enemy, so help us map all the existing cameras so we can at least know where they are and try to avoid them (when possible).
-
-## Legal information for nerds
-
-### Attribution
-
-This project is here thanks to the work of others. To create this website I've mainly used those following dependencies.
-
-If you notice that I've used your project but don't see it in this list feel free to open an [issue](https://github.com/babastienne/PanoptiCity/issues/new) or a [pull request](https://github.com/babastienne/PanoptiCity/compare) so it can be added.
-
-#### Cartography
-
-- [Leaflet v1.9.4](https://github.com/Leaflet/Leaflet/releases/tag/v1.9.4) - _BSD 2-Clause License_
-- [Leaflet.Locate v0.83.1](https://github.com/domoritz/leaflet-locatecontrol) - _MIT license_
-- [Leaflet.Basemaps v0.2.1](https://github.com/consbio/Leaflet.Basemaps/releases/tag/0.2.1) - _ISC license_ (used a [forked version](https://github.com/consbio/Leaflet.Basemaps/pull/28))
-- [OverlappingMarkerSpiderfier-Leaflet](https://github.com/jawj/OverlappingMarkerSpiderfier-Leaflet) - No license
-- Map background attributions can be seen directly on map on the website
-
-#### OpenStreetMap
-
-- [OpenStreetMap](https://osmfoundation.org/) - _OBdL-1.0 license_
-- [pyosmium v4.0.2](https://github.com/osmcode/pyosmium) - _BSD 2-Clause License_
-- [osm2pgsql v2.0.1](https://github.com/osm2pgsql-dev/osm2pgsql) - _GPL-2.0 License_
-- [osm-api-js v2.4.0](https://github.com/k-yle/osm-api-js/) - _MIT license_
-
-#### Backend
-
-- [Django v5.1](https://github.com/django/django) - _BSD-3-Clause license_
-- [django-rest-framework-gis v1.1.0](https://github.com/openwisp/django-rest-framework-gis) - _MIT license_
-- [django-rest-framework v3.15.2](https://github.com/encode/django-rest-framework) - _[license](https://github.com/encode/django-rest-framework/blob/master/LICENSE.md)_
-
-#### Frontend
-
-- [Pico CSS v2.0.6](https://github.com/picocss/pico) - _MIT license_
-
-#### Images
-
-- Logo: https://design-kink.com/hal-9000-2001-space-odyssey-free-vector-art/
-- Pictograms for cameras: SunderS
-
-### License
-
-For this project, I've used a Cooperative Non-Violent Non-AI Public Software license. In brief (if you really intent to use this software [check the complete license](./LICENSE) though), you are free to use, modify, redistribute, commercialize and do pretty much everything you want with this software as long as:
-
-- It is not used to exerce any violent action or repression or discrimination against any person. This software can't therefore be used by any law-enforcement administration or company ; (Non-Violent clause)
-- If a commercial usage is made of this software, the financial gains are equaly redistributed among workers ; (Cooperative or Anticapitalist clause)
-- The content of this project can't be used to train any artificial intelligence model ; (Non-AI clause)
