@@ -8,6 +8,8 @@ description: "PanoptiCity is a website to display CCTV location and field of vie
 # Your daily life is under surveillance
 {: .fs-9 }
 
+A website to raise awareness about mass surveillance in all major cities !
+
 PanoptiCity displays the location and field of view of CCTV cameras in your city, and allows you to contribute missing cameras to OpenStreetMap using a simple responsive interface.
 {: .fs-6 .fw-300 }
 
