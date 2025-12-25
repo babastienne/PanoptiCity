@@ -1,11 +1,11 @@
 ---
 title: License
-nav_order: 6
+nav_order: 7
 ---
 
 # License
 
-For this project, I've used a Cooperative Non-Violent Non-AI Public Software license. In brief, you are free to use, modify, redistribute, commercialize and do pretty much everything you want with this software as long as:
+For this project, I've used a **Cooperative Non-Violent Non-AI Public Software license**. In brief, you are free to use, modify, redistribute, commercialize and do pretty much everything you want with this software as long as:
 
 - It is not used to exerce any violent action or repression or discrimination against any person. This software can't therefore be used by any law-enforcement administration or company ; (Non-Violent clause)
 - If a commercial usage is made of this software, the financial gains are equaly redistributed among workers ; (Cooperative or Anticapitalist clause)
