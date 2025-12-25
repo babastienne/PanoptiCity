@@ -37,3 +37,10 @@ callouts:
   warning:
     title: Warning
     color: red
+
+gh_edit_link: true
+gh_edit_link_text: "Edit this page on GitHub"
+gh_edit_repository: "https://github.com/babastienne/PanoptiCity"
+gh_edit_branch: "main"
+gh_edit_source: docs
+gh_edit_view_mode: "tree"

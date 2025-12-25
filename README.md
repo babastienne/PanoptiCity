@@ -4,12 +4,14 @@
 
 <p align="center"><img alt="PanoptiCity logo" src="front-end/android-chrome-192x192.png"></p>
 
-- [Introduction](#introduction)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Calculation methods for field of view](#calculation-methods-for-field-of-view)
-- [More information](#more-information)
-- [Legal information for nerds](#legal-information-for-nerds)
+<p align="center">
+  <a href="https://panopticity.fr/">
+    <img src="https://img.shields.io/badge/Visit_the_website-orange?style=for-the-badge" alt="Visit the website">
+  </a>
+  <a href="https://babastienne.github.io/PanoptiCity/">
+    <img src="https://img.shields.io/badge/View_the_documentation-blue?style=for-the-badge" alt="View the documentation">
+  </a>
+</p>
 
 ## Introduction
 
@@ -19,7 +21,7 @@ This project's purpose is to help display information about CCTV, cameras, to ea
 
 PanoptiCity is my way to act and try to raise awareness about mass surveillance in all cities, to make people realize the amount of cameras around us that they usually not even see. In a time were artifical intelligence is generalizing, it is more than ever the moment to ask ourselves, is it really the model of society we want to build collectively ?
 
-One major inspiration for this project has been the website [SunderS](https://sunders.uber.space/). It gave me the idea of improving the project with new features and therefore obviously needs to be cited. Information used is from the awesome [OpenStreetMap](https://www.openstreetmap.org/) database. Other attributions and projects used for this application can be found later on this page.
+**To learn more about the core ideas behind PanoptiCity, see our [complete manifesto](https://babastienne.github.io/PanoptiCity/manifest).**
 
 ### Screenshots
 
@@ -39,80 +41,19 @@ One major inspiration for this project has been the website [SunderS](https://su
 
 To discover all the features, go to [panopticity.fr](https://panopticity.fr/) !
 
-## Installation
+## Documentation
 
-### Set project environement
+The complete technical documentation is available directly on [https://babastienne.github.io/PanoptiCity/](https://babastienne.github.io/PanoptiCity/). It covers:
 
-Define some variables used by the application by editing environment variables :
-
-- `cp .env.dist .env`
-- Then edit the `.env` file and replace the variables values by the ones you want to use.
-- Edit the configuration file for the front-end `front-end/CONFIG.js` and override with your parameters.
-
-### Initialize database
-
-It is now time to launch the project for the first time :
-
-1. Initialize the database by running `docker compose run --rm postgis`. When you see `database system is ready to accept connections` you can exit by doing `ctr+c` (should not take more than a few seconds).
-2. Then create the database structure by applying Django migration. To do so run: `docker compose run --rm web ./manage.py migrate`
+- Installation
+- Configuration
+- Architecture
+- Performances
+- Development 
+- Contributions
 
 
-2. Import the buildings in the database (can take some time depending of your area. For loading entire France it took 12 minutes) by running the following command:
-
-```
-   docker compose run osm2pgsql -O flex -S /data/buildings.lua /osm-data/<my-pbf-file>
-```
-
-3. Load cameras (usually takes more time than the previous command):
-
-```
-   docker compose run --rm web ./manage.py load_cameras /osm-data/<my-pbf-file>
-```
-
-#### Steps to update the cameras
-
-- Generate your state file from your original data file. To do so run the command: `docker compose run --rm web pyosmium-get-changes -O /osm-data/<my-pbf-file> -f /osm-data/sequence.state.txt -v`. It will create a state file in `osm-data/sequence.state.txt`.
-
-> After this step, if you don't want to update your buildings in the future and want to save some space on your server you can download your original data file.
-
-- This last command should have prompted something an URL on the terminal. Probably in the format `INFO: Using replication server at <URL_OF_THE_REPLICATION_SERVER>` This is the URL that will be used to get diffs. Copy it and then you can run the following lines to update your cameras (replace with your url):
-
-1. `docker compose run --rm web pyosmium-get-changes --server <URL_OF_THE_REPLICATION_SERVER> -f /osm-data/sequence.state.txt -o /osm-data/diff.osc.gz` > This command creates a diff file (the file `osm-data/diff.osc.gz`) that contains every differences between the original data file and the last version of OSM data on the replication server. The command also edit the sequence.state.txt file to update the sequence number with the last version fetched on the server.
-2. `docker compose run --rm web ./manage.py load_cameras -d -r /osm-data/diff.osc.gz` > This command updates the camera database with the differences.
-3. (Optionnal) the `osm-data/diff.osc.gz` can be removed. It will otherwise be overwrite next time so this is not mandatory.
-
-> Note: If you want to stay up to date, the last three commands can easily by put into a bash script and then launched regularly with a cron depending of your update frequency (minute, hour, day). The file `update-cameras.sh` is an example of something that can be done to automatize the process (it could be improved with log monitoring).
-
-#### Steps to update the buildings
-
-> Because of the volume of the building database, we recommand not to update those objects too often. The process consist of completely reloading the database from scratch so it is time consuming and therefore need to be done only occasionaly.
-
-> To update your building database without having to completely re-download your data, you need to keep on your server your original data file. This file well be updated by the process.
-
-1. `docker compose run --rm web pyosmium-up-to-date /osm-data/<my-pbf-file>` > This command will fetch the diffs since the last version of your file and apply them to your data file. This command can take some time depending of the last time you did the operation.
-2. Re-create the building database : `docker compose run osm2pgsql -O flex -S /data/buildings.lua /osm-data/<my-pbf-file>`
-3. (Option) Re-compute camera field of views (can be long) :
-
-```
-   docker compose run --rm web ./manage.py shell
-   > from cameras.models import Camera
-   > for elem in Camera:
-   > elem.save()
-   >
-   > # This operation will be long
-   >
-   > exit()
-   exit
-```
-
-We don't recommand to automatize this operation.
-
-### Run the website for production
-
-- To launch the back-end, you need to run `docker compose up -d`. The back-end will be running on localhost on port 8000. You need to configure your server as an http_proxy to this port. Anything behind then endpoint `/api` need to be available.
-- The front-end is a static html website so it can be served by any web server.
-
-An example of basic server configuration can be found on the file `nginx.conf.example`.
+# :warning: **All sections below are being progressively moves to the documentation website** :warning:
 
 ### Development
 
@@ -300,38 +241,3 @@ This way of representing objects has been discussed in the community and seems t
 
 - See [this discussion](https://community.openstreetmap.org/t/how-to-tag-multiple-cameras-on-one-supporting-pole/2070) (in english)
 - Or [almost the same](https://forum.openstreetmap.fr/t/marquer-plusieurs-cameras-sur-un-meme-mat/13427) (in french)
-
-### Complementary resources
-
-One inspiration for this project has been the SunderS project. Lot of resources can already be [found on their website](https://sunders.uber.space/#where).
-
-#### CCTV Effectiveness
-
-[Multiple studies](https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q=cctv+effectiveness&btnG=&oq=cctv) has been conducted to measure effectiveness of CCTV in public areas. It usually shows relative effectiveness but not in the spots we could imagine: in car parkings and residential areas ... so not really in public spaces and city centers.
-
-Also, [field studies](https://academicworks.cuny.edu/cgi/viewcontent.cgi?article=1275&context=jj_pubs) in cities have shown that video surveillance does not significantly help to solve investigations, nor does it reduce the number of violent crimes, drug-related offences or public order disturbances in cities. There are a number of reasons for this ineffectiveness: lack of coordination between security forces (private, state, municipal), poor quality images, misdirected or dirty cameras, etc. But the major problem is the staggering number of video streams compared with the small number of officers who are supposed to be using them.
-
-Moreover, few studies really compare CCTV costs in comparison with human investments, wich could be interesting.
-
-Finally, in a rising AI age, this really asks more about what we want to do collectively as society and where we want to go. Does little effectiveness justify global surveillance and death of anonymity ?
-
-#### Websites about mass surveillance
-
-- [TechnoPolice](https://technopolice.fr/) by La Quadrature Du Net (french)
-- [Big Brother Watch](https://bigbrotherwatch.org.uk/)
-- [Outperforming activism: reflections on the demise of the surveillance camera players](https://www.tandfonline.com/doi/full/10.1080/14794713.2015.1084797#d1e98)
-
-#### Fight back
-
-- Anonymize yourself with IR LEDs:
-  - [The camera Shy Hoodie](https://www.macpierce.com/the-camera-shy-hoodie)
-  - [Miss my face](https://urbanarmor.org/portfolio/miss-my-face/)
-- Anti-recognition systems:
-  - [Meet the activists perfecting the craft of anti-surveillance](https://www.ft.com/content/a0f8d8c5-ee5c-4618-bfbd-6bfb383b803e)
-  - [Anti-Surveillance Makeup](https://www.nylon.com/beauty/on-anti-surveillance-makeup-and-just-how-effective-it-really-is)
-  - [Clothes, masks, makeup and more](https://yr.media/tech/guide-to-anti-surveillance-fashion/)
-- Disable cameras:
-  - [With lasers](http://www.naimark.net/projects/zap/howto.html)
-  - Or physicaly (paint, stickers, rocks ... be creative)
-
-... and **add cameras that you spot in your daily life on OpenStreetMap !** The best way to fight back is to know your enemy, so help us map all the existing cameras so we can at least know where they are and try to avoid them (when possible).
