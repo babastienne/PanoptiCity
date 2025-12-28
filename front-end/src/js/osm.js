@@ -10,7 +10,7 @@ async function OSMLogin() {
   OSM.login({
     mode: "popup",
     clientId: CLIENT_ID_OSM_APP,
-    redirectUrl: `${DOMAIN_NAME}/land.html`,
+    redirectUrl: `${DOMAIN_NAME}/src/land.html`,
     scopes: ["write_api", "openid", "write_notes"],
   })
     .then(() => {
