@@ -43,7 +43,7 @@ To discover all the features, go to [panopticity.fr](https://panopticity.fr/) !
 
 ## Documentation
 
-The complete technical documentation is available directly on [https://babastienne.github.io/PanoptiCity/](https://babastienne.github.io/PanoptiCity/). It covers:
+The entire technical documentation is available directly on [https://babastienne.github.io/PanoptiCity/](https://babastienne.github.io/PanoptiCity/). It covers:
 
 - Installation
 - Configuration

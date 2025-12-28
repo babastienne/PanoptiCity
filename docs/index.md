@@ -15,7 +15,7 @@ PanoptiCity displays the location and field of view of CCTV cameras in your city
 {: .fs-6 .fw-300 }
 
 [Visit the website](https://panopticity.fr){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
-[Read the manifesto](/PanoptiCity/manifest){: .btn .btn-green .fs-5 .mb-4 .mb-md-0 .mr-2 }
+[Read the manifesto]({{site.baseurl}}/manifest){: .btn .btn-green .fs-5 .mb-4 .mb-md-0 .mr-2 }
 [View the project on Github](https://github.com/babastienne/PanoptiCity){: .btn .fs-5 .mb-4 .mb-md-0 }
 
 ---
@@ -30,6 +30,6 @@ PanoptiCity is a way to act and try to raise awareness about mass surveillance i
 
 Welcome to the documentation of PanoptiCity. Here you can find all the information you need to install, configure, use and contribute to the project. You'll find the information split in mutliple chapters depending on your needs.
 
-- [User guide](/PanoptiCity/installation-config/index) : Everything you need to know about the functionalities of the website, both for end-users and contributors. Details about the computation methodology for nerds.
-- [Installation and configuration](/PanoptiCity/installation-config/index) : Guide you through the installation and configuration of the project on your own server.
-- [Development and architecture](/PanoptiCity/technical/index) : If you want to contribute to the project or understand more about the core concepts and implementation, this is the right place.
+- [User guide]({{site.baseurl}}/installation-config/index) : Everything you need to know about the functionalities of the website, both for end-users and contributors. Details about the computation methodology for nerds.
+- [Installation and configuration]({{site.baseurl}}/installation-config/index) : Guide you through the installation and configuration of the project on your own server.
+- [Development and architecture]({{site.baseurl}}/technical/index) : If you want to contribute to the project or understand more about the core concepts and implementation, this is the right place.

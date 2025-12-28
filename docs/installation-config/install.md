@@ -25,7 +25,7 @@ The installation procedure has been developed, tested and reproduced for GNU/Lin
 
 
 {: .warning }
-This is the installation procedure to follow if you want to install the project in production. If you want to use it in development mode, follow the [development installation procedure](/PanoptiCity/technical/dev-install)
+This is the installation procedure to follow if you want to install the project in production. If you want to use it in development mode, follow the [development installation procedure]({{site.baseurl}}/technical/dev-install)
 
 
 ## Pre-requisites
@@ -95,7 +95,7 @@ The script will then proceed to install everything including the SSL certificate
 
 
 {: .warning }
-Depending of the size of your ata to import, the installation can be quite long (from couple minutes to couple hours). To learn more about performances, see [Import procedure and performances](/PanoptiCity/technical/Import-and-performances).
+Depending of the size of your ata to import, the installation can be quite long (from couple minutes to couple hours). To learn more about performances, see [Import procedure and performances]({{site.baseurl}}/technical/Import-and-performances).
 
 
 At the end of the installation, the script set everything to be ready for both :
@@ -111,5 +111,5 @@ Visit your website domain name and you should see PanoptiCity running ! 🎉
 _____________
 
 Now that you've installed the site, you are ready for the next steps :
-- [Advanced configuration](/PanoptiCity/installation-config/configuration)
-- [Updating the data](/PanoptiCity/installation-config/update)
+- [Advanced configuration]({{site.baseurl}}/installation-config/configuration)
+- [Updating the data]({{site.baseurl}}/installation-config/update)
