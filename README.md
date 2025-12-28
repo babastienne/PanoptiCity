@@ -92,12 +92,12 @@ The combination of those last 3 parameters allow to determine the quality of an 
 
 By taking those elements in consideration, we can compute the field of view of camera in which a person can be identified, recognized, detected. We use this matching table to establish what quality corresponds to what level :
 
-| Color on map                                       | Level of surveillance                                                                                                                                                                                                            | Image quality    | Example                                                                  |
-| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- | ------------------------------------------------------------------------ |
-| ![Circle red](docs/images/zone-identification.svg) | **Identification**: At this level a person can easily be identified by any human or automated program.                                                                                                                           | **> 250 PPM**    | 320ppm image ![320ppm image of a cyclist](docs/images/example320ppm.jpg) |
-| ![Circle red](docs/images/zone-recognition.svg)    | **Recognition**: Some specific details can be seen. Sometimes not enough details to automatize the recognition but a targeted person can still be recognized by a human eye. This quality level can be used for forensic review. | **250 - 65 PPM** | 160ppm image ![160ppm image of a cyclist](docs/images/example160ppm.jpg) |
-| ![Circle red](docs/images/zone-observation.svg)    | **Observation**: It is possible to detect persons, objects and movements but not to identify details. Usually for large non targeted observation.                                                                                | **25 - 65 PPM**  | 40ppm image ![40ppm image of a cyclist](docs/images/example40ppm.jpg)    |
-|                                                    | **Not usable**: At this level we consider the camera unable to detect anything and do not display any field of view anymore.                                                                                                     | **< 25 PPM**     | 20ppm image ![40ppm image of a cyclist](docs/images/example20ppm.jpg)    |
+| Color on map                                             | Level of surveillance                                                                                                                                                                                                            | Image quality    | Example                                                                             |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------- |
+| ![Circle red](docs/images/icons/zone-identification.svg) | **Identification**: At this level a person can easily be identified by any human or automated program.                                                                                                                           | **> 250 PPM**    | 320ppm image ![320ppm image of a cyclist](docs/images/resolution/example320ppm.jpg) |
+| ![Circle red](docs/images/icons/zone-recognition.svg)    | **Recognition**: Some specific details can be seen. Sometimes not enough details to automatize the recognition but a targeted person can still be recognized by a human eye. This quality level can be used for forensic review. | **250 - 65 PPM** | 160ppm image ![160ppm image of a cyclist](docs/images/resolution/example160ppm.jpg) |
+| ![Circle red](docs/images/icons/zone-observation.svg)    | **Observation**: It is possible to detect persons, objects and movements but not to identify details. Usually for large non targeted observation.                                                                                | **25 - 65 PPM**  | 40ppm image ![40ppm image of a cyclist](docs/images/resolution/example40ppm.jpg)    |
+|                                                          | **Not usable**: At this level we consider the camera unable to detect anything and do not display any field of view anymore.                                                                                                     | **< 25 PPM**     | 20ppm image ![40ppm image of a cyclist](docs/images/resolution/example20ppm.jpg)    |
 
 > The level of surveillance and corresponding qualities are inspired from this [Department of Homeland Security document about VideoSurveillance Quality](https://www.dhs.gov/sites/default/files/publications/VQiPS_Digital-Video-Quality-HB_UPDATED-180117-508.pdf).
 
@@ -175,13 +175,13 @@ For exemple bullets or fisheyes cameras has been kept and categorized as Dome ca
 
 #### Format lense repartition
 
-![Format lens repartition (linear)](docs/images/data-format.png)
+![Format lens repartition (linear)](docs/images/stats/data-format.png)
 
-![Format lens repartition (logarithmic scale)](docs/images/data-format-log.png)
+![Format lens repartition (logarithmic scale)](docs/images/stats/data-format-log.png)
 
 #### Resolution repartition
 
-![Resolution repartition for any camera type](docs/images/data-resolution.png)
+![Resolution repartition for any camera type](docs/images/stats/data-resolution.png)
 
 #### Focals repartition
 
@@ -191,43 +191,43 @@ Those numbers are the minimum/average/maximum focal available for each camera pr
 
 **Fixed cameras**
 
-![Minimum focal repartition for fixed cameras (linear)](docs/images/data-min-focal-fixed.png)
+![Minimum focal repartition for fixed cameras (linear)](docs/images/stats/data-min-focal-fixed.png)
 
-![Minimum focal repartition for fixed cameras (logarithmic scale)](docs/images/data-min-focal-fixed-log.png)
+![Minimum focal repartition for fixed cameras (logarithmic scale)](docs/images/stats/data-min-focal-fixed-log.png)
 
 **Dome/PTZ cameras**
 
-![Minimum focal repartition for dome/PTZ cameras (linear)](docs/images/data-min-focal-domeptz.png)
+![Minimum focal repartition for dome/PTZ cameras (linear)](docs/images/stats/data-min-focal-domeptz.png)
 
-![Minimum focal repartition for dome/PTZ cameras (logarithmic scale)](docs/images/data-min-focal-domeptz-log.png)
+![Minimum focal repartition for dome/PTZ cameras (logarithmic scale)](docs/images/stats/data-min-focal-domeptz-log.png)
 
 ##### Average focal
 
 **Fixed cameras**
 
-![Average focal repartition for fixed cameras (linear)](docs/images/data-average-focal-fixed.png)
+![Average focal repartition for fixed cameras (linear)](docs/images/stats/data-average-focal-fixed.png)
 
-![Average focal repartition for fixed cameras (logarithmic scale)](docs/images/data-average-focal-fixed-log.png)
+![Average focal repartition for fixed cameras (logarithmic scale)](docs/images/stats/data-average-focal-fixed-log.png)
 
 **Dome/PTZ cameras**
 
-![Average focal repartition for dome/PTZ cameras (linear)](docs/images/data-average-focal-domeptz.png)
+![Average focal repartition for dome/PTZ cameras (linear)](docs/images/stats/data-average-focal-domeptz.png)
 
-![Average focal repartition for dome/PTZ cameras (logarithmic scale)](docs/images/data-average-focal-domeptz-log.png)
+![Average focal repartition for dome/PTZ cameras (logarithmic scale)](docs/images/stats/data-average-focal-domeptz-log.png)
 
 ##### Maximum focal
 
 **Fixed cameras**
 
-![Maximum focal repartition for fixed cameras (linear)](docs/images/data-max-focal-fixed.png)
+![Maximum focal repartition for fixed cameras (linear)](docs/images/stats/data-max-focal-fixed.png)
 
-![Maximum focal repartition for fixed cameras (logarithmic scale)](docs/images/data-max-focal-fixed-log.png)
+![Maximum focal repartition for fixed cameras (logarithmic scale)](docs/images/stats/data-max-focal-fixed-log.png)
 
 **Dome/PTZ cameras**
 
-![Maximum focal repartition for dome/PTZ cameras (linear)](docs/images/data-max-focal-domeptz.png)
+![Maximum focal repartition for dome/PTZ cameras (linear)](docs/images/stats/data-max-focal-domeptz.png)
 
-![Maximum focal repartition for dome/PTZ cameras (logarithmic scale)](docs/images/data-max-focal-domeptz-log.png)
+![Maximum focal repartition for dome/PTZ cameras (logarithmic scale)](docs/images/stats/datas-max-focal-domeptz-log.png)
 
 ## More information
 
