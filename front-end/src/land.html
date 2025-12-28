@@ -1,6 +1,6 @@
 <script>
-  if (window.opener) {
-    window.opener.authComplete(location.href);
+  if (new URLSearchParams(location.search).has("code")) {
+    new BroadcastChannel("osm-api-auth-complete").postMessage(location.href);
     window.close();
   }
 </script>
