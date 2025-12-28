@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+<!--Document / Manual Base-->
+  <path d="M6 4h14l6 6v18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="#F0F0F0" stroke="#1A1A1A" stroke-width="2"/>
+<!--Folded Corner-->
+  <path d="M20 4v6h6" fill="#D0D0D0" stroke="#1A1A1A" stroke-width="2"/>
+<!--Surveillance Lens in the center-->
+  <circle cx="15" cy="18" r="6" fill="#1A1A1A"/>
+  <circle cx="15" cy="18" r="4.5" fill="#333333"/>
+  <circle cx="15" cy="18" r="2.5" fill="#1A1A1A"/>
+<!--Red "Recording" Glint (Documentation Status)-->
+  <circle cx="15" cy="18" r="1.5" fill="#FF0000"/>
+<!--Decorative text lines (Documentation feel)-->
+  <line x1="8" y1="8" x2="16" y2="8" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="8" y1="26" x2="22" y2="26" stroke="#1A1A1A" stroke-width="1" opacity="0.4"/>
+</svg>
