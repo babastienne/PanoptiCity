@@ -14,12 +14,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
     <!-- Pico CSS -->
-    <link rel="stylesheet" href="css/pico.conditional.green.min.css" />
+    <link rel="stylesheet" href="src/css/pico.conditional.green.min.css" />
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/theme-switcher.css" />
-    <link rel="stylesheet" href="css/burger.css" />
-    <link rel="stylesheet" href="css/main.css" />
-    <link rel="stylesheet" href="css/modal.css" />
+    <link rel="stylesheet" href="src/css/theme-switcher.css" />
+    <link rel="stylesheet" href="src/css/burger.css" />
+    <link rel="stylesheet" href="src/css/main.css" />
+    <link rel="stylesheet" href="src/css/modal.css" />
   </head>
   <body>
     <header>
@@ -46,7 +46,7 @@
           </ul>
           <ul>
             <li>
-              <img class="logo-img" src="favicon-32x32.png" alt="PanoptiCity Logo" />
+              <img class="logo-img" src="/images/logo/favicon-32x32.png" alt="PanoptiCity Logo" />
               <strong>
                 <h1 id="tr-titleApp">PanoptiCity</h1>
               </strong>
@@ -123,38 +123,38 @@
 
     <!-- ** Load external libs ** -->
     <!-- Leaflet -->
-    <link rel="stylesheet" href="libs/leaflet/leaflet.css" />
-    <script src="libs/leaflet/leaflet.js"></script>
+    <link rel="stylesheet" href="packages/leaflet/leaflet.css" />
+    <script src="packages/leaflet/leaflet.js"></script>
     <!-- Leaflet locate -->
-    <link rel="stylesheet" href="libs/leaflet-locate/L.Control.Locate.min.css" />
-    <script src="libs/leaflet-locate/L.Control.Locate.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="packages/leaflet-locate/L.Control.Locate.min.css" />
+    <script src="packages/leaflet-locate/L.Control.Locate.min.js" charset="utf-8"></script>
     <!-- Leaflet BaseMaps -->
-    <link rel="stylesheet" href="libs/Leaflet.Basemaps/L.Control.Basemaps.css" />
+    <link rel="stylesheet" href="packages/Leaflet.Basemaps/L.Control.Basemaps.css" />
     <!-- Using this local version, modified on L45 until https://github.com/consbio/Leaflet.Basemaps/pull/28 is merged and released -->
-    <script src="libs/Leaflet.Basemaps/L.Control.Basemaps.js" charset="utf-8"></script>
+    <script src="packages/Leaflet.Basemaps/L.Control.Basemaps.js" charset="utf-8"></script>
     <!-- Leaflet OverlappingMarkerSpiderfier -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OverlappingMarkerSpiderfier-Leaflet/0.2.6/oms.min.js"></script>
     <!-- Load LeafletVectorGrid -->
     <script src="https://unpkg.com/leaflet.vectorgrid@latest/dist/Leaflet.VectorGrid.bundled.js"></script>
     <!-- Load OSM API JS (https://github.com/k-yle/osm-api-js) -->
-    <script src="libs/osm-api-js.js"></script>
+    <script src="packages/osm-api-js.js"></script>
 
     <!-- ** Custom JS ** -->
     <script src="CONFIG.js"></script>
     <script src="translations.js"></script>
-    <script src="js/interfaceFill.js"></script>
+    <script src="src/js/interfaceFill.js"></script>
     <!-- Camera logic -->
-    <script src="js/camera.js"></script>
+    <script src="src/js/camera.js"></script>
     <!-- Map files -->
-    <script src="js/leaflet.data.tilelayer.js"></script>
-    <script src="js/leafletembed_icons.js"></script>
-    <script src="js/map.js"></script>
+    <script src="src/js/leaflet.data.tilelayer.js"></script>
+    <script src="src/js/leafletembed_icons.js"></script>
+    <script src="src/js/map.js"></script>
     <!-- UI animation -->
-    <script src="js/theme-switcher.js"></script>
-    <script src="js/bottomModal.js"></script>
+    <script src="src/js/theme-switcher.js"></script>
+    <script src="src/js/bottomModal.js"></script>
     <!-- OSM Api -->
-    <script src="js/osm.js"></script>
+    <script src="src/js/osm.js"></script>
     <!-- Contribution -->
-    <script src="js/contrib.js"></script>
+    <script src="src/js/contrib.js"></script>
   </body>
 </html>
