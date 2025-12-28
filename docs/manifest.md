@@ -191,4 +191,4 @@ This name is therefore a wordplay to denounce a world where, because of global s
 
 ## Inspirations
 
-One major inspiration for this project has been the website [SunderS](https://sunders.uber.space/). It gave me the idea of improving the project with new features and therefore obviously needs to be cited. Information used is from the awesome [OpenStreetMap](https://www.openstreetmap.org/) database. Other attributions and projects used for this application can be found [on the dedicated page](/PanoptiCity/license).
+One major inspiration for this project has been the website [SunderS](https://sunders.uber.space/). It gave me the idea of improving the project with new features and therefore obviously needs to be cited. Information used is from the awesome [OpenStreetMap](https://www.openstreetmap.org/) database. Other attributions and projects used for this application can be found [on the dedicated page]({{site.baseurl}}/license).

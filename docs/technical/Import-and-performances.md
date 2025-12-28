@@ -52,7 +52,7 @@ To handle data, we store a tiles table. Buildings and cameras are all associated
 
 We use the [QuadTiles system](https://wiki.openstreetmap.org/wiki/QuadTiles). To avoid having millions of tiles, the system used is an adaptative grid that covers desertic areas (oceans, forest, etc.) with large tiles while urban areas with a lot of buildings are using small tiles. In total the world has been splitted into 101 191 squares covering the entire planet.
 
-![QuadTiles visualization in Qgis](/PanoptiCity/images/quadtiles.png)
+![QuadTiles visualization in Qgis]({{site.baseurl}}/images/quadtiles.png)
 _Visualization of the created and imported tiles in QGis_
 
 The generated tiles used in this project had been computed using the _GHS-BUILT-S_ dataset representing the built up surface in a grid where 1 pixel = 1 square kilometer. This is an open an free dataset created by the European Union ([source](https://data.europa.eu/data/datasets/9f06f36f-4b11-47ec-abb0-4f8b7b1d72ea)).
