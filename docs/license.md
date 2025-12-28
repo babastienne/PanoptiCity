@@ -34,7 +34,7 @@ If you notice that I've used your project but don't see it in this list feel fre
 - [OpenStreetMap](https://osmfoundation.org/) - _OBdL-1.0 license_
 - [pyosmium](https://github.com/osmcode/pyosmium) - _BSD 2-Clause License_
 - [osm2pgsql](https://github.com/osm2pgsql-dev/osm2pgsql) - _GPL-2.0 License_
-- [osm-api-js](https://github.com/k-yle/osm-api-js/) - _MIT license_
+- [osm-api-js](https://github.com/osmlab/osm-api-js/) - _MIT license_
 
 ### Backend
 
