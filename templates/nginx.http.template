@@ -3,6 +3,18 @@ proxy_cache_path /var/cache/nginx/focus levels=1:2 keys_zone=focus_cache:20m max
 
 server {
     listen 80;
+    server_name ${FRONTEND_DOMAIN_NAME};
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+
+server {
+    listen 80;
     server_name ${BACKEND_DOMAIN_NAME};
 
     set $bypass_cache 0;
@@ -61,17 +73,5 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         
         add_header Access-Control-Allow-Origin * always;
-    }
-}
-
-server {
-    listen 80;
-    server_name ${FRONTEND_DOMAIN_NAME};
-
-    root /usr/share/nginx/html;
-    index index.html;
-
-    location / {
-        try_files $uri $uri/ /index.html;
     }
 }
