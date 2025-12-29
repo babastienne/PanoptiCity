@@ -17,3 +17,4 @@ back-end/venv*
 *.prof
 *.log
 nginx.conf.template
+front-end/CONFIG.js
