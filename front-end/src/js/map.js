@@ -107,25 +107,63 @@ const createLegendControl = () => {
 };
 
 /**
- * BBOX & STORAGE LOGIC
+ * VIEW STATE LOGIC (Zoom/Lat/Lng)
  */
-function getInitialBBox() {
+function getInitialView() {
   const hash = window.location.hash;
-  if (hash.includes("mapBBox")) {
-    const regexBBox = /\[\[\d*.\d+,\d*.\d+\],\[\d*.\d+,\d*.\d+\]\]/g;
-    return JSON.parse(hash.match(regexBBox)[0]);
+
+  if (hash.startsWith("#map=")) {
+    const parts = hash.replace("#map=", "").split("/");
+    if (parts.length === 3) {
+      const zoom = parseFloat(parts[0]);
+      const lat = parseFloat(parts[1]);
+      const lng = parseFloat(parts[2]);
+      if (!isNaN(zoom) && !isNaN(lat) && !isNaN(lng)) {
+        return { center: [lat, lng], zoom: zoom };
+      }
+    }
   }
-  const cached = localStorage.getItem("map-bbox");
-  return cached ? JSON.parse(cached) : MAP_INITIAL_BBOX;
+
+  const cached = localStorage.getItem("map-view");
+  if (cached) {
+    try {
+      const parsed = JSON.parse(cached);
+      return { center: [parsed.lat, parsed.lng], zoom: parsed.zoom };
+    } catch (e) {
+      console.error("Error parsing cached view", e);
+    }
+  }
+
+  return {
+    center: MAP_INITIAL_CENTER,
+    zoom: MAP_INITIAL_ZOOM,
+  };
 }
 
-function updateBBox() {
-  const b = map.getBounds();
-  const bboxStr = `[[${b.getSouthWest().lat},${b.getSouthWest().lng}],[${b.getNorthEast().lat},${
-    b.getNorthEast().lng
-  }]]`;
-  localStorage.setItem("map-bbox", bboxStr);
-  window.location.hash = `mapBBox=${bboxStr}`;
+function updateViewHash() {
+  const center = map.getCenter();
+  const zoom = map.getZoom();
+
+  // Format coordinates to 2 decimal places for a clean URL
+  const precision = 2;
+  const lat = center.lat.toFixed(precision);
+  const lng = center.lng.toFixed(precision);
+  const z = zoom % 1 === 0 ? zoom : zoom.toFixed(2); // Keep decimals only if zoom is fractional
+
+  const viewString = `${z}/${lat}/${lng}`;
+
+  // Update URL Hash without triggering a page reload
+  window.location.hash = `map=${viewString}`;
+
+  // Update LocalStorage
+  localStorage.setItem(
+    "map-view",
+    JSON.stringify({
+      lat: center.lat,
+      lng: center.lng,
+      zoom: zoom,
+    })
+  );
 }
 
 /**
@@ -209,8 +247,9 @@ function initMap() {
   createLegendControl().addTo(map);
 
   // 7. Initial View Positioning & Events
-  map.fitBounds(getInitialBBox());
-  map.on("moveend", updateBBox);
+  const initialView = getInitialView();
+  map.setView(initialView.center, initialView.zoom);
+  map.on("moveend", updateViewHash);
 }
 
 // Startup
