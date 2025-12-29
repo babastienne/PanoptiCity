@@ -2,9 +2,9 @@
  * CONFIGURATION & CONSTANTS
  */
 const FOV_STYLES = {
-  1: { fillColor: "red", fillOpacity: 0.5, stroke: false, fill: true }, // Identification
+  1: { fillColor: "red", fillOpacity: 0.4, stroke: false, fill: true }, // Identification
   2: { fillColor: "orange", fillOpacity: 0.4, stroke: false, fill: true }, // Recognition
-  3: { fillColor: "#00b300", fillOpacity: 0.2, stroke: false, fill: true }, // Observation
+  3: { fillColor: "#00b300", fillOpacity: 0.3, stroke: false, fill: true }, // Observation
 };
 
 const LEGEND_GRADES = [

@@ -6,17 +6,17 @@ levelsCameraConfiguration = {
   identification: {
     color: "red",
     weight: 0,
-    fill: 0.4,
+    fill: 0.5,
   },
   recognition: {
     color: "orange",
     weight: 0,
-    fill: 0.4,
+    fill: 0.5,
   },
   observation: {
     color: "green",
     weight: 0,
-    fill: 0.4,
+    fill: 0.5,
   },
 };
 
