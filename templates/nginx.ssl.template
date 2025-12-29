@@ -18,6 +18,22 @@ server {
 server {
     listen 443 ssl;
     listen [::]:443 ssl;
+    server_name ${FRONTEND_DOMAIN_NAME};
+
+    ssl_certificate /etc/letsencrypt/live/${FRONTEND_DOMAIN_NAME}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${FRONTEND_DOMAIN_NAME}/privkey.pem;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
     server_name ${BACKEND_DOMAIN_NAME};
 
     ssl_certificate /etc/letsencrypt/live/${FRONTEND_DOMAIN_NAME}/fullchain.pem;
@@ -78,21 +94,5 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
         add_header Access-Control-Allow-Origin * always;
-    }
-}
-
-server {
-    listen 443 ssl;
-    listen [::]:443 ssl;
-    server_name ${FRONTEND_DOMAIN_NAME};
-
-    ssl_certificate /etc/letsencrypt/live/${FRONTEND_DOMAIN_NAME}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/${FRONTEND_DOMAIN_NAME}/privkey.pem;
-
-    root /usr/share/nginx/html;
-    index index.html;
-
-    location / {
-        try_files $uri $uri/ /index.html;
     }
 }
