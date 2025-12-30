@@ -1,231 +1,21 @@
-var cameraDetails = {};
-var cameraDetailsPlots = [];
-var cameraDetailsSelectedScenario = "mean";
+import { BASE_URL_API } from "../../CONFIG.js";
+import { TEXTS } from "./language.js";
+import { showBottomModal, updateBottomModalContent } from "./bottomModal.js";
+import { cancelCameraCreation } from "./contrib.js";
+import { fovLayer } from "./map.js";
+import { levelsCameraConfiguration, tagsListCamera } from "./cameraConfig.js";
 
-levelsCameraConfiguration = {
-  identification: {
-    color: "red",
-    weight: 0,
-    fill: 0.5,
-  },
-  recognition: {
-    color: "orange",
-    weight: 0,
-    fill: 0.5,
-  },
-  observation: {
-    color: "green",
-    weight: 0,
-    fill: 0.5,
-  },
+let map;
+let cameraDetails = {};
+let cameraDetailsPlots = [];
+let cameraDetailsSelectedScenario = "mean";
+
+export let initCamera = (mapInstance) => {
+  map = mapInstance;
+  window._displayCameraFOV = _displayCameraFOV;
 };
 
-choicesCameraType = {
-  title: TEXTS.cameraTypeQuestion,
-  name: TEXTS.cameraTypeName,
-  display: true,
-  tagName: "camera:type",
-  options: {
-    dome: {
-      name: TEXTS.cameraTypeDome,
-      picture: "images/contrib/type-dome.svg",
-    },
-    fixed: {
-      name: TEXTS.cameraTypeFixed,
-      picture: "images/contrib/type-fixed.svg",
-    },
-    panning: {
-      name: TEXTS.cameraTypePanning,
-      picture: "images/contrib/type-panning-arrow.svg",
-    },
-  },
-};
-
-choicesSurveillanceType = {
-  title: TEXTS.cameraSurveillanceQuestion,
-  name: TEXTS.cameraSurveillanceName,
-  display: true,
-  tagName: "surveillance",
-  options: {
-    public: {
-      name: TEXTS.cameraSurveillancePublic,
-      picture: "images/contrib/type-public.svg",
-    },
-    outdoor: {
-      name: TEXTS.cameraSurveillanceOutdoor,
-      picture: "images/contrib/type-outdoor.svg",
-    },
-    indoor: {
-      name: TEXTS.cameraSurveillanceIndoor,
-      picture: "images/contrib/type-indoor.svg",
-    },
-  },
-};
-
-choicesCameraMount = {
-  title: TEXTS.cameraMountQuestion,
-  name: TEXTS.cameraMountName,
-  display: true,
-  tagName: "camera:mount",
-  options: {
-    wall: {
-      name: TEXTS.cameraMountWall,
-      picture: "images/contrib/mount-wall.jpg",
-    },
-    pole: {
-      name: TEXTS.cameraMountPole,
-      picture: "images/contrib/mount-pole.jpg",
-    },
-    ceiling: {
-      name: TEXTS.cameraMountCeiling,
-      picture: "images/contrib/mount-ceiling.jpg",
-    },
-    street_lamp: {
-      name: TEXTS.cameraMountStreetLamp,
-      picture: "images/contrib/mount-streetlamp.jpg",
-    },
-    traffic_signals: {
-      name: TEXTS.cameraMountTrafficSignal,
-      picture: "images/contrib/mount-trafficlights.jpg",
-    },
-    doorbell: {
-      name: TEXTS.cameraMountDoorbell,
-      picture: "images/contrib/type-fixed.svg",
-    },
-    atm: {
-      name: TEXTS.cameraMountAtm,
-      picture: "images/contrib/type-fixed.svg",
-    },
-  },
-};
-
-choicesCameraZone = {
-  title: TEXTS.cameraZoneQuestion,
-  name: TEXTS.cameraZoneName,
-  display: true,
-  tagName: "surveillance:zone",
-  options: {
-    traffic: {
-      name: TEXTS.cameraZoneTraffic,
-      picture: "images/contrib/zone-traffic.svg",
-    },
-    town: {
-      name: TEXTS.cameraZoneTown,
-      picture: "images/contrib/zone-city.jpg",
-    },
-    entrance: {
-      name: TEXTS.cameraZoneEntrance,
-      picture: "images/contrib/zone-entrance.png",
-    },
-    shop: {
-      name: TEXTS.cameraZoneShop,
-      picture: "images/contrib/zone-store.jpg",
-    },
-    bank: {
-      name: TEXTS.cameraZoneBank,
-      picture: "images/contrib/zone-bank2.svg",
-    },
-    building: {
-      name: TEXTS.cameraZoneBuilding,
-      picture: "images/contrib/zone-building.svg",
-    },
-    parking: {
-      name: TEXTS.cameraZoneParking,
-      picture: "images/contrib/zone-parking.svg",
-    },
-    public_transport_platform: {
-      name: TEXTS.cameraZonePublicTransportPlatform,
-      picture: "images/contrib/zone-transport.jpg",
-    },
-  },
-};
-
-choicesCameraHeight = {
-  title: TEXTS.cameraHeightQuestion,
-  name: TEXTS.cameraHeightName,
-  display: true,
-  tagName: "height",
-  defaultValue: 4,
-  minValue: 1,
-  maxValue: 16,
-  step: 0.5,
-};
-
-choicesCameraDirection = {
-  title: TEXTS.cameraDirectionQuestion,
-  name: TEXTS.cameraDirectionName,
-  display: true,
-  tagName: "camera:direction",
-  additionalTransform: 0,
-  defaultValue: 0,
-  minValue: 0,
-  maxValue: 355,
-  step: 5,
-};
-
-choicesCameraAngle = {
-  title: TEXTS.cameraAngleQuestion,
-  name: TEXTS.cameraAngleName,
-  display: true,
-  tagName: "camera:angle",
-  additionalTransform: 90,
-  defaultValue: 15,
-  minValue: 0,
-  maxValue: 90,
-  step: 5,
-};
-
-choicesCameraLocation = {
-  title: TEXTS.cameraLocationQuestion,
-  name: TEXTS.cameraLocationName,
-  display: false,
-  tagName: "camera:position",
-};
-
-last_date = {
-  name: TEXTS.cameracheckDateName,
-  display: true,
-};
-
-tagsListCamera = {
-  man_made: { display: false },
-  "surveillance:type": { display: false },
-  check_date: last_date,
-  "survey:date": last_date,
-  source: {
-    name: TEXTS.source,
-    display: true,
-  },
-  operator: {
-    name: TEXTS.operator,
-    display: true,
-  },
-  "contact:webcam": {
-    name: TEXTS.cameraWebcamName,
-    display: true,
-  },
-  "addr:street": {
-    name: TEXTS.address,
-    display: true,
-  },
-  name: {
-    name: TEXTS.name,
-    display: true,
-  },
-  "camera:type": choicesCameraType,
-  surveillance: choicesSurveillanceType,
-  "camera:mount": choicesCameraMount,
-  "surveillance:zone": choicesCameraZone,
-  height: choicesCameraHeight,
-  ele: choicesCameraHeight,
-  "camera:angle": choicesCameraAngle,
-  "camera:position": choicesCameraLocation,
-  "camera:direction": choicesCameraDirection,
-  "surveillance:direction": choicesCameraDirection,
-  direction: choicesCameraDirection,
-};
-
-async function getCameraDetails(idCamera) {
+let getCameraDetails = async (idCamera) => {
   const url = `${BASE_URL_API}/cameras/${idCamera}.json`;
   try {
     let response = await fetch(url);
@@ -233,20 +23,20 @@ async function getCameraDetails(idCamera) {
   } catch (error) {
     console.error(error.message);
   }
-}
+};
 
-async function displayCameraDetails(marker) {
+export let displayCameraDetails = async (marker) => {
   // Function called onClick on a camera Marker
-  idCamera = marker.options.id;
+  let idCamera = marker.options.id;
   cameraDetails = await getCameraDetails(idCamera);
   addCameraDetailsData(marker, cameraDetails);
   _displayCameraFOV("mean");
   if (map.hasLayer(fovLayer)) {
     fovLayer.removeFrom(map);
   }
-}
+};
 
-function _transformTagContentInHtml(content) {
+const _transformTagContentInHtml = (content) => {
   let descr = String(content);
   if (descr.substring(0, 4) == "http") {
     var suffix = descr.slice(-3).toLowerCase();
@@ -258,9 +48,9 @@ function _transformTagContentInHtml(content) {
   } else {
     return content;
   }
-}
+};
 
-function _createTableEntry(key, value) {
+const _createTableEntry = (key, value) => {
   let preparedValue = _transformTagContentInHtml(value);
   return `
         <tr>
@@ -272,13 +62,13 @@ function _createTableEntry(key, value) {
           </td>
         <td>
       `;
-}
+};
 
 // Add camera popup to camera marker.
-function addCameraDetailsData(plotMarker, plot) {
+const addCameraDetailsData = (plotMarker, plot) => {
   let { lat, lng } = plotMarker.getLatLng();
   let listAttributes = [];
-  popupDataTable = `<div class="pico modal-div">
+  let popupDataTable = `<div class="pico modal-div">
 
   ${_generateContentFOV()}
 
@@ -299,7 +89,7 @@ function addCameraDetailsData(plotMarker, plot) {
         <tr>
           <td>Longitude</td><td>${lng}</td>
         </tr>`;
-  for (x in plot.tags) {
+  for (let x in plot.tags) {
     if (Object.keys(tagsListCamera).includes(x)) {
       if (tagsListCamera[x].display) {
         if (tagsListCamera[x]?.options?.[plot.tags[x]]) {
@@ -319,17 +109,17 @@ function addCameraDetailsData(plotMarker, plot) {
 
   cancelCameraCreation();
   updateBottomModalContent(popupDataTable);
-  showBottomModal(
-    (overlayClickHideModal = true),
-    (authorizeMoveBehindModal = true),
-    (authorizeDragModal = true),
-    (defaultHeight = 50)
-  );
-}
+  showBottomModal({
+    overlayClickHideModal: true,
+    authorizeMoveBehindModal: true,
+    authorizeDragModal: true,
+    defaultHeight: 50,
+  });
+};
 
 // Camera edition methods
-function _displayEditionButton(listAttributes) {
-  content = "";
+const _displayEditionButton = (listAttributes) => {
+  let content = "";
   if (OSM.isLoggedIn()) {
     if (
       listAttributes.length < 7 ||
@@ -346,10 +136,10 @@ function _displayEditionButton(listAttributes) {
     }
   }
   return content;
-}
+};
 
 // Camera Field of view methods
-function _generateContentFOV() {
+const _generateContentFOV = () => {
   let content = `<h4 class="modal-title">
     ${TEXTS.simulateFOV}
     <sup><a href="https://github.com/babastienne/PanoptiCity?tab=readme-ov-file#calculation-methods-for-field-of-view" target="_blank">
@@ -380,11 +170,11 @@ function _generateContentFOV() {
     content += `<p>${TEXTS.noFOV}</p>`;
   }
   return content;
-}
+};
 
-function removeCameraFOVDetail() {
+export const removeCameraFOVDetail = () => {
   if (cameraDetailsPlots.length) {
-    for (elem in cameraDetailsPlots) {
+    for (let elem in cameraDetailsPlots) {
       map.removeLayer(cameraDetailsPlots[elem]);
     }
     cameraDetailsPlots = [];
@@ -393,9 +183,9 @@ function removeCameraFOVDetail() {
     let button = document.getElementById(`button-${cameraDetailsSelectedScenario}`);
     button.classList.add("secondary");
   } catch (e) {}
-}
+};
 
-function _displayCameraFOV(scenario) {
+const _displayCameraFOV = (scenario) => {
   removeCameraFOVDetail();
   cameraDetailsSelectedScenario = scenario;
   try {
@@ -404,7 +194,7 @@ function _displayCameraFOV(scenario) {
   } catch (e) {}
   let plotDetail;
   let previousPolygon = [];
-  for (elem in cameraDetails.fov[scenario]) {
+  for (let elem in cameraDetails.fov[scenario]) {
     if (cameraDetails.fov[scenario][elem]) {
       plotDetail = new L.Polygon(
         [
@@ -422,4 +212,4 @@ function _displayCameraFOV(scenario) {
       previousPolygon = cameraDetails.fov[scenario][elem];
     }
   }
-}
+};

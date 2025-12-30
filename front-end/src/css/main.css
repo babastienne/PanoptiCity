@@ -1,3 +1,18 @@
+:root {
+  --panel-bg: #ffffff;
+  --text-color: #000000;
+  --snackbar-bg: #333333;
+  --snackbar-color: #fff
+}
+
+[data-theme="dark"] {
+  --panel-bg: #13171f;
+  --text-color: #ffffff;
+  --snackbar-bg: #dddddd;
+  --snackbar-color: #333
+}
+
+
 body {
   margin: 0;
 }
@@ -49,13 +64,9 @@ header {
   font-size: 17px;
   transform: translate(-50%, 0);
 }
-[data-theme="light"] #snackbar {
-  background-color: #333;
-  color: #fff;
-}
-[data-theme="dark"] #snackbar {
-  background-color: #ddd;
-  color: #333;
+#snackbar {
+  background-color: var(--snackbar-bg);
+  color: var(--text-color);
 }
 
 #snackbar.show {

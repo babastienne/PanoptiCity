@@ -1,24 +1,17 @@
-function displaySnackbar(content = "") {
+import { TEXTS } from "./language.js";
+import { showBottomModal, updateBottomModalContent } from "./bottomModal.js";
+
+export let displaySnackbar = (content = "") => {
   let elem = document.getElementById("snackbar");
   elem.className = "show";
   elem.innerHTML = content;
   setTimeout(function () {
     elem.className = elem.className.replace("show", "");
   }, 2950);
-}
-
-let getUserLang = () => {
-  let [userLang] = navigator.language.split("-");
-  if (!Object.keys(translatedTexts).includes(userLang)) {
-    userLang = "en";
-  }
-  return userLang;
 };
 
-const TEXTS = translatedTexts[getUserLang()];
-
 // Create some components
-var creationCameraButton = `
+export let creationCameraButton = `
   <img
     src="images/contrib/add.svg"
     id="buttonAddCamera"
@@ -27,10 +20,10 @@ var creationCameraButton = `
   />`;
 
 // Handle side menu content
-fillSideMenu = () => {
+let fillSideMenu = () => {
   let sideMenuContent = document.getElementById("sideMenuContent");
   let menuContent = "";
-  for (entry in TEXTS.menuContent) {
+  for (let entry in TEXTS.menuContent) {
     menuContent =
       menuContent +
       `
@@ -41,7 +34,7 @@ fillSideMenu = () => {
   sideMenuContent.innerHTML = menuContent;
 };
 
-displayMenuContent = (entry) => {
+let displayMenuContent = (entry) => {
   let content = `
   <div class="pico modal-div">
     <h4 class="modal-title">${entry}</h4><div class="modal-content">`;
@@ -53,13 +46,18 @@ displayMenuContent = (entry) => {
   showBottomModal();
 };
 
-fillSideMenu();
+export let initUI = () => {
+  fillSideMenu();
 
-// Handle translations of UI
-document.title = `${TEXTS.titleApp} - ${TEXTS.teaserApp}`;
-document.getElementById("tr-titleApp").innerHTML = TEXTS.titleApp;
-document.getElementById("tr-burgerMenu").title = TEXTS.burgerMenu;
-document.getElementById("tr-themeToggle").title = TEXTS.toggleTheme;
-document.getElementById("tr-github").title = TEXTS.linkGithub;
-document.getElementById("loginButton").title = TEXTS.loginButtonTitle;
-document.getElementById("loginButton").innerHTML = TEXTS.loginButtonName;
+  // Handle translations of UI
+  document.title = `${TEXTS.titleApp} - ${TEXTS.teaserApp}`;
+  document.getElementById("tr-titleApp").innerHTML = TEXTS.titleApp;
+  document.getElementById("tr-burgerMenu").title = TEXTS.burgerMenu;
+  document.getElementById("tr-themeToggle").title = TEXTS.toggleTheme;
+  document.getElementById("tr-github").title = TEXTS.linkGithub;
+  document.getElementById("loginButton").title = TEXTS.loginButtonTitle;
+  document.getElementById("loginButton").innerHTML = TEXTS.loginButtonName;
+};
+
+// TEMPORARY: Bridge for HTML onclick attributes
+window.displayMenuContent = displayMenuContent;

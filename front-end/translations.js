@@ -1,4 +1,4 @@
-let translatedTexts = {
+export const TRANSLATIONS = {
   en: {
     titleApp: "PanoptiCity",
     teaserApp: "A life under surveillance",
