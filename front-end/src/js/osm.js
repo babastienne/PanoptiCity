@@ -1,8 +1,10 @@
-OSM.configure({ apiUrl: OSM_API_URL });
+import { CLIENT_ID_OSM_APP, DOMAIN_NAME } from "../../CONFIG.js";
+import { TEXTS } from "./language.js";
+import { creationCameraButton } from "./interfaceFill.js";
 
-var userIsConnected;
+export let userIsConnected;
 
-async function OSMLogin() {
+let OSMLogin = async () => {
   let button = document.getElementById("loginButton");
   button.title = TEXTS.inProgressLabel;
   button.innerHTML = TEXTS.inProgressLabel;
@@ -16,15 +18,16 @@ async function OSMLogin() {
     .then(() => {
       checkIfUserConnected();
     })
-    .catch(() => {
+    .catch((e) => {
+      console.error(e);
       console.log("User cancelled the login, or there was an error");
       checkIfUserConnected();
     });
 
   await OSM.authReady;
-}
+};
 
-checkIfUserConnected = () => {
+export let checkIfUserConnected = () => {
   userIsConnected = OSM.isLoggedIn();
   let buttonLogin = document.getElementById("loginButton");
   let latteralButtons = document.getElementById("latteralButtons");
@@ -50,14 +53,14 @@ checkIfUserConnected = () => {
   }
 };
 
-getCamera = async (id) => {
+export let getCamera = async (id) => {
   let [fetchedCamera] = await OSM.getFeature("node", id);
   console.log(fetchedCamera);
   return fetchedCamera;
 };
 
-cleanObject = (camera) => {
-  for (elem in camera.tags) {
+let cleanObject = (camera) => {
+  for (let elem in camera.tags) {
     if (camera.tags[elem] == null) {
       delete camera.tags[elem];
     }
@@ -65,7 +68,7 @@ cleanObject = (camera) => {
   return camera;
 };
 
-createCamera = async (camera) => {
+export let createCamera = async (camera) => {
   camera.type = "node";
   camera.id = -1; // Negative ID for new features
   camera.uid = -1;
@@ -83,7 +86,7 @@ createCamera = async (camera) => {
   );
 };
 
-updateCamera = async (camera) => {
+export let updateCamera = async (camera) => {
   camera = cleanObject(camera);
   console.log(camera);
   await OSM.uploadChangeset(
@@ -91,5 +94,3 @@ updateCamera = async (camera) => {
     { create: [], modify: [camera], delete: [] }
   );
 };
-
-checkIfUserConnected();

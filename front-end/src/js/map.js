@@ -1,3 +1,8 @@
+import { BASE_URL_API, MAP_INITIAL_CENTER, MAP_MAX_BBOX, MAP_INITIAL_ZOOM, MAP_MIN_ZOOM } from "../../CONFIG.js";
+import { TEXTS } from "./language.js";
+import { displayCameraDetails } from "./camera.js";
+import { dataTileLayerCamera } from "./leaflet.data.tilelayer.js";
+
 /**
  * CONFIGURATION & CONSTANTS
  */
@@ -17,7 +22,8 @@ const LEGEND_GRADES = [
  * STATE MANAGEMENT (Map Instance & Controls)
  */
 let map;
-let layerSwitcherLight, layerSwitcherDark, zoomControl, locateControl, fovLayer, tilesCams;
+export let fovLayer, locateControl;
+let layerSwitcherLight, layerSwitcherDark, zoomControl;
 
 /**
  * LAYER FACTORIES
@@ -109,7 +115,7 @@ const createLegendControl = () => {
 /**
  * VIEW STATE LOGIC (Zoom/Lat/Lng)
  */
-function getInitialView() {
+let getInitialView = () => {
   const hash = window.location.hash;
 
   if (hash.startsWith("#map=")) {
@@ -138,9 +144,9 @@ function getInitialView() {
     center: MAP_INITIAL_CENTER,
     zoom: MAP_INITIAL_ZOOM,
   };
-}
+};
 
-function updateViewHash() {
+let updateViewHash = () => {
   const center = map.getCenter();
   const zoom = map.getZoom();
 
@@ -164,12 +170,12 @@ function updateViewHash() {
       zoom: zoom,
     })
   );
-}
+};
 
 /**
  * MAIN INITIALIZATION
  */
-function initMap() {
+export let initMap = () => {
   const layers = createBaseLayers();
 
   // 1. Initialize Map Instance
@@ -189,14 +195,14 @@ function initMap() {
 
   layerSwitcherLight = L.control
     .basemaps({
-      basemaps: [layers.cartoDbDark, layers.osmHot, layers.esriTiles],
+      basemaps: [layers.cartoDbVoyager, layers.osmHot, layers.esriTiles],
       ...commonSwitcherCfg,
     })
     .setPosition("bottomright");
 
   layerSwitcherDark = L.control
     .basemaps({
-      basemaps: [layers.cartoDbVoyager, layers.osmHot, layers.esriTiles],
+      basemaps: [layers.cartoDbDark, layers.osmHot, layers.esriTiles],
       ...commonSwitcherCfg,
     })
     .setPosition("bottomright");
@@ -237,8 +243,9 @@ function initMap() {
     })
     .addTo(map);
 
-  tilesCams = new L.dataTileLayerCamera(`${BASE_URL_API}/cameras.json?tile={z}/{x}/{y}`, {
+  const tilesCams = dataTileLayerCamera(`${BASE_URL_API}/cameras.json?tile={z}/{x}/{y}`, {
     display: true,
+    onCameraClick: displayCameraDetails,
   });
   map.addLayer(tilesCams);
 
@@ -250,7 +257,24 @@ function initMap() {
   const initialView = getInitialView();
   map.setView(initialView.center, initialView.zoom);
   map.on("moveend", updateViewHash);
-}
 
-// Startup
-initMap();
+  // 8. Init event listener to change theme layers
+  window.addEventListener("themeChanged", (e) => {
+    const theme = e.detail.theme;
+    if (theme === "dark") {
+      layerSwitcherLight.options.basemaps.forEach((e) => {
+        map.removeLayer(e);
+      });
+      map.removeControl(layerSwitcherLight);
+      map.addControl(layerSwitcherDark);
+    } else {
+      layerSwitcherDark.options.basemaps.forEach((e) => {
+        map.removeLayer(e);
+      });
+      map.removeControl(layerSwitcherDark);
+      map.addControl(layerSwitcherLight);
+    }
+  });
+
+  return map;
+};

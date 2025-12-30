@@ -1,4 +1,13 @@
-const computeRenderedImageWidth = (minWidth, gap, numberImages, maxWidth) => {
+import { removeCameraFOVDetail } from "./camera.js";
+import { fovLayer } from "./map.js";
+
+let map;
+
+export let initModal = (mapReference) => {
+  map = mapReference;
+};
+
+export const computeRenderedImageWidth = (minWidth, gap, numberImages, maxWidth) => {
   let widthModal = window.screen.width - 40; // 40 = padding for modal
   let numberOfDisaplyedImagesByRow = Math.floor(widthModal / (minWidth + gap));
   if (numberOfDisaplyedImagesByRow > numberImages) {
@@ -26,12 +35,12 @@ let allowHiding = true,
   moveBehindModal = null,
   dragModal = null;
 
-const showBottomModal = (
+export const showBottomModal = ({
   overlayClickHideModal = true,
   authorizeMoveBehindModal = false,
   authorizeDragModal = true,
-  defaultHeight = 80
-) => {
+  defaultHeight = 80,
+} = {}) => {
   allowHiding = overlayClickHideModal;
   moveBehindModal = authorizeMoveBehindModal;
   dragModal = authorizeDragModal;
@@ -80,7 +89,7 @@ const updateSheetHeight = (height) => {
   }
 };
 
-const hideBottomSheet = () => {
+export const hideBottomSheet = () => {
   document.getElementById("map").style.height = `calc(100vh - 4rem)`;
   map.invalidateSize();
   bottomSheet.classList.remove("show");
@@ -138,7 +147,7 @@ const dragStop = () => {
     : updateSheetHeight(sheetHeight);
 };
 
-const updateBottomModalContent = (content, heightAdd = 0, adaptMap = false) => {
+export const updateBottomModalContent = (content, { heightAdd = 0, adaptMap = false } = {}) => {
   bodyModal.innerHTML = content;
   let maxHeightModal = bodyModal.children[0].scrollHeight + 120 + heightAdd;
   if (maxHeightModal > window.screen.height) {
@@ -150,6 +159,8 @@ const updateBottomModalContent = (content, heightAdd = 0, adaptMap = false) => {
     map.invalidateSize();
   }
 };
+
+// ---- EVENTS AND LISTENERS ----
 
 const addDraggingEvents = (e, moveHandler, condition = () => true) => {
   const [moveEvent, stopEvent] = e.type === "mousedown" ? ["mousemove", "mouseup"] : ["touchmove", "touchend"];

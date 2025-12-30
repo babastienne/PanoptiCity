@@ -1,15 +1,42 @@
-var currentPositionMarker = new L.marker(map.getCenter(), {});
-var sliderValue = 0;
-var currentCamera = {};
+import { TEXTS } from "./language.js";
+import { displaySnackbar, creationCameraButton } from "./interfaceFill.js";
+import { getCamera, createCamera, updateCamera, userIsConnected } from "./osm.js";
+import { locateControl } from "./map.js";
+import {
+  computeRenderedImageWidth,
+  showBottomModal,
+  hideBottomSheet,
+  updateBottomModalContent,
+} from "./bottomModal.js";
+import {
+  choicesCameraType,
+  choicesSurveillanceType,
+  choicesCameraMount,
+  choicesCameraZone,
+  choicesCameraHeight,
+  choicesCameraDirection,
+  choicesCameraAngle,
+  choicesCameraLocation,
+} from "./cameraConfig.js";
+
+let map;
+let currentPositionMarker;
+let sliderValue = 0;
+let currentCamera = {};
+
+export const initContrib = (givenMap) => {
+  map = givenMap;
+  currentPositionMarker = new L.marker(map.getCenter(), {});
+};
 
 // -- Functions to display forms / ask user information --
-displaySelectChoicesForUser = (choices) => {
+const displaySelectChoicesForUser = (choices) => {
   let modalContent = `
         <div class="pico modal-div">
             <h4 class="modal-title">${choices.title}</h4>
             <div class="modal-grid">
     `;
-  for (elem in choices.options) {
+  for (let elem in choices.options) {
     modalContent =
       modalContent +
       `<div class="modal-cell" onclick="nextStep('${choices.tagName}', '${elem}')">
@@ -24,21 +51,16 @@ displaySelectChoicesForUser = (choices) => {
             class="outline secondary modal-button"
             onclick="nextStep('${choices.tagName}')"
         >${TEXTS.iDontKnowButton}</button></div>`;
-  let additionalHeight = computeRenderedImageWidth(
-    100,
-    5,
-    Object.keys(choices.options).length,
-    200
-  );
-  updateBottomModalContent(modalContent, additionalHeight - 15);
-  showBottomModal(
-    (overlayClickHideModal = false),
-    (authorizeMoveBehindModal = false),
-    (authorizeDragModal = false)
-  );
+  let additionalHeight = computeRenderedImageWidth(100, 5, Object.keys(choices.options).length, 200);
+  updateBottomModalContent(modalContent, { heightAdd: additionalHeight - 15 });
+  showBottomModal({
+    overlayClickHideModal: false,
+    authorizeMoveBehindModal: false,
+    authorizeDragModal: false,
+  });
 };
 
-displaySliderForUser = (choices) => {
+const displaySliderForUser = (choices) => {
   let modalContent = `
         <div class="pico modal-div">
           <h4 class="modal-title">${choices.title}</h4>
@@ -63,16 +85,16 @@ displaySliderForUser = (choices) => {
           </div>
         </div>
     `;
-  updateBottomModalContent(modalContent, (heightAdd = -15));
+  updateBottomModalContent(modalContent, { heightAdd: -15 });
   updateSliderDistanceValue(choices.defaultValue);
-  showBottomModal(
-    (overlayClickHideModal = false),
-    (authorizeMoveBehindModal = false),
-    (authorizeDragModal = false)
-  );
+  showBottomModal({
+    overlayClickHideModal: false,
+    authorizeMoveBehindModal: false,
+    authorizeDragModal: false,
+  });
 };
 
-displayDirectionFormForUser = (choices) => {
+const displayDirectionFormForUser = (choices) => {
   let modalContent = `
   <div class="pico modal-div">
     <h4 class="modal-title">${choices.title}</h4>
@@ -88,16 +110,16 @@ displayDirectionFormForUser = (choices) => {
     </div>
   </div>
 `;
-  updateBottomModalContent(modalContent, (heightAdd = -15), (adaptMap = true));
+  updateBottomModalContent(modalContent, { heightAdd: -15, adaptMap: true });
   addDirectionArrowOnMap();
-  showBottomModal(
-    (overlayClickHideModal = false),
-    (authorizeMoveBehindModal = true),
-    (authorizeDragModal = false)
-  );
+  showBottomModal({
+    overlayClickHideModal: false,
+    authorizeMoveBehindModal: true,
+    authorizeDragModal: false,
+  });
 };
 
-displayAngleFormForUser = (choices) => {
+const displayAngleFormForUser = (choices) => {
   let modalContent = `
   <div class="pico modal-div">
     <h4 class="modal-title">${choices.title}</h4>
@@ -123,16 +145,16 @@ displayAngleFormForUser = (choices) => {
     </div>
   </div>
 `;
-  updateBottomModalContent(modalContent, (heightAdd = -15));
+  updateBottomModalContent(modalContent, { heightAdd: -15 });
   rotateArrowForDirection(choices.defaultValue, choices.additionalTransform);
-  showBottomModal(
-    (overlayClickHideModal = false),
-    (authorizeMoveBehindModal = false),
-    (authorizeDragModal = false)
-  );
+  showBottomModal({
+    overlayClickHideModal: false,
+    authorizeMoveBehindModal: false,
+    authorizeDragModal: false,
+  });
 };
 
-displayMapFormForUser = (choices) => {
+const displayMapFormForUser = (choices) => {
   let modalContent = `
   <div class="pico modal-div">
     <h4 class="modal-title">${choices.title}</h4>
@@ -148,32 +170,32 @@ displayMapFormForUser = (choices) => {
     </div>
   </div>
 `;
-  updateBottomModalContent(modalContent, (heightAdd = -15), (adaptMap = true));
-  showBottomModal(
-    (overlayClickHideModal = false),
-    (authorizeMoveBehindModal = true),
-    (authorizeDragModal = false)
-  );
+  updateBottomModalContent(modalContent, { heightAdd: -15, adaptMap: true });
+  showBottomModal({
+    overlayClickHideModal: false,
+    authorizeMoveBehindModal: true,
+    authorizeDragModal: false,
+  });
 };
 
 // -- UTILS Functions --
-addCreationMarkerOnMap = () => {
+const addCreationMarkerOnMap = () => {
   currentPositionMarker.setLatLng(map.getCenter());
   currentPositionMarker.addTo(map);
   map.on("move", centerMarkerOnMap);
 };
 
-centerMarkerOnMap = (event) => {
+const centerMarkerOnMap = (event) => {
   currentPositionMarker.setLatLng(event.target.getCenter());
 };
 
-removeCreationMarkerFromMap = () => {
+const removeCreationMarkerFromMap = () => {
   currentPositionMarker.remove();
   map.off("move", centerMarkerOnMap);
   return currentPositionMarker.getLatLng();
 };
 
-addDirectionArrowOnMap = () => {
+const addDirectionArrowOnMap = () => {
   map.dragging.disable();
   locateControl.remove(map);
   let overlay = document.getElementById("customOverlay");
@@ -187,22 +209,18 @@ addDirectionArrowOnMap = () => {
   arrow.addEventListener("touchstart", eventRotationArrow, false);
 };
 
-eventRotationArrow = (event) => {
-  typeEvents =
-    event.type == "mousedown"
-      ? ["mousemove", "mouseup"]
-      : ["touchmove", "touchend"];
+const eventRotationArrow = (event) => {
+  let typeEvents = event.type == "mousedown" ? ["mousemove", "mouseup"] : ["touchmove", "touchend"];
   var arrow = document.getElementById("overlay-arrow-direction");
   var arrowRects = arrow.getBoundingClientRect();
   var arrowX = arrowRects.left + arrowRects.width / 2;
   var arrowY = arrowRects.top + arrowRects.height / 2;
 
-  function eventMoveHandlerMouse(event) {
+  let eventMoveHandlerMouse = (event) => {
     let geom = event.type == "touchmove" ? event.touches[0] : event;
-    var angle =
-      Math.atan2(geom.clientY - arrowY, geom.clientX - arrowX) + Math.PI / 2;
+    var angle = Math.atan2(geom.clientY - arrowY, geom.clientX - arrowX) + Math.PI / 2;
     rotateArrow((angle * 180) / Math.PI);
-  }
+  };
 
   window.addEventListener(typeEvents[0], eventMoveHandlerMouse, false);
 
@@ -216,13 +234,13 @@ eventRotationArrow = (event) => {
   );
 };
 
-function rotateArrow(deg) {
+const rotateArrow = (deg) => {
   let arrow = document.getElementById("overlay-arrow-direction");
   arrow.style.transform = `rotate(${deg}deg)`;
   sliderValue = Math.round(deg);
-}
+};
 
-removeDirectionArrowFromMap = () => {
+const removeDirectionArrowFromMap = () => {
   map.dragging.enable();
   locateControl.addTo(map);
   let arrow = document.getElementById("overlay-arrow-direction");
@@ -235,27 +253,23 @@ removeDirectionArrowFromMap = () => {
   overlay.innerHTML = "";
 };
 
-rotateArrowForDirection = (value, optionnalTransformation = 0) => {
+const rotateArrowForDirection = (value, optionnalTransformation = 0) => {
   sliderValue = Number(value);
   let arrow = document.getElementById("modal-arrow-direction");
-  arrow.style.transform = `rotate(${
-    Number(value) + optionnalTransformation
-  }deg)`;
+  arrow.style.transform = `rotate(${Number(value) + optionnalTransformation}deg)`;
   document.getElementById("sliderValue").innerHTML = `${value}°`;
 };
 
-updateSliderDistanceValue = (value) => {
+const updateSliderDistanceValue = (value) => {
   sliderValue = value;
   document.getElementById("sliderValue").innerHTML =
-    value <= 1
-      ? `${value} ${TEXTS.distanceUnit}`
-      : `${value} ${TEXTS.distanceUnitPlural}`;
+    value <= 1 ? `${value} ${TEXTS.distanceUnit}` : `${value} ${TEXTS.distanceUnitPlural}`;
 };
 
 // -- Functions to handle creation workflow --
-saveChoosenValue = (tagName, value = null) => {
+const saveChoosenValue = (tagName, value = null) => {
   if (tagName == choicesCameraLocation.tagName) {
-    position = removeCreationMarkerFromMap();
+    let position = removeCreationMarkerFromMap();
     currentCamera.lat = position.lat;
     currentCamera.lon = position.lng;
     displaySelectChoicesForUser(choicesCameraType);
@@ -277,7 +291,7 @@ saveChoosenValue = (tagName, value = null) => {
   }
 };
 
-chooseNextStep = () => {
+const chooseNextStep = () => {
   let existingCameraFields = Object.keys(currentCamera);
   let existingCameraTags = Object.keys(currentCamera.tags);
   if (!existingCameraFields.includes("lat")) {
@@ -287,9 +301,7 @@ chooseNextStep = () => {
     displaySelectChoicesForUser(choicesCameraType);
   } else if (
     existingCameraTags.includes(choicesCameraType.tagName) &&
-    ["fixed", "panning"].includes(
-      currentCamera.tags[choicesCameraType.tagName]
-    ) &&
+    ["fixed", "panning"].includes(currentCamera.tags[choicesCameraType.tagName]) &&
     !existingCameraTags.includes(choicesCameraDirection.tagName)
   ) {
     displayDirectionFormForUser(choicesCameraDirection);
@@ -319,13 +331,13 @@ chooseNextStep = () => {
   }
 };
 
-nextStep = (tagName, value = null) => {
+export const nextStep = (tagName, value = null) => {
   hideBottomSheet();
   saveChoosenValue(tagName, value);
   chooseNextStep();
 };
 
-startCameraCreation = () => {
+export const startCameraCreation = () => {
   // This function is called when the user click on the creation button
   document.getElementById("latteralButtons").innerHTML = ""; // We remove the creation button of the interface
   currentCamera = {
@@ -337,16 +349,24 @@ startCameraCreation = () => {
   chooseNextStep();
 };
 
-completeExistingCameraMissingAttributes = async (cameraId) => {
+export const completeExistingCameraMissingAttributes = async (cameraId) => {
   document.getElementById("latteralButtons").innerHTML = ""; // We remove the creation button of the interface
   currentCamera = await getCamera(cameraId);
   chooseNextStep();
 };
 
-cancelCameraCreation = () => {
+export const cancelCameraCreation = () => {
   hideBottomSheet();
   removeCreationMarkerFromMap();
   if (userIsConnected) {
     document.getElementById("latteralButtons").innerHTML = creationCameraButton;
   }
 };
+
+// TEMPORARY: Bridge for HTML onclick attributes
+window.completeExistingCameraMissingAttributes = completeExistingCameraMissingAttributes;
+window.nextStep = nextStep;
+window.startCameraCreation = startCameraCreation;
+window.cancelCameraCreation = cancelCameraCreation;
+window.updateSliderDistanceValue = updateSliderDistanceValue;
+window.rotateArrowForDirection = rotateArrowForDirection;

@@ -103,26 +103,6 @@
   grid-gap: 5px;
   display: grid;
 }
-/* @media screen and (max-width: 950px) {
-  .modal-grid {
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-  }
-}
-@media screen and (max-width: 750px) {
-  .modal-grid {
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  }
-}
-@media screen and (max-width: 600px) {
-  .modal-grid {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-  }
-}
-@media screen and (max-width: 450px) {
-  .modal-grid {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-} */
 .modal-cell {
   display: flex;
   align-items: center;
