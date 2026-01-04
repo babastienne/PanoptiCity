@@ -28,13 +28,14 @@ let fillSideMenu = () => {
       menuContent +
       `
       <li class="menu__li">
-        <a class="menu__item" title=${entry} onclick="displayMenuContent('${entry}')">${entry}</a>
+        <a class="menu__item" title='${entry}' onclick="displayMenuContent('${entry}')">${entry}</a>
       </li>`;
   }
   sideMenuContent.innerHTML = menuContent;
 };
 
 let displayMenuContent = (entry) => {
+  let menu = document.getElementById("menu__toggle");
   let content = `
   <div class="pico modal-div">
     <h4 class="modal-title">${entry}</h4><div class="modal-content">`;
@@ -43,7 +44,10 @@ let displayMenuContent = (entry) => {
   });
   content = content + "</div></div>";
   updateBottomModalContent(content);
-  showBottomModal();
+  menu.checked = false; // Close latteral menu before displaying the modal
+  showBottomModal({
+    authorizeMoveBehindModal: true,
+  });
 };
 
 export let initUI = () => {

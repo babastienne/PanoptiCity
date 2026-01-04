@@ -110,13 +110,13 @@ const displayDirectionFormForUser = (choices) => {
     </div>
   </div>
 `;
-  updateBottomModalContent(modalContent, { heightAdd: -15, adaptMap: true });
-  addDirectionArrowOnMap();
+  updateBottomModalContent(modalContent, { heightAdd: -15 });
   showBottomModal({
     overlayClickHideModal: false,
     authorizeMoveBehindModal: true,
     authorizeDragModal: false,
   });
+  addDirectionArrowOnMap();
 };
 
 const displayAngleFormForUser = (choices) => {
@@ -170,7 +170,7 @@ const displayMapFormForUser = (choices) => {
     </div>
   </div>
 `;
-  updateBottomModalContent(modalContent, { heightAdd: -15, adaptMap: true });
+  updateBottomModalContent(modalContent, { heightAdd: -15 });
   showBottomModal({
     overlayClickHideModal: false,
     authorizeMoveBehindModal: true,
@@ -201,7 +201,7 @@ const addDirectionArrowOnMap = () => {
   let overlay = document.getElementById("customOverlay");
   overlay.innerHTML = `<img id="overlay-arrow-direction" draggable="false" oncontextmenu="return false;" src="/images/contrib/arrow-base.svg" />`;
   let arrow = document.getElementById("overlay-arrow-direction");
-  arrow.style.top = `calc(${map.getSize().y / 2}px + 4rem - 100px)`;
+  arrow.style.top = `calc(${map.getSize().y / 2}px + 3.5rem - 100px)`;
   let mapDiv = document.getElementById("map");
   mapDiv.addEventListener("mousedown", eventRotationArrow, false);
   arrow.addEventListener("mousedown", eventRotationArrow, false);

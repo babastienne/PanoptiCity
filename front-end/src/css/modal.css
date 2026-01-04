@@ -1,3 +1,13 @@
+:root {
+  --panel-bg: #ffffff;
+  --modal-box-shadow: rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] {
+  --panel-bg: #13171f;
+  --modal-box-shadow: rgba(255, 255, 255, 0.4);
+}
+
 .bottom-sheet {
   position: fixed;
   top: 0;
@@ -17,20 +27,6 @@
   opacity: 1;
   pointer-events: auto;
 }
-.bottom-sheet .sheet-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.2;
-}
-[data-theme="light"] .bottom-sheet .sheet-overlay {
-  background: #000;
-}
-[data-theme="dark"] .bottom-sheet .sheet-overlay {
-  background: #666;
-}
 
 .bottom-sheet .content {
   width: 100%;
@@ -41,14 +37,8 @@
   transform: translateY(100%);
   border-radius: 12px 12px 0 0;
   transition: 0.3s ease;
-}
-[data-theme="light"] .bottom-sheet .content {
-  background: #fff;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-}
-[data-theme="dark"] .bottom-sheet .content {
-  background: #13171f;
-  box-shadow: 0 10px 20px rgba(255, 255, 255, 0.4);
+  background: var(--panel-bg);
+  box-shadow: 0 10px 20px var(--modal-box-shadow);
 }
 
 .bottom-sheet.show .content {

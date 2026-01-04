@@ -1,15 +1,13 @@
 :root {
-  --panel-bg: #ffffff;
   --text-color: #000000;
   --snackbar-bg: #333333;
-  --snackbar-color: #fff
+  --snackbar-color: #fff;
 }
 
 [data-theme="dark"] {
-  --panel-bg: #13171f;
   --text-color: #ffffff;
   --snackbar-bg: #dddddd;
-  --snackbar-color: #333
+  --snackbar-color: #333;
 }
 
 
@@ -21,8 +19,12 @@ body {
   margin-right: 1rem;
 }
 
+.app-header {
+  height: 3.5rem;
+}
+
 #map {
-  height: calc(100vh - 4rem);
+  height: calc(100vh - 3.5rem);
 }
 
 header {
@@ -66,7 +68,7 @@ header {
 }
 #snackbar {
   background-color: var(--snackbar-bg);
-  color: var(--text-color);
+  color: var(--snackbar-color);
 }
 
 #snackbar.show {
