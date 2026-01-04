@@ -34,6 +34,8 @@ export let displayCameraDetails = async (marker) => {
   if (map.hasLayer(fovLayer)) {
     fovLayer.removeFrom(map);
   }
+  // Center map on the clicked marker
+  map.setView(marker.getLatLng(), Math.max(map.getZoom(), 16));
 };
 
 const _transformTagContentInHtml = (content) => {
@@ -110,7 +112,7 @@ const addCameraDetailsData = (plotMarker, plot) => {
   cancelCameraCreation();
   updateBottomModalContent(popupDataTable);
   showBottomModal({
-    overlayClickHideModal: true,
+    authorizeClosingModal: true,
     authorizeMoveBehindModal: true,
     authorizeDragModal: true,
     defaultHeight: 50,
