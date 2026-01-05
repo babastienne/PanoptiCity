@@ -50,8 +50,36 @@ let displayMenuContent = (entry) => {
   });
 };
 
+const initWelcomeModal = () => {
+  const modal = document.getElementById("welcome-modal");
+  const understandBtn = document.getElementById("understand-button");
+
+  // Check if user has already seen the modal
+  if (localStorage.getItem("welcome-modal-seen") === "true") {
+    modal.classList.add("hidden");
+    return;
+  }
+
+  // Populate text
+  document.getElementById("tr-welcomeTitle").innerText = TEXTS.welcomeTitle;
+  document.getElementById("tr-welcomeDesc").innerText = TEXTS.welcomeDesc;
+  document.getElementById("tr-welcomeStep1").innerText = TEXTS.welcomeStep1;
+  document.getElementById("tr-welcomeStep2").innerText = TEXTS.welcomeStep2;
+  document.getElementById("tr-welcomeStep3").innerText = TEXTS.welcomeStep3;
+  understandBtn.innerText = TEXTS.welcomeButton;
+
+  const hideModal = () => {
+    modal.classList.add("hidden");
+    localStorage.setItem("welcome-modal-seen", "true");
+  };
+
+  understandBtn.addEventListener("click", hideModal);
+};
+
 export let initUI = () => {
   fillSideMenu();
+
+  initWelcomeModal();
 
   // Handle translations of UI
   document.title = `${TEXTS.titleApp} - ${TEXTS.teaserApp}`;
