@@ -12,7 +12,7 @@ export const levelsCameraConfiguration = {
     fill: 0.5,
   },
   observation: {
-    color: "green",
+    color: "#00b300",
     weight: 0,
     fill: 0.5,
   },

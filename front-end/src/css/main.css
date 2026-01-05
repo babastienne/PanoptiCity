@@ -181,6 +181,7 @@ header {
   height: 30px;
   margin-left: 5px;
   margin-top: 5px;
+  color: black;
 
   text-align: center;
   border-radius: 15px;
@@ -189,6 +190,13 @@ header {
 
 .marker-cluster span {
   line-height: 30px;
+}
+
+/* Hide zoom buttons on mobile */
+@media (max-width: 919px) {
+  .leaflet-control-zoom {
+    display: none !important;
+  }
 }
 
 
