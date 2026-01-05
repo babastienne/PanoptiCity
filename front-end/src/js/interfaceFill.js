@@ -51,14 +51,15 @@ let displayMenuContent = (entry) => {
 };
 
 const initWelcomeModal = () => {
+  // Check if user has already seen the modal
+  if (localStorage.getItem("welcome-modal-seen") === "true") {
+    return;
+  }
+
   const modal = document.getElementById("welcome-modal");
   const understandBtn = document.getElementById("understand-button");
 
-  // Check if user has already seen the modal
-  if (localStorage.getItem("welcome-modal-seen") === "true") {
-    modal.classList.add("hidden");
-    return;
-  }
+  modal.classList.remove("hidden");
 
   // Populate text
   document.getElementById("tr-welcomeTitle").innerText = TEXTS.welcomeTitle;
