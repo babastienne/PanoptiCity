@@ -32,8 +32,8 @@ header {
 }
 
 .dark-map-tiles {
-  filter: brightness(0.6) invert(1) contrast(4) hue-rotate(200deg) saturate(0.4)
-    brightness(0.7);
+  filter: var(--dark-map-filter, none);
+  transition: filter 0.3s ease;
 }
 
 #buttonAddCamera {
