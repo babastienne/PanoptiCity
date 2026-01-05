@@ -120,6 +120,84 @@
 
     <div id="snackbar"></div>
 
+    <!-- Welcome Modal -->
+    <div id="welcome-modal" class="welcome-overlay pico">
+      <article class="welcome-card pico">
+        <header>
+          <strong id="tr-welcomeTitle" class="welcome-title">Welcome to PanoptiCity</strong>
+        </header>
+
+        <p id="tr-welcomeDesc">
+          This interactive map reveals the scale of mass surveillance worldwide. Each marker represents a known camera
+          location and it's estimated field of view. The map displays a tiny fraction of the reality as the majority of
+          cameras as not been yet contributed.
+        </p>
+
+        <ul class="welcome-list pico">
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon-map"
+            >
+              <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+              <line x1="8" y1="2" x2="8" y2="18"></line>
+              <line x1="16" y1="6" x2="16" y2="22"></line>
+            </svg>
+            <span id="tr-welcomeStep1">Zoom and pan to explore surveillance coverage</span>
+          </li>
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon-eye"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <span id="tr-welcomeStep2">Toggle between different range scenarios</span>
+          </li>
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon-plus"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="16"></line>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+            <span id="tr-welcomeStep3">Sign in to contribute camera locations to OpenStreetMap</span>
+          </li>
+        </ul>
+
+        <footer class="welcome-footer">
+          <button id="understand-button" class="pico-primary">Let's explore the map</button>
+        </footer>
+      </article>
+    </div>
+
     <!-- ** Load external libs ** -->
     <!-- Leaflet -->
     <link rel="stylesheet" href="packages/leaflet/leaflet.css" />

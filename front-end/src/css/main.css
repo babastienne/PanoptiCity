@@ -184,9 +184,59 @@ header {
 
   text-align: center;
   border-radius: 15px;
-  font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font: 12px "Roboto", Arial, Helvetica, sans-serif;
 }
 
 .marker-cluster span {
   line-height: 30px;
+}
+
+
+/* MODAL CSS */
+
+.welcome-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 6000;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.welcome-card header {
+  display: flex;
+  justify-content: center;
+}
+
+.welcome-overlay.hidden {
+  display: none;
+}
+
+.welcome-card {
+  max-width: 500px;
+  width: 100%;
+}
+
+.welcome-list {
+  list-style: none;
+  padding: 0;
+}
+
+.welcome-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.welcome-list svg {
+  flex-shrink: 0;
+  margin-top: 4px;
+  color: var(--pico-primary);
+}
+
+.welcome-footer {
+  display: flex;
+  justify-content: center;
 }

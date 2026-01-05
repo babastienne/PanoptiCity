@@ -79,6 +79,13 @@ export const TRANSLATIONS = {
       "Why this name ?":
         "PanoptiCity is the contraction of Panopticon and City.\n A Panopticon is a type of architecture, designed for prisons, that try to create a situation where every convict can be seen by a guardian at all time. It is often represented with a central watch tower into a circular building so that it can maximize the number of prisonners seen by a minimum number of guardians.\n This old concept (invented centuries ago) is nowadays sometimes used as a metaphor for modern surveillance, the idea being enforced by the fact that CCTV control centers looks a lot like panopticons control towers.\n This name is therefore a wordplay to denounce a world where, because of global surveillance with CCTV, an entire city is now becoming a panopticon.\n You can learn more about panopticons on <a href='https://en.wikipedia.org/wiki/Panopticon'>wikipedia</a>.",
     },
+    welcomeTitle: "Welcome to PanoptiCity",
+    welcomeDesc:
+      "This interactive map reveals the scale of mass surveillance worldwide. Each marker represents a known camera location and it's estimated field of view. The map displays a tiny fraction of the reality as the majority of cameras as not been yet contributed.",
+    welcomeStep1: "Zoom and pan to explore surveillance coverage",
+    welcomeStep2: "Toggle between different range scenarios",
+    welcomeStep3: "Sign in to contribute camera locations to OpenStreetMap",
+    welcomeButton: "Let's explore the map",
   },
   fr: {
     titleApp: "PanoptiCity",
@@ -160,5 +167,12 @@ export const TRANSLATIONS = {
       "Pourquoi ce nom ?":
         "PanoptiCity est la contraction de Panoptique et Cité.\n Un Panoptique est un type d'architecture carcérale, qui essaye de créer une situation ou chaque condamné peut être vu par un guardien à chaque instant. Cette architecture est souvent représentée avec une tour de surveillance centrale dans un batiment circulaire, afin de maximiser le nombre de prisonniers pour un minimum de guardiens.\n Ce vieux concept (inventé il y a plusieurs siècles) est de nos jours parfois utilisé comme une métaphore pour parler de surveillance moderne, l'idée étant renforcée par le fait que les centres de contrôle de caméras ressemblent fortement à des tours de contrôle panoptiques.\n Le nom de ce site est un jeu de mot pour dénoncer un monde où, du fait d'une surveillance vidéo globalisée, une ville complète peut devenir panoptique faisant des citoyen·ne·s des prisonniers modernes perpétuellement observés.\n Vous pouvez en apprendre plus sur le panoptique sur <a href='https://en.wikipedia.org/wiki/Panopticon'>wikipedia</a>.",
     },
+    welcomeTitle: "Bienvenue sur PanoptiCity",
+    welcomeDesc:
+      "Cette carte interactive révèle l'ampleur de la surveillance de masse à l'échelle mondiale. Chaque marqueur représente l'emplacement connu d'une caméra et son champ de vision estimé. La carte n'affiche qu'une infime partie de la réalité, car la majorité des caméras n'ont pas encore été répertoriées.",
+    welcomeStep1: "Zoomez et déplacez la carte pour parcourir les données.",
+    welcomeStep2: "Basculez entre plusieurs scénarios de simulation des champs de vision",
+    welcomeStep3: "Connectez-vous pour répertorier de nouvelles caméras",
+    welcomeButton: "Explorer la carte",
   },
 };
