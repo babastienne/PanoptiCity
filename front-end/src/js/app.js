@@ -7,6 +7,7 @@ import { checkIfUserConnected } from "./osm.js";
 import { initTheme } from "./theme-switcher.js";
 import { initModal } from "./bottomModal.js";
 import { initContrib } from "./contrib.js";
+import { initSearch } from "./search.js";
 
 // Initialize everything when the DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
@@ -16,8 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const map = initMap();
   // Init cameras
   initCamera(map);
+  initSearch(map); // Initialize search
   // Init theme switcher
-  //   themeSwitcher.init(map);
   initTheme();
 
   // Init modal

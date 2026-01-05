@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="src/css/burger.css" />
     <link rel="stylesheet" href="src/css/main.css" />
     <link rel="stylesheet" href="src/css/modal.css" />
+    <link rel="stylesheet" href="src/css/search.css" />
   </head>
   <body>
     <header class="app-header">
@@ -117,6 +118,48 @@
     <div id="customOverlay"></div>
 
     <div id="map"></div>
+    <div id="map-search-container" class="search-container">
+      <div class="search-bar">
+        <input id="search-input" type="text" placeholder="" autocomplete="off" />
+        <button id="search-action-btn" class="search-button primary">
+          <!-- Search Icon (Visible by default) -->
+          <svg
+            id="icon-search"
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+
+          <!-- Clear Icon (Hidden by default) -->
+          <svg
+            id="icon-clear"
+            class="hidden"
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <ul id="search-results" class="search-results-list hidden"></ul>
+    </div>
 
     <div id="snackbar"></div>
 

@@ -86,6 +86,7 @@ export const TRANSLATIONS = {
     welcomeStep2: "Toggle between different range scenarios",
     welcomeStep3: "Sign in to contribute camera locations to OpenStreetMap",
     welcomeButton: "Let's explore the map",
+    searchPlaceholder: "Search location",
   },
   fr: {
     titleApp: "PanoptiCity",
@@ -174,5 +175,6 @@ export const TRANSLATIONS = {
     welcomeStep2: "Basculez entre plusieurs scénarios de simulation des champs de vision",
     welcomeStep3: "Connectez-vous pour répertorier de nouvelles caméras",
     welcomeButton: "Explorer la carte",
+    searchPlaceholder: "Rechercher un lieu...",
   },
 };
