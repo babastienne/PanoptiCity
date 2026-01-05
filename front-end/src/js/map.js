@@ -7,8 +7,8 @@ import { dataTileLayerCamera } from "./leaflet.data.tilelayer.js";
  * CONFIGURATION & CONSTANTS
  */
 const FOV_STYLES = {
-  1: { fillColor: "red", fillOpacity: 0.4, stroke: false, fill: true }, // Identification
-  2: { fillColor: "orange", fillOpacity: 0.4, stroke: false, fill: true }, // Recognition
+  1: { fillColor: "#ff3131", fillOpacity: 0.4, stroke: false, fill: true }, // Identification
+  2: { fillColor: "#ffbf00", fillOpacity: 0.4, stroke: false, fill: true }, // Recognition
   3: { fillColor: "#00b300", fillOpacity: 0.3, stroke: false, fill: true }, // Observation
 };
 
