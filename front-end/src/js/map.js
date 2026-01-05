@@ -23,7 +23,6 @@ const LEGEND_GRADES = [
  */
 let map;
 export let fovLayer, locateControl;
-let layerSwitcherLight, layerSwitcherDark, zoomControl;
 
 /**
  * LAYER FACTORIES
@@ -34,37 +33,29 @@ const createBaseLayers = () => {
     {
       maxNativeZoom: 19,
       maxZoom: 21,
+      className: "dark-map-tiles",
       attribution: "Tiles &copy; Esri",
       label: "Satellite",
     }
   );
 
-  const cartoDbDark = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  const OSM = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxNativeZoom: 19,
     maxZoom: 21,
     subdomains: "abc",
     className: "dark-map-tiles",
     label: "Map",
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> | &copy; <a href="https://carto.com/">CARTO</a>',
-  });
-
-  const cartoDbVoyager = L.tileLayer("//{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-    subdomains: "abcd",
-    maxNativeZoom: 20,
-    maxZoom: 21,
-    label: "Map",
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> | &copy; <a href="https://carto.com/">CARTO</a>',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
   });
 
   const osmHot = L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
     maxZoom: 21,
     maxNativeZoom: 19,
+    className: "dark-map-tiles",
     attribution: '&copy; OSM | <a href="https://www.hotosm.org/">HOT</a>',
   });
 
-  return { esriTiles, cartoDbDark, cartoDbVoyager, osmHot };
+  return { esriTiles, OSM, osmHot };
 };
 
 /**
@@ -103,7 +94,7 @@ const createLegendControl = () => {
   const legend = L.control({ position: "bottomleft" });
   legend.onAdd = () => {
     const div = L.DomUtil.create("div", "map_legend info legend");
-    div.innerHTML = "<h4>FOV Levels</h4>";
+    div.innerHTML = "<h4>Levels of surveillance</h4>";
     LEGEND_GRADES.forEach((item) => {
       div.innerHTML += `<i style="background: ${item.color}"></i> ${item.label}<br>`;
     });
@@ -193,16 +184,9 @@ export let initMap = () => {
   // 3. Configure BaseMap Switchers
   const commonSwitcherCfg = { tileX: 15, tileY: 10, tileZ: 5 };
 
-  layerSwitcherLight = L.control
+  let layerSwitcher = L.control
     .basemaps({
-      basemaps: [layers.cartoDbVoyager, layers.osmHot, layers.esriTiles],
-      ...commonSwitcherCfg,
-    })
-    .setPosition("bottomright");
-
-  layerSwitcherDark = L.control
-    .basemaps({
-      basemaps: [layers.cartoDbDark, layers.osmHot, layers.esriTiles],
+      basemaps: [layers.osmHot, layers.OSM, layers.esriTiles],
       ...commonSwitcherCfg,
     })
     .setPosition("bottomright");
@@ -212,20 +196,22 @@ export let initMap = () => {
     .setPosition("bottomright")
     .setPrefix('<a href="https://github.com/babastienne" target="_blank">Babastienne</a>');
 
-  zoomControl = L.control
+  let zoomControl = L.control
     .zoom({
       zoomOutTitle: TEXTS.mapZoomOut,
       zoomInTitle: TEXTS.mapZoomIn,
     })
+    .setPosition("bottomright")
     .addTo(map);
 
   locateControl = L.control
     .locate({
       strings: { title: TEXTS.mapLocateButton },
     })
+    .setPosition("bottomright")
     .addTo(map);
 
-  map.addControl(layerSwitcherLight);
+  map.addControl(layerSwitcher);
 
   // 5. Add Data Layers
   fovLayer = L.vectorGrid
@@ -250,7 +236,7 @@ export let initMap = () => {
   map.addLayer(tilesCams);
 
   // 6. Add Custom Logic Controls
-  createScenarioControl(fovLayer).addTo(map);
+  createScenarioControl(fovLayer).setPosition("bottomleft").addTo(map);
   createLegendControl().addTo(map);
 
   // 7. Initial View Positioning & Events
@@ -261,18 +247,11 @@ export let initMap = () => {
   // 8. Init event listener to change theme layers
   window.addEventListener("themeChanged", (e) => {
     const theme = e.detail.theme;
+    const root = document.documentElement;
     if (theme === "dark") {
-      layerSwitcherLight.options.basemaps.forEach((e) => {
-        map.removeLayer(e);
-      });
-      map.removeControl(layerSwitcherLight);
-      map.addControl(layerSwitcherDark);
+      root.style.setProperty("--dark-map-filter", "brightness(0.7) contrast(1.2)");
     } else {
-      layerSwitcherDark.options.basemaps.forEach((e) => {
-        map.removeLayer(e);
-      });
-      map.removeControl(layerSwitcherDark);
-      map.addControl(layerSwitcherLight);
+      root.style.setProperty("--dark-map-filter", "none");
     }
   });
 
