@@ -2,17 +2,17 @@ import { TEXTS } from "./language.js";
 
 export const levelsCameraConfiguration = {
   identification: {
-    color: "red",
+    color: "#ff3131",
     weight: 0,
     fill: 0.5,
   },
   recognition: {
-    color: "orange",
+    color: "#ffbf00",
     weight: 0,
     fill: 0.5,
   },
   observation: {
-    color: "green",
+    color: "#00b300",
     weight: 0,
     fill: 0.5,
   },
