@@ -1,5 +1,5 @@
 import { TEXTS } from "./language.js";
-import { displaySnackbar, creationCameraButton } from "./interfaceFill.js";
+import { displaySnackbar, showLoginModal } from "./interfaceFill.js";
 import { getCamera, createCamera, updateCamera, userIsConnected } from "./osm.js";
 import { locateControl } from "./map.js";
 import {
@@ -343,7 +343,10 @@ export const nextStep = (tagName, value = null) => {
 
 export const startCameraCreation = () => {
   // This function is called when the user click on the creation button
-  document.getElementById("latteralButtons").innerHTML = ""; // We remove the creation button of the interface
+  if (!userIsConnected) {
+    showLoginModal();
+    return;
+  }
   currentCamera = {
     tags: {
       man_made: "surveillance",
@@ -354,7 +357,10 @@ export const startCameraCreation = () => {
 };
 
 export const completeExistingCameraMissingAttributes = async (cameraId) => {
-  document.getElementById("latteralButtons").innerHTML = ""; // We remove the creation button of the interface
+  if (!userIsConnected) {
+    showLoginModal();
+    return;
+  }
   currentCamera = await getCamera(cameraId);
   chooseNextStep();
 };
@@ -362,9 +368,6 @@ export const completeExistingCameraMissingAttributes = async (cameraId) => {
 export const cancelCameraCreation = () => {
   hideBottomSheet();
   removeCreationMarkerFromMap();
-  if (userIsConnected) {
-    document.getElementById("latteralButtons").innerHTML = creationCameraButton;
-  }
 };
 
 // TEMPORARY: Bridge for HTML onclick attributes

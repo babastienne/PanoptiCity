@@ -87,6 +87,9 @@ export const TRANSLATIONS = {
     welcomeStep3: "Sign in to contribute camera locations to OpenStreetMap",
     welcomeButton: "Let's explore the map",
     searchPlaceholder: "Search location",
+    inviteTitle: "Log in to contribute",
+    inviteDesc:
+      "Want to contribute? 🗺️ That's awesome!\n PanoptiCity is synchronized with OpenStreetMap. Just sign in or create an account in 30 seconds to start mapping! 🚀🙌",
   },
   fr: {
     titleApp: "PanoptiCity",
@@ -176,5 +179,8 @@ export const TRANSLATIONS = {
     welcomeStep3: "Connectez-vous pour répertorier de nouvelles caméras",
     welcomeButton: "Explorer la carte",
     searchPlaceholder: "Rechercher un lieu...",
+    inviteTitle: "Connectez-vous pour contribuer",
+    inviteDesc:
+      "Vous souhaitez participer à l'enrichissement de cette carte ? 🗺️ C'est génial !\n PanoptiCity est synchronisé avec OpenStreetMap. Il vous suffit de vous connecter ou de créer un compte en 30 secondes pour commencer à cartographier ! 🚀🙌",
   },
 };

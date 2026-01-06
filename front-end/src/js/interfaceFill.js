@@ -1,5 +1,6 @@
 import { TEXTS } from "./language.js";
 import { showBottomModal, updateBottomModalContent } from "./bottomModal.js";
+import { OSMLogin } from "./osm.js";
 
 export let displaySnackbar = (content = "") => {
   let elem = document.getElementById("snackbar");
@@ -9,15 +10,6 @@ export let displaySnackbar = (content = "") => {
     elem.className = elem.className.replace("show", "");
   }, 2950);
 };
-
-// Create some components
-export let creationCameraButton = `
-  <img
-    src="images/contrib/add.svg"
-    id="buttonAddCamera"
-    title="${TEXTS.addCameraButton}"
-    onclick="startCameraCreation()"
-  />`;
 
 // Handle side menu content
 let fillSideMenu = () => {
@@ -57,24 +49,28 @@ const initWelcomeModal = () => {
   }
 
   const modal = document.getElementById("welcome-modal");
-  const understandBtn = document.getElementById("understand-button");
 
   modal.classList.remove("hidden");
-
-  // Populate text
-  document.getElementById("tr-welcomeTitle").innerText = TEXTS.welcomeTitle;
-  document.getElementById("tr-welcomeDesc").innerText = TEXTS.welcomeDesc;
-  document.getElementById("tr-welcomeStep1").innerText = TEXTS.welcomeStep1;
-  document.getElementById("tr-welcomeStep2").innerText = TEXTS.welcomeStep2;
-  document.getElementById("tr-welcomeStep3").innerText = TEXTS.welcomeStep3;
-  understandBtn.innerText = TEXTS.welcomeButton;
 
   const hideModal = () => {
     modal.classList.add("hidden");
     localStorage.setItem("welcome-modal-seen", "true");
   };
 
-  understandBtn.addEventListener("click", hideModal);
+  document.getElementById("understand-button").addEventListener("click", hideModal);
+  document.getElementById("close-welcome").addEventListener("click", hideModal);
+};
+
+export let showLoginModal = () => {
+  const inviteModal = document.getElementById("login-invite-modal");
+  inviteModal.classList.remove("hidden");
+
+  document.getElementById("login-osm-button").onclick = () => {
+    inviteModal.classList.add("hidden");
+    OSMLogin();
+  };
+
+  document.getElementById("close-invite").onclick = () => inviteModal.classList.add("hidden");
 };
 
 export let initUI = () => {
@@ -90,6 +86,18 @@ export let initUI = () => {
   document.getElementById("tr-github").title = TEXTS.linkGithub;
   document.getElementById("loginButton").title = TEXTS.loginButtonTitle;
   document.getElementById("loginButton").innerHTML = TEXTS.loginButtonName;
+  document.getElementById("tr-welcomeTitle").innerText = TEXTS.welcomeTitle;
+  document.getElementById("tr-welcomeDesc").innerText = TEXTS.welcomeDesc;
+  document.getElementById("tr-welcomeStep1").innerText = TEXTS.welcomeStep1;
+  document.getElementById("tr-welcomeStep2").innerText = TEXTS.welcomeStep2;
+  document.getElementById("tr-welcomeStep3").innerText = TEXTS.welcomeStep3;
+  document.getElementById("understand-button").innerText = TEXTS.welcomeButton;
+  document.getElementById("understand-button").title = TEXTS.welcomeButton;
+  document.getElementById("tr-inviteTitle").innerText = TEXTS.inviteTitle;
+  document.getElementById("tr-inviteDesc").innerText = TEXTS.inviteDesc;
+  document.getElementById("login-osm-button").innerText = TEXTS.loginButtonName;
+  document.getElementById("login-osm-button").title = TEXTS.loginButtonTitle;
+  document.getElementById("buttonAddCamera").title = TEXTS.addCameraButton;
 };
 
 // TEMPORARY: Bridge for HTML onclick attributes

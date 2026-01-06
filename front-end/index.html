@@ -104,7 +104,9 @@
       </div>
     </header>
 
-    <div id="latteralButtons"></div>
+    <div id="latteralButtons">
+      <img src="images/contrib/add.svg" id="buttonAddCamera" title="Add a new camera" onclick="startCameraCreation()" />
+    </div>
 
     <div class="bottom-sheet">
       <div class="content">
@@ -167,7 +169,23 @@
     <div id="welcome-modal" class="welcome-overlay pico hidden">
       <article class="welcome-card pico">
         <header>
-          <strong id="tr-welcomeTitle" class="welcome-title">Welcome to PanoptiCity</strong>
+          <h3 id="tr-welcomeTitle" class="welcome-title">Welcome to PanoptiCity</h3>
+          <button id="close-welcome" aria-label="Close" class="close-btn secondary outline">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
         </header>
 
         <p id="tr-welcomeDesc">
@@ -237,6 +255,43 @@
 
         <footer class="welcome-footer">
           <button id="understand-button" class="pico-primary">Let's explore the map</button>
+        </footer>
+      </article>
+    </div>
+
+    <!-- Login Invitation Modal -->
+    <div id="login-invite-modal" class="welcome-overlay pico hidden">
+      <article class="welcome-card">
+        <header>
+          <h3 id="tr-inviteTitle">Log in to add a camera</h3>
+          <button id="close-invite" aria-label="Close" class="close-btn secondary outline">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </header>
+
+        <p id="tr-inviteDesc">
+          You want to improve this map by contributing ? That's great ! The data used here is from the community website
+          OpenStreetMap. To contribute to this awesome dataset you need an OpenStreetMap account (you can create one
+          right now in 30 seconds).
+        </p>
+
+        <div class="space-y-3"></div>
+
+        <footer class="welcome-footer">
+          <button id="login-osm-button" class="primary w-full">Sign in with OpenStreetMap</button>
         </footer>
       </article>
     </div>
