@@ -1,10 +1,9 @@
 import { CLIENT_ID_OSM_APP, DOMAIN_NAME } from "../../CONFIG.js";
 import { TEXTS } from "./language.js";
-import { creationCameraButton } from "./interfaceFill.js";
 
 export let userIsConnected;
 
-let OSMLogin = async () => {
+export let OSMLogin = async () => {
   let button = document.getElementById("loginButton");
   button.title = TEXTS.inProgressLabel;
   button.innerHTML = TEXTS.inProgressLabel;
@@ -30,7 +29,6 @@ let OSMLogin = async () => {
 export let checkIfUserConnected = () => {
   userIsConnected = OSM.isLoggedIn();
   let buttonLogin = document.getElementById("loginButton");
-  let latteralButtons = document.getElementById("latteralButtons");
   if (userIsConnected) {
     buttonLogin.ariaBusy = false;
     buttonLogin.innerHTML = TEXTS.logoutButtonName;
@@ -41,7 +39,6 @@ export let checkIfUserConnected = () => {
     };
     buttonLogin.classList.remove("secondary");
     buttonLogin.classList.add("danger");
-    latteralButtons.innerHTML = creationCameraButton;
   } else {
     buttonLogin.ariaBusy = false;
     buttonLogin.innerHTML = TEXTS.loginButtonName;
@@ -49,7 +46,6 @@ export let checkIfUserConnected = () => {
     buttonLogin.onclick = OSMLogin;
     buttonLogin.classList.remove("danger");
     buttonLogin.classList.add("secondary");
-    latteralButtons.innerHTML = "";
   }
 };
 

@@ -122,20 +122,18 @@ const addCameraDetailsData = (plotMarker, plot) => {
 // Camera edition methods
 const _displayEditionButton = (listAttributes) => {
   let content = "";
-  if (OSM.isLoggedIn()) {
-    if (
-      listAttributes.length < 7 ||
-      (["fixed", "panning"].includes(cameraDetails["camera_type"]) && listAttributes.length < 9)
-    ) {
-      content = `
-        <div class="modal-flex-buttons">
-          <button
-              class="outline primary modal-button"
-              onclick="completeExistingCameraMissingAttributes(${cameraDetails.id})"
-          >${TEXTS.completeCameraButton}</button>
-        </div>
-      `;
-    }
+  if (
+    listAttributes.length < 7 ||
+    (["fixed", "panning"].includes(cameraDetails["camera_type"]) && listAttributes.length < 9)
+  ) {
+    content = `
+      <div class="modal-flex-buttons">
+        <button
+            class="outline primary modal-button"
+            onclick="completeExistingCameraMissingAttributes(${cameraDetails.id})"
+        >${TEXTS.completeCameraButton}</button>
+      </div>
+    `;
   }
   return content;
 };

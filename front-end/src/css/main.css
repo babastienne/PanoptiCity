@@ -200,7 +200,7 @@ header {
 }
 
 
-/* MODAL CSS */
+/* Popup CSS */
 
 .welcome-overlay {
   position: fixed;
@@ -214,7 +214,11 @@ header {
 
 .welcome-card header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+}
+
+.welcome-card h3 {
+  margin: 0;
 }
 
 .welcome-overlay.hidden {
@@ -247,4 +251,11 @@ header {
 .welcome-footer {
   display: flex;
   justify-content: center;
+}
+
+#close-invite, #close-welcome {
+  border: none;
+  padding: 0;
+  margin: 0;
+  height: 20px;
 }
