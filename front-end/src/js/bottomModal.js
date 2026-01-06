@@ -1,5 +1,6 @@
 import { removeCameraFOVDetail } from "./camera.js";
 import { fovLayer } from "./map.js";
+import { removeCreationMarkerFromMap, removeDirectionArrowFromMap } from "./contrib.js";
 
 let map;
 
@@ -59,7 +60,9 @@ export const showBottomModal = ({
   authorizeDragModal = true,
   defaultHeight = 80,
 } = {}) => {
-  // Start by reseting possible previous modal displays
+  // Start by reseting possible previous modal displays and components
+  removeCreationMarkerFromMap();
+  removeDirectionArrowFromMap();
   resetCameraFocusDisplay(); // Hide potential existing Camera Details
   resetEventListeners();
 

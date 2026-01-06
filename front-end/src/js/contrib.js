@@ -189,7 +189,7 @@ const centerMarkerOnMap = (event) => {
   currentPositionMarker.setLatLng(event.target.getCenter());
 };
 
-const removeCreationMarkerFromMap = () => {
+export const removeCreationMarkerFromMap = () => {
   currentPositionMarker.remove();
   map.off("move", centerMarkerOnMap);
   return currentPositionMarker.getLatLng();
@@ -240,15 +240,19 @@ const rotateArrow = (deg) => {
   sliderValue = Math.round(deg);
 };
 
-const removeDirectionArrowFromMap = () => {
+export const removeDirectionArrowFromMap = () => {
   map.dragging.enable();
   locateControl.addTo(map);
   let arrow = document.getElementById("overlay-arrow-direction");
   let mapDiv = document.getElementById("map");
-  mapDiv.removeEventListener("mousedown", eventRotationArrow, false);
-  arrow.removeEventListener("mousedown", eventRotationArrow, false);
-  mapDiv.removeEventListener("touchstart", eventRotationArrow, false);
-  arrow.removeEventListener("touchstart", eventRotationArrow, false);
+  if (mapDiv) {
+    mapDiv.removeEventListener("mousedown", eventRotationArrow, false);
+    mapDiv.removeEventListener("touchstart", eventRotationArrow, false);
+  }
+  if (arrow) {
+    arrow.removeEventListener("mousedown", eventRotationArrow, false);
+    arrow.removeEventListener("touchstart", eventRotationArrow, false);
+  }
   let overlay = document.getElementById("customOverlay");
   overlay.innerHTML = "";
 };
@@ -295,8 +299,8 @@ const chooseNextStep = () => {
   let existingCameraFields = Object.keys(currentCamera);
   let existingCameraTags = Object.keys(currentCamera.tags);
   if (!existingCameraFields.includes("lat")) {
-    addCreationMarkerOnMap();
     displayMapFormForUser(choicesCameraLocation);
+    addCreationMarkerOnMap();
   } else if (!existingCameraTags.includes(choicesCameraType.tagName)) {
     displaySelectChoicesForUser(choicesCameraType);
   } else if (
