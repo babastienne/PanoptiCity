@@ -8,6 +8,7 @@ import { initTheme } from "./theme-switcher.js";
 import { initModal } from "./bottomModal.js";
 import { initContrib } from "./contrib.js";
 import { initSearch } from "./search.js";
+import { initSidebar } from "./sidebar.js";
 
 // Initialize everything when the DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
@@ -18,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Init cameras
   initCamera(map);
   initSearch(map); // Initialize search
+  initSidebar(map);
   // Init theme switcher
   initTheme();
 

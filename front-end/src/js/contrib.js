@@ -197,7 +197,6 @@ export const removeCreationMarkerFromMap = () => {
 
 const addDirectionArrowOnMap = () => {
   map.dragging.disable();
-  locateControl.remove(map);
   let overlay = document.getElementById("customOverlay");
   overlay.innerHTML = `<img id="overlay-arrow-direction" draggable="false" oncontextmenu="return false;" src="/images/contrib/arrow-base.svg" />`;
   let arrow = document.getElementById("overlay-arrow-direction");
@@ -242,7 +241,6 @@ const rotateArrow = (deg) => {
 
 export const removeDirectionArrowFromMap = () => {
   map.dragging.enable();
-  locateControl.addTo(map);
   let arrow = document.getElementById("overlay-arrow-direction");
   let mapDiv = document.getElementById("map");
   if (mapDiv) {

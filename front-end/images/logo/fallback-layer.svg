@@ -1,0 +1,24 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="256" height="256" fill="#F3F4F6"/>
+  
+  <!-- Subtle Grid Pattern -->
+  <defs>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#D1D5DB" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#grid)" />
+
+  <!-- Center Icon (Map Pin with a slash) -->
+  <g opacity="0.3" transform="translate(68, 68) scale(5)">
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="12" cy="10" r="3" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="4" y1="4" x2="20" y2="20" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Optional Text -->
+  <text x="50%" y="85%" dominant-baseline="middle" text-anchor="middle" fill="#9CA3AF" font-family="sans-serif" font-size="14" font-weight="bold">
+    MAP DATA UNAVAILABLE
+  </text>
+</svg>

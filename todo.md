@@ -95,9 +95,9 @@ Ressources :
 
 - [x] Zoom initial de la carte et emplacement de départ
 
-## Main priority
+## Main priorities
 
-- [ ] Improve UI to encourage contribution > Every action availble but popup to conect if not logged in
+- [x] Improve UI to encourage contribution > Every action availble but popup to conect if not logged in
 - [x] Do not display FOV of inside cameras outside buildings
 - [ ] Display cameras that need to be completed
 - [ ] Allow deletion of cameras
