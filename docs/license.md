@@ -25,7 +25,6 @@ If you notice that I've used your project but don't see it in this list feel fre
 
 - [Leaflet](https://github.com/Leaflet/Leaflet) - _BSD 2-Clause License_
 - [Leaflet.Locate](https://github.com/domoritz/leaflet-locatecontrol) - _MIT license_
-- [Leaflet.Basemaps](https://github.com/consbio/Leaflet.Basemaps) - _ISC license_ (used a [forked version](https://github.com/consbio/Leaflet.Basemaps/pull/28))
 - [OverlappingMarkerSpiderfier-Leaflet](https://github.com/jawj/OverlappingMarkerSpiderfier-Leaflet) - No license
 - Map background attributions can be seen directly on map on the website
 

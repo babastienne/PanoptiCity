@@ -104,10 +104,6 @@
       </div>
     </header>
 
-    <div id="latteralButtons">
-      <img src="images/contrib/add.svg" id="buttonAddCamera" title="Add a new camera" onclick="startCameraCreation()" />
-    </div>
-
     <div class="bottom-sheet">
       <div class="content">
         <div class="header-modal">
@@ -162,6 +158,115 @@
       </div>
       <ul id="search-results" class="search-results-list hidden"></ul>
     </div>
+
+    <nav id="map-sidebar" class="map-sidebar">
+      <!-- Layers -->
+      <button id="btn-layers" class="sidebar-btn" data-tooltip="Switch Layers">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+          <polyline points="2 17 12 22 22 17"></polyline>
+          <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+      </button>
+
+      <!-- Scenario -->
+      <button id="btn-scenario" class="sidebar-btn" data-tooltip="Change Scenario">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="4" y1="21" x2="4" y2="14" />
+          <line x1="4" y1="10" x2="4" y2="3" />
+          <line x1="12" y1="21" x2="12" y2="12" />
+          <line x1="12" y1="8" x2="12" y2="3" />
+          <line x1="20" y1="21" x2="20" y2="16" />
+          <line x1="20" y1="12" x2="20" y2="3" />
+          <line x1="2" y1="14" x2="6" y2="14" />
+          <line x1="10" y1="8" x2="14" y2="8" />
+          <line x1="18" y1="16" x2="22" y2="16" />
+        </svg>
+      </button>
+
+      <!-- Legend -->
+      <button id="btn-legend" class="sidebar-btn" data-tooltip="View Legend">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+      </button>
+
+      <hr class="sidebar-divider" />
+
+      <!-- Location -->
+      <button id="btn-locate" class="sidebar-btn" data-tooltip="My Location">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="8" />
+          <line x1="12" y1="2" x2="12" y2="5" />
+          <line x1="12" y1="19" x2="12" y2="22" />
+          <line x1="2" y1="12" x2="5" y2="12" />
+          <line x1="19" y1="12" x2="22" y2="12" />
+          <circle cx="12" cy="12" r="2" fill="currentColor" />
+        </svg>
+      </button>
+
+      <hr class="sidebar-divider" />
+
+      <!-- Camera Creation -->
+      <button id="btn-add-camera" class="sidebar-btn" data-tooltip="Add Camera">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+        </svg>
+      </button>
+    </nav>
 
     <div id="snackbar"></div>
 
@@ -303,10 +408,6 @@
     <!-- Leaflet locate -->
     <link rel="stylesheet" href="packages/leaflet-locate/L.Control.Locate.min.css" />
     <script src="packages/leaflet-locate/L.Control.Locate.min.js" charset="utf-8"></script>
-    <!-- Leaflet BaseMaps -->
-    <link rel="stylesheet" href="packages/Leaflet.Basemaps/L.Control.Basemaps.css" />
-    <!-- Using this local version, modified on L45 until https://github.com/consbio/Leaflet.Basemaps/pull/28 is merged and released -->
-    <script src="packages/Leaflet.Basemaps/L.Control.Basemaps.js" charset="utf-8"></script>
     <!-- Leaflet OverlappingMarkerSpiderfier -->
     <script src="packages/overlappingMarkerSpiderfier-0.2.6.min.js"></script>
     <!-- Load LeafletVectorGrid -->

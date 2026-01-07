@@ -12,95 +12,60 @@ const FOV_STYLES = {
   3: { fillColor: "#00b300", fillOpacity: 0.3, stroke: false, fill: true }, // Observation
 };
 
-const LEGEND_GRADES = [
-  { label: "Identification", color: FOV_STYLES[1].fillColor },
-  { label: "Recognition", color: FOV_STYLES[2].fillColor },
-  { label: "Observation", color: FOV_STYLES[3].fillColor },
-];
-
 /**
  * STATE MANAGEMENT (Map Instance & Controls)
  */
-let map;
-export let fovLayer, locateControl;
+let map, currentBaseLayer;
+export let fovLayer, locateControl, layers;
+let currentBaseLayerId = "osm";
 
 /**
- * LAYER FACTORIES
+ * LAYERS FUNCTIONS
  */
-const createBaseLayers = () => {
-  const esriTiles = L.tileLayer(
-    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-    {
-      maxNativeZoom: 19,
-      maxZoom: 21,
-      className: "dark-map-tiles",
-      attribution: "Tiles &copy; Esri",
-      label: "Satellite",
-    }
-  );
+export let setBaseLayer = (layerId) => {
+  if (!baseLayersConfig[layerId]) return;
 
-  const OSM = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  // Remove old layer
+  if (currentBaseLayer) {
+    map.removeLayer(currentBaseLayer);
+  }
+
+  // Add new layer
+  currentBaseLayer = baseLayersConfig[layerId];
+  currentBaseLayerId = layerId;
+  currentBaseLayer.addTo(map);
+
+  // 3. Ensure fovLayer stays on top if necessary (if it's not a pane)
+  // fovLayer.bringToFront();
+};
+
+export const getActiveBaseLayerId = () => currentBaseLayerId;
+
+export const baseLayersConfig = {
+  osm: L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxNativeZoom: 19,
     maxZoom: 21,
     subdomains: "abc",
     className: "dark-map-tiles",
     label: "Map",
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
-  });
-
-  const osmHot = L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
+    name: TEXTS.layerStandard,
+  }),
+  hot: L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
     maxZoom: 21,
     maxNativeZoom: 19,
     className: "dark-map-tiles",
     attribution: '&copy; OSM | <a href="https://www.hotosm.org/">HOT</a>',
-  });
-
-  return { esriTiles, OSM, osmHot };
-};
-
-/**
- * CUSTOM CONTROLS
- */
-const createScenarioControl = (fovLayer) => {
-  const control = L.control({ position: "topright" });
-  control.onAdd = () => {
-    const div = L.DomUtil.create("div", "leaflet-bar scenario-picker");
-    Object.assign(div.style, { backgroundColor: "white", padding: "10px" });
-
-    div.innerHTML = `
-      <label for="scenario-select" style="display:block; font-weight:bold; margin-bottom:5px;">Quality Scenario:</label>
-      <select id="scenario-select" style="width: 100%;">
-          <option value="best">Scenario 1: Bad Quality</option>
-          <option value="mean" selected>Scenario 2: Average Quality</option>
-          <option value="worst">Scenario 3: Best Quality</option>
-      </select>`;
-
-    L.DomEvent.disableClickPropagation(div);
-
-    // Internal listener for the select element
-    setTimeout(() => {
-      document.getElementById("scenario-select").addEventListener("change", (e) => {
-        const newUrl = `${BASE_URL_API}/focus/{z}/{x}/{y}/${e.target.value}/`;
-        fovLayer.setUrl(newUrl);
-      });
-    }, 0);
-
-    return div;
-  };
-  return control;
-};
-
-const createLegendControl = () => {
-  const legend = L.control({ position: "bottomleft" });
-  legend.onAdd = () => {
-    const div = L.DomUtil.create("div", "map_legend info legend");
-    div.innerHTML = "<h4>Levels of surveillance</h4>";
-    LEGEND_GRADES.forEach((item) => {
-      div.innerHTML += `<i style="background: ${item.color}"></i> ${item.label}<br>`;
-    });
-    return div;
-  };
-  return legend;
+    name: TEXTS.layerHot,
+  }),
+  esri: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+    maxNativeZoom: 19,
+    maxZoom: 21,
+    className: "dark-map-tiles",
+    attribution: "Tiles &copy; Esri",
+    label: "Satellite",
+    name: TEXTS.layerSatellite,
+  }),
 };
 
 /**
@@ -167,8 +132,6 @@ let updateViewHash = () => {
  * MAIN INITIALIZATION
  */
 export let initMap = () => {
-  const layers = createBaseLayers();
-
   // 1. Initialize Map Instance
   map = L.map("map", {
     zoom: MAP_INITIAL_ZOOM,
@@ -177,43 +140,25 @@ export let initMap = () => {
     zoomControl: false,
   });
 
+  currentBaseLayer = baseLayersConfig[currentBaseLayerId];
+  currentBaseLayer.addTo(map);
+
   // 2. Setup Panes
   map.createPane("fovPane");
   map.getPane("fovPane").style.zIndex = 450;
 
-  // 3. Configure BaseMap Switchers
-  const commonSwitcherCfg = { tileX: 15, tileY: 10, tileZ: 5 };
-
-  let layerSwitcher = L.control
-    .basemaps({
-      basemaps: [layers.osmHot, layers.OSM, layers.esriTiles],
-      ...commonSwitcherCfg,
-    })
-    .setPosition("bottomright");
-
-  // 4. Add UI Controls
+  // 3. Add UI Controls
   map.attributionControl
     .setPosition("bottomright")
     .setPrefix('<a href="https://github.com/babastienne" target="_blank">Babastienne</a>');
 
-  let zoomControl = L.control
-    .zoom({
-      zoomOutTitle: TEXTS.mapZoomOut,
-      zoomInTitle: TEXTS.mapZoomIn,
-    })
-    .setPosition("bottomright")
-    .addTo(map);
-
   locateControl = L.control
     .locate({
-      strings: { title: TEXTS.mapLocateButton },
+      showPopup: false,
     })
-    .setPosition("bottomright")
     .addTo(map);
 
-  map.addControl(layerSwitcher);
-
-  // 5. Add Data Layers
+  // 4. Add Data Layers
   fovLayer = L.vectorGrid
     .protobuf(`${BASE_URL_API}/focus/{z}/{x}/{y}/mean/`, {
       minZoom: 14,
@@ -235,16 +180,12 @@ export let initMap = () => {
   });
   map.addLayer(tilesCams);
 
-  // 6. Add Custom Logic Controls
-  createScenarioControl(fovLayer).setPosition("bottomleft").addTo(map);
-  createLegendControl().addTo(map);
-
-  // 7. Initial View Positioning & Events
+  // 5. Initial View Positioning & Events
   const initialView = getInitialView();
   map.setView(initialView.center, initialView.zoom);
   map.on("moveend", updateViewHash);
 
-  // 8. Init event listener to change theme layers
+  // 6. Init event listener to change theme layers
   window.addEventListener("themeChanged", (e) => {
     const theme = e.detail.theme;
     const root = document.documentElement;

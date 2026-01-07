@@ -65,6 +65,9 @@ export const showBottomModal = ({
   removeDirectionArrowFromMap();
   resetCameraFocusDisplay(); // Hide potential existing Camera Details
   resetEventListeners();
+  clearModalActiveStates();
+
+  let maxDisplayedHeight = Math.min(modalMaxHeight, defaultHeight);
 
   // Set variables
   allowHiding = authorizeClosingModal;
@@ -73,7 +76,7 @@ export const showBottomModal = ({
 
   bottomSheet.classList.add("show");
   document.body.style.overflowY = "hidden";
-  updateSheetHeight(defaultHeight);
+  updateSheetHeight(maxDisplayedHeight);
 
   // Adapt display of contents depending on moveBehindModal value
   if (moveBehindModal) {
@@ -96,9 +99,7 @@ export const showBottomModal = ({
     map.on("click", hideBottomSheet);
   }
 
-  document
-    .getElementById("map")
-    .style.setProperty("height", `calc(100vh - 3.5rem - ${Math.min(modalMaxHeight, defaultHeight)}vh)`);
+  document.getElementById("map").style.setProperty("height", `calc(100vh - 3.5rem - ${maxDisplayedHeight}vh)`);
   map.invalidateSize();
 };
 
@@ -124,6 +125,7 @@ export const hideBottomSheet = () => {
   document.body.style.overflowY = "auto";
   resetCameraFocusDisplay();
   resetEventListeners();
+  clearModalActiveStates();
 };
 
 export const updateBottomModalContent = (content, { heightAdd = 0 } = {}) => {
