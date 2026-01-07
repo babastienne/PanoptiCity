@@ -217,7 +217,7 @@ export const TRANSLATIONS = {
       "Cette carte interactive révèle l'ampleur de la surveillance de masse à l'échelle mondiale. Chaque marqueur représente l'emplacement connu d'une caméra et son champ de vision estimé. La carte n'affiche qu'une infime partie de la réalité, car la majorité des caméras n'ont pas encore été répertoriées.",
     welcomeStep1: "Zoomez et déplacez la carte pour parcourir les données.",
     welcomeStep2: "Basculez entre plusieurs scénarios de simulation des champs de vision",
-    welcomeStep3: "Connectez-vous pour répertorier de nouvelles caméras",
+    welcomeStep3: "Contribuez à OpenStreetMap en répertoriant de nouvelles caméras",
     welcomeButton: "Explorer la carte",
     // Search placeholder
     searchPlaceholder: "Rechercher un lieu...",
