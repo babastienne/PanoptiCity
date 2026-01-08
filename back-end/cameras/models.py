@@ -45,38 +45,37 @@ class Camera(models.Model):
     focus = models.PolygonField(null=True)
     tile = models.CharField(max_length=15, db_index=True)
 
-    COLOR_EXPRESSION = Case(
-        When(surveillance="public", then=Value("Red")),
-        When(surveillance="indoor", then=Value("Green")),
-        When(surveillance="outdoor", then=Value("Blue")),
-        default=Value("Black"),
-        output_field=models.CharField()
+    IS_INCOMPLETE_CONDITION = (
+        Q(mount="") |
+        Q(surveillance_type="") |
+        Q(camera_type="") |
+        Q(zone="") |
+        Q(height__isnull=True) |
+        (Q(camera_type="fixed") & Q(angle__isnull=True)) |
+        (Q(camera_type="fixed") & Q(direction__isnull=True))
     )
 
-    MARKER_EXPRESSION = Case(
-        When(
-            Q(surveillance_type="ALPR") |
-            Q(surveillance__in=["red_light",
-              "level_crossing", "speed_camera"]),
-            then=Value("traffic")
-        ),
-        default=Concat(
-            Case(
-                When(camera_type="fixed", then=Value("fixed")),
-                When(camera_type="panning", then=Value("panning")),
-                When(camera_type="dome", then=Value("dome")),
-                When(surveillance_type="guard", then=Value("guard")),
-                default=Value("cam"),
+    STATUS_SUFFIX_EXPRESSION = Case(
+        When(focus__isnull=True, then=Value("Missing")),
+        When(IS_INCOMPLETE_CONDITION, then=Value("Incomplete")),
+        default=Value(""),
+    )
+
+    MARKER_EXPRESSION = Concat(
+        Case(
+            When(
+                Q(surveillance_type="ALPR") |
+                Q(surveillance__in=["red_light",
+                                    "level_crossing", "speed_camera"]),
+                then=Value("traffic")
             ),
-            COLOR_EXPRESSION  # Re-using the color logic defined above
+            When(camera_type="fixed", then=Value("fixed")),
+            When(camera_type="panning", then=Value("panning")),
+            When(camera_type="dome", then=Value("dome")),
+            default=Value("cam"),
         ),
+        STATUS_SUFFIX_EXPRESSION,
         output_field=models.CharField()
-    )
-
-    color = models.GeneratedField(
-        expression=COLOR_EXPRESSION,
-        output_field=models.CharField(max_length=10),
-        db_persist=True
     )
 
     marker = models.GeneratedField(

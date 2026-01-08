@@ -1,5 +1,6 @@
 import { removeCameraFOVDetail } from "./camera.js";
 import { fovLayer } from "./map.js";
+import { highlightMarker } from "./camera.js";
 import { removeCreationMarkerFromMap, removeDirectionArrowFromMap } from "./contrib.js";
 
 let map;
@@ -84,6 +85,7 @@ export const showBottomModal = ({
   resetCameraFocusDisplay(); // Hide potential existing Camera Details
   resetEventListeners();
   clearModalActiveStates();
+  highlightMarker(null);
   if (isRightMode) {
     mapSidebar.style.right = "15px";
   }
@@ -183,6 +185,7 @@ export const hideBottomSheet = () => {
   resetCameraFocusDisplay();
   resetEventListeners();
   clearModalActiveStates();
+  highlightMarker(null);
 };
 
 export const updateBottomModalContent = (content, { heightAdd = 0 } = {}) => {

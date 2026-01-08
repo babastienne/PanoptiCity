@@ -1,26 +1,4 @@
-const ICONS_MAPPING = {
-  camBlack: "images/cameras/cam.png",
-  fixedBlack: "images/cameras/fixed.png",
-  panningBlack: "images/cameras/panning.png",
-  domeBlack: "images/cameras/dome.png",
-  guardBlack: "images/cameras/guard.png",
-  traffic: "images/cameras/traffic.png",
-  camBlue: "images/cameras/camBlue.png",
-  fixedBlue: "images/cameras/fixedBlue.png",
-  panningBlue: "images/cameras/panningBlue.png",
-  domeBlue: "images/cameras/domeBlue.png",
-  guardBlue: "images/cameras/guardBlue.png",
-  camGreen: "images/cameras/camGreen.png",
-  fixedGreen: "images/cameras/fixedGreen.png",
-  panningGreen: "images/cameras/panningGreen.png",
-  domeGreen: "images/cameras/domeGreen.png",
-  guardGreen: "images/cameras/guardGreen.png",
-  camRed: "images/cameras/camRed.png",
-  fixedRed: "images/cameras/fixedRed.png",
-  panningRed: "images/cameras/panningRed.png",
-  domeRed: "images/cameras/domeRed.png",
-  guardRed: "images/cameras/guardRed.png",
-};
+import { activeCameraId } from "./camera.js";
 
 export const DataTileLayer = L.GridLayer.extend({
   includes: L.Evented.prototype,
@@ -31,11 +9,13 @@ export const DataTileLayer = L.GridLayer.extend({
   // Layers and tracking
   markersLayer: null, // Standard LayerGroup replacing MarkerClusterGroup
   displayedCamerasList: null, // Set to prevent duplicates across tiles
+  createCameraIcon: null, // Function to create icon
   oms: null, // Overlapping Marker Spiderfier instance
 
   initialize(url, options) {
     this.url = url;
     this.onCameraClick = options.onCameraClick;
+    this.createCameraIcon = options.createCameraIcon;
     this.displayedCamerasList = new Set();
     this.markersLayer = L.layerGroup();
     L.GridLayer.prototype.initialize.call(this, options);
@@ -139,16 +119,20 @@ export const DataTileLayer = L.GridLayer.extend({
     const latlng = L.latLng(camera.lat, camera.lon);
 
     try {
-      let icon = L.icon({
-        iconUrl: ICONS_MAPPING[camera.marker],
-        iconSize: [20, 20],
-        iconAnchor: [10, 10],
-        popupAnchor: [0, -10],
-      });
+      const isSelected = camera.id === activeCameraId;
+      let icon = this.createCameraIcon(camera.marker);
       const marker = L.marker(latlng, {
         icon: icon,
         id: camera.id,
       });
+
+      if (isSelected) {
+        // We use a small timeout to ensure Leaflet has finished
+        // putting the element in the DOM
+        setTimeout(() => {
+          if (marker._icon) marker._icon.classList.add("active-marker");
+        }, 10);
+      }
 
       this.oms.addMarker(marker);
 

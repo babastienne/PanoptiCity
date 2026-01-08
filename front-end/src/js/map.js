@@ -1,6 +1,6 @@
 import { BASE_URL_API, MAP_INITIAL_CENTER, MAP_MAX_BBOX, MAP_INITIAL_ZOOM, MAP_MIN_ZOOM } from "../../CONFIG.js";
 import { TEXTS } from "./language.js";
-import { displayCameraDetails } from "./camera.js";
+import { createCameraIcon, displayCameraDetails } from "./camera.js";
 import { dataTileLayerCamera } from "./leaflet.data.tilelayer.js";
 
 /**
@@ -9,7 +9,25 @@ import { dataTileLayerCamera } from "./leaflet.data.tilelayer.js";
 const FOV_STYLES = {
   1: { fillColor: "#ff3131", fillOpacity: 0.4, stroke: false, fill: true }, // Identification
   2: { fillColor: "#ffbf00", fillOpacity: 0.4, stroke: false, fill: true }, // Recognition
-  3: { fillColor: "#00b300", fillOpacity: 0.3, stroke: false, fill: true }, // Observation
+  3: { fillColor: "#00b300", fillOpacity: 0.4, stroke: false, fill: true }, // Observation
+};
+
+export const ICONS_MAPPING = {
+  traffic: "images/cameras/traffic.png",
+  cam: "images/cameras/cam.png",
+  fixed: "images/cameras/fixed.png",
+  panning: "images/cameras/panning.png",
+  dome: "images/cameras/dome.png",
+  trafficIncomplete: "images/cameras/trafficOrange.png",
+  camIncomplete: "images/cameras/camOrange.png",
+  fixedIncomplete: "images/cameras/fixedOrange.png",
+  panningIncomplete: "images/cameras/panningOrange.png",
+  domeIncomplete: "images/cameras/domeOrange.png",
+  trafficMissing: "images/cameras/trafficRed.png",
+  camMissing: "images/cameras/camRed.png",
+  fixedMissing: "images/cameras/fixedRed.png",
+  panninMissing: "images/cameras/panningRed.png",
+  domeMissing: "images/cameras/domeRed.png",
 };
 
 /**
@@ -107,7 +125,7 @@ let updateViewHash = () => {
   const zoom = map.getZoom();
 
   // Format coordinates to 2 decimal places for a clean URL
-  const precision = 2;
+  const precision = 4;
   const lat = center.lat.toFixed(precision);
   const lng = center.lng.toFixed(precision);
   const z = zoom % 1 === 0 ? zoom : zoom.toFixed(2); // Keep decimals only if zoom is fractional
@@ -177,6 +195,7 @@ export let initMap = () => {
   const tilesCams = dataTileLayerCamera(`${BASE_URL_API}/cameras.json?tile={z}/{x}/{y}`, {
     display: true,
     onCameraClick: displayCameraDetails,
+    createCameraIcon: createCameraIcon,
   });
   map.addLayer(tilesCams);
 

@@ -13,12 +13,8 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='camera',
-            name='color',
-            field=models.GeneratedField(db_persist=True, expression=models.Case(models.When(surveillance='public', then=models.Value('Red')), models.When(surveillance='indoor', then=models.Value('Green')), models.When(surveillance='outdoor', then=models.Value('Blue')), default=models.Value('Black'), output_field=models.CharField()), output_field=models.CharField(max_length=10)),
-        ),
-        migrations.AddField(
-            model_name='camera',
             name='marker',
-            field=models.GeneratedField(db_persist=True, expression=models.Case(models.When(models.Q(('surveillance_type', 'ALPR'), ('surveillance__in', ['red_light', 'level_crossing', 'speed_camera']), _connector='OR'), then=models.Value('traffic')), default=django.db.models.functions.text.Concat(models.Case(models.When(camera_type='fixed', then=models.Value('fixed')), models.When(camera_type='panning', then=models.Value('panning')), models.When(camera_type='dome', then=models.Value('dome')), models.When(surveillance_type='guard', then=models.Value('guard')), default=models.Value('cam')), models.Case(models.When(surveillance='public', then=models.Value('Red')), models.When(surveillance='indoor', then=models.Value('Green')), models.When(surveillance='outdoor', then=models.Value('Blue')), default=models.Value('Black'), output_field=models.CharField())), output_field=models.CharField()), output_field=models.CharField(max_length=20)),
+            field=models.GeneratedField(db_persist=True, expression=django.db.models.functions.text.Concat(models.Case(models.When(models.Q(('surveillance_type', 'ALPR'), ('surveillance__in', ['red_light', 'level_crossing', 'speed_camera']), _connector='OR'), then=models.Value('traffic')), models.When(camera_type='fixed', then=models.Value('fixed')), models.When(camera_type='panning', then=models.Value('panning')), models.When(camera_type='dome', then=models.Value('dome')), default=models.Value(
+                'cam')), models.Case(models.When(focus__isnull=True, then=models.Value('Missing')), models.When(models.Q(('mount', ''), ('surveillance_type', ''), ('camera_type', ''), ('zone', ''), ('height__isnull', True), models.Q(('camera_type', 'fixed'), ('angle__isnull', True)), models.Q(('camera_type', 'fixed'), ('direction__isnull', True)), _connector='OR'), then=models.Value('Incomplete')), default=models.Value('')), output_field=models.CharField()), output_field=models.CharField(max_length=20)),
         ),
     ]

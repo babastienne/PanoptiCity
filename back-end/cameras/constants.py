@@ -16,9 +16,7 @@ class MountChoices(TextChoices):
 
 class SurveillanceTypeChoices(TextChoices):
     CAMERA = "camera", "camera"
-    GUARD = "guard", "guard"
     ALPR = "ALPR", "ALPR"
-    GUNSHOT_DETECTOR = "gunshot_detector", "gunshot_detector"
 
 
 class SurveillanceChoices(TextChoices):
