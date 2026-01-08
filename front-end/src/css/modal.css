@@ -219,3 +219,39 @@
     width: 100%;
   }
 }
+
+.close-modal-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  z-index: 10;
+  color: var(--pico-muted-color);
+  /* Uses Pico's secondary text color */
+  line-height: 0;
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-modal-btn:hover {
+  color: var(--pico-primary);
+  transform: scale(1.1);
+}
+
+/* Adjust for the drag handle on mobile so they don't overlap */
+@media (max-width: 1023px) {
+  .close-modal-btn {
+    top: 5px;
+    right: 5px;
+  }
+}
+
+/* Dark theme tweak if needed */
+[data-theme="dark"] .close-modal-btn {
+  color: #fff;
+}

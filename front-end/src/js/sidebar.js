@@ -111,7 +111,6 @@ export let initSidebar = (map) => {
 
     updateBottomModalContent(content);
     showBottomModal({
-      authorizeClosingModal: true,
       authorizeMoveBehindModal: true,
       authorizeDragModal: true,
     });
@@ -165,7 +164,6 @@ export let initSidebar = (map) => {
     `;
     updateBottomModalContent(content);
     showBottomModal({
-      authorizeClosingModal: true,
       authorizeMoveBehindModal: true,
       authorizeDragModal: true,
       defaultHeight: 50,
@@ -227,7 +225,6 @@ export let initSidebar = (map) => {
   `;
     updateBottomModalContent(content);
     showBottomModal({
-      authorizeClosingModal: true,
       authorizeMoveBehindModal: true,
       authorizeDragModal: true,
       displayOnRight: true,
