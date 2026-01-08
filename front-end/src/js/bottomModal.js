@@ -8,6 +8,13 @@ const isLaptop = () => window.innerWidth >= 1024;
 
 export let initModal = (mapReference) => {
   map = mapReference;
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      hideBottomSheet();
+    });
+  }
 };
 
 // --- Utils functions ---
@@ -56,9 +63,9 @@ const bodyModal = bottomSheet.querySelector(".body-modal");
 const dragIcon = bottomSheet.querySelector(".drag-icon");
 const headerModal = bottomSheet.querySelector(".header-modal");
 const mapSidebar = document.getElementById("map-sidebar");
+const closeBtn = document.querySelector(".close-modal-btn");
 
-let allowHiding = true,
-  startY,
+let startY,
   previousY,
   startHeight,
   modalMaxHeight,
@@ -66,7 +73,6 @@ let allowHiding = true,
   dragModal = null;
 
 export const showBottomModal = ({
-  authorizeClosingModal = true,
   authorizeMoveBehindModal = false,
   authorizeDragModal = true,
   defaultHeight = 80,
@@ -97,7 +103,6 @@ export const showBottomModal = ({
   let maxDisplayedHeight = Math.min(modalMaxHeight, defaultHeight);
 
   // Set variables
-  allowHiding = authorizeClosingModal;
   moveBehindModal = authorizeMoveBehindModal;
   dragModal = authorizeDragModal;
 
@@ -119,6 +124,7 @@ export const showBottomModal = ({
 
   // If drag is allowed, display drag button and add events handlers
   dragIcon.style.display = dragModal ? "" : "none";
+  closeBtn.style.display = dragModal ? "flex" : "none";
   if (dragModal) {
     headerModal.addEventListener("mousedown", handleDraggingEvents);
     headerModal.addEventListener("touchstart", handleDraggingEvents);
@@ -134,7 +140,7 @@ const updateSheetHeight = (size) => {
   const unit = isRightMode ? "vw" : "vh";
   let realSize = isRightMode ? Math.min(50, size) : Math.min(modalMaxHeight, size);
 
-  if (allowHiding || size > 20) {
+  if (size > 20) {
     root.style.setProperty("--modal-size", `${size}${unit}`);
     if (isRightMode) {
       sheetContent.style.height = "100%";
@@ -248,7 +254,7 @@ const dragStop = () => {
     newSize = currentSize;
   }
 
-  if (newSize < 25 && allowHiding) {
+  if (newSize < 25) {
     hideBottomSheet();
   } else if (newSize > 85) {
     updateSheetHeight(100);

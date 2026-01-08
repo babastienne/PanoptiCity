@@ -112,7 +112,6 @@ const addCameraDetailsData = (plotMarker, plot) => {
   cancelCameraCreation();
   updateBottomModalContent(popupDataTable);
   showBottomModal({
-    authorizeClosingModal: true,
     authorizeMoveBehindModal: true,
     authorizeDragModal: true,
     defaultHeight: 50,
