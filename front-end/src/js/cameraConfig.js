@@ -185,9 +185,22 @@ const last_date = {
   display: true,
 };
 
+const surveillanceType = {
+  name: TEXTS.cameraSurveillanceTypeName,
+  display: true,
+  options: {
+    camera: {
+      name: TEXTS.cameraSurveillanceTypeCamera,
+    },
+    ALPR: {
+      name: TEXTS.cameraSurveillanceTypeALPR,
+    },
+  },
+};
+
 export const tagsListCamera = {
   man_made: { display: false },
-  "surveillance:type": { display: false },
+  "surveillance:type": surveillanceType,
   check_date: last_date,
   "survey:date": last_date,
   source: {

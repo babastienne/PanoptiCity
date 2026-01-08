@@ -2,13 +2,34 @@ import { BASE_URL_API } from "../../CONFIG.js";
 import { TEXTS } from "./language.js";
 import { showBottomModal, updateBottomModalContent } from "./bottomModal.js";
 import { cancelCameraCreation } from "./contrib.js";
-import { fovLayer } from "./map.js";
+import { fovLayer, ICONS_MAPPING } from "./map.js";
 import { levelsCameraConfiguration, tagsListCamera } from "./cameraConfig.js";
 
 let map;
 let cameraDetails = {};
 let cameraDetailsPlots = [];
 let cameraDetailsSelectedScenario = "mean";
+export let activeCameraId = null;
+
+/**
+ * Camera icons on map functions
+ */
+export const createCameraIcon = (cameraMarker) => {
+  return L.icon({
+    iconUrl: ICONS_MAPPING[cameraMarker],
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
+    popupAnchor: [0, -10],
+  });
+};
+
+export const highlightMarker = (marker) => {
+  activeCameraId = marker ? marker.options.id : null;
+  document.querySelectorAll(".active-marker").forEach((el) => el.classList.remove("active-marker"));
+  if (marker && marker._icon) {
+    marker._icon.classList.add("active-marker");
+  }
+};
 
 export let initCamera = (mapInstance) => {
   map = mapInstance;
@@ -36,6 +57,8 @@ export let displayCameraDetails = async (marker) => {
   }
   // Center map on the clicked marker
   map.setView(marker.getLatLng(), Math.max(map.getZoom(), 16));
+  // Change the marker image
+  highlightMarker(marker);
 };
 
 const _transformTagContentInHtml = (content) => {
@@ -107,7 +130,7 @@ const addCameraDetailsData = (plotMarker, plot) => {
     listAttributes.push(x);
   }
 
-  popupDataTable += `</tbody></table>${_displayEditionButton(listAttributes)}</div>`;
+  popupDataTable += `</tbody></table>${_displayEditionButton(plot.marker)}</div>`;
 
   cancelCameraCreation();
   updateBottomModalContent(popupDataTable);
@@ -120,12 +143,9 @@ const addCameraDetailsData = (plotMarker, plot) => {
 };
 
 // Camera edition methods
-const _displayEditionButton = (listAttributes) => {
+const _displayEditionButton = (markerName) => {
   let content = "";
-  if (
-    listAttributes.length < 7 ||
-    (["fixed", "panning"].includes(cameraDetails["camera_type"]) && listAttributes.length < 9)
-  ) {
+  if (markerName.split(/[A-Z]/)[1]) {
     content = `
       <div class="modal-flex-buttons">
         <button
@@ -167,7 +187,16 @@ const _generateContentFOV = () => {
       </div>
     `;
   } else {
-    content += `<p>${TEXTS.noFOV}</p>`;
+    content += `
+      <p>${TEXTS.noFOV}</p>
+      <div class="modal-flex-buttons">
+        <button
+          class="outline primary modal-button"
+          style="margin-bottom: 2rem;"
+          onclick="completeExistingCameraMissingAttributes(${cameraDetails.id})"
+        >${TEXTS.completeCameraButton}</button>
+      </div>
+    `;
   }
   return content;
 };

@@ -15,7 +15,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Tile',
             fields=[
-                ('id', models.CharField(max_length=15, primary_key=True, serialize=False, db_index=True)),
+                ('id', models.CharField(max_length=15,
+                 primary_key=True, serialize=False, db_index=True)),
                 ('geom', django.contrib.gis.db.models.fields.PolygonField(srid=4326)),
                 ('level', models.IntegerField(db_index=True)),
                 ('obj_count', models.IntegerField()),
@@ -56,9 +57,7 @@ class Migration(migrations.Migration):
                         blank=True,
                         choices=[
                             ("camera", "camera"),
-                            ("guard", "guard"),
                             ("ALPR", "ALPR"),
-                            ("gunshot_detector", "gunshot_detector"),
                         ],
                         default="camera",
                     ),

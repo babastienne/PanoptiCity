@@ -49,6 +49,7 @@ class CameraDetailSerializer(serializers.HyperlinkedModelSerializer):
             "direction",
             "angle",
             "fov",
+            "marker",
         ]
 
 

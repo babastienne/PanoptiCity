@@ -1,16 +1,16 @@
 // -- Back-end configuration --
-const BASE_URL_API = "${API_PROTOCOL}://${BACKEND_DOMAIN_NAME}/api";
+export const BASE_URL_API = "${API_PROTOCOL}://${BACKEND_DOMAIN_NAME}/api";
 
 // -- OpenStreetMap App configuration (for contributions) --
-const OSM_API_URL = "https://api.openstreetmap.org";
-const CLIENT_ID_OSM_APP = "${CLIENT_ID_OSM_APP}";
-const DOMAIN_NAME = "${API_PROTOCOL}://${FRONTEND_DOMAIN_NAME}";
+export const OSM_API_URL = "https://api.openstreetmap.org";
+export const CLIENT_ID_OSM_APP = "${CLIENT_ID_OSM_APP}";
+export const DOMAIN_NAME = "${API_PROTOCOL}://${FRONTEND_DOMAIN_NAME}";
 
 // -- Map configuration --
-const MAP_INITIAL_CENTER = [48.8566, 2.3522]; // LatLng object (see: https://leafletjs.com/reference.html#latlng)
-const MAP_MAX_BBOX = [
+export const MAP_INITIAL_CENTER = [48.8566, 2.3522]; // LatLng object (see: https://leafletjs.com/reference.html#latlng)
+export const MAP_MAX_BBOX = [
   [55.71473, 16.17187],
   [37.03763, -14.15039],
 ]; // If set, the user can't go out of this bbox on the map
-const MAP_INITIAL_ZOOM = 11;
-const MAP_MIN_ZOOM = 6;
+export const MAP_INITIAL_ZOOM = 11;
+export const MAP_MIN_ZOOM = 6;

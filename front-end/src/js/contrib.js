@@ -1,7 +1,6 @@
 import { TEXTS } from "./language.js";
 import { displaySnackbar, showLoginModal } from "./interfaceFill.js";
-import { getCamera, createCamera, updateCamera, userIsConnected } from "./osm.js";
-import { locateControl } from "./map.js";
+import { getCamera, createCamera, updateCamera, userIsConnected, logout } from "./osm.js";
 import {
   computeRenderedImageWidth,
   showBottomModal,
@@ -359,8 +358,13 @@ export const completeExistingCameraMissingAttributes = async (cameraId) => {
     showLoginModal();
     return;
   }
-  currentCamera = await getCamera(cameraId);
-  chooseNextStep();
+  try {
+    currentCamera = await getCamera(cameraId);
+    chooseNextStep();
+  } catch (e) {
+    displaySnackbar(TEXTS.completeCameraErrorSnackbar);
+    logout();
+  }
 };
 
 export const cancelCameraCreation = () => {

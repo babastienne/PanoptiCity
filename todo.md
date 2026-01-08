@@ -104,4 +104,4 @@ Ressources :
 - [ ] Allow to modify existing fields
 - [ ] Contribute operator (list of values ?)
 - [ ] Simplify pictograms
-- [ ] Remove guards ?
+- [x] Remove guards ?

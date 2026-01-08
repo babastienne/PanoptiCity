@@ -34,8 +34,7 @@ export let checkIfUserConnected = () => {
     buttonLogin.innerHTML = TEXTS.logoutButtonName;
     buttonLogin.title = TEXTS.logoutButtonTitle;
     buttonLogin.onclick = () => {
-      OSM.logout();
-      checkIfUserConnected();
+      logout();
     };
     buttonLogin.classList.remove("secondary");
     buttonLogin.classList.add("danger");
@@ -47,6 +46,11 @@ export let checkIfUserConnected = () => {
     buttonLogin.classList.remove("danger");
     buttonLogin.classList.add("secondary");
   }
+};
+
+export let logout = () => {
+  OSM.logout();
+  checkIfUserConnected();
 };
 
 export let getCamera = async (id) => {
