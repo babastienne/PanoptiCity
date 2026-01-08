@@ -169,6 +169,7 @@ export let initSidebar = (map) => {
       authorizeMoveBehindModal: true,
       authorizeDragModal: true,
       defaultHeight: 50,
+      displayOnRight: true,
     });
     setModalGroupActive("btn-scenario");
     // Add event listeners to the new buttons
@@ -229,6 +230,7 @@ export let initSidebar = (map) => {
       authorizeClosingModal: true,
       authorizeMoveBehindModal: true,
       authorizeDragModal: true,
+      displayOnRight: true,
     });
     setModalGroupActive("btn-legend");
   };

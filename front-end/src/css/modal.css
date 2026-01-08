@@ -1,6 +1,7 @@
 :root {
   --panel-bg: #ffffff;
   --modal-box-shadow: rgba(0, 0, 0, 0.4);
+  --modal-size: 50vh;
 }
 
 [data-theme="dark"] {
@@ -20,10 +21,11 @@
   align-items: center;
   flex-direction: column;
   justify-content: flex-end;
-  transition: 0.1s linear;
+  transition: opacity 0.15s linear;
   z-index: 5011;
 }
 .bottom-sheet.show {
+  transition: opacity 0.15s linear;
   opacity: 1;
   pointer-events: auto;
 }
@@ -34,16 +36,11 @@
   max-height: 90vh;
   height: 50vh;
   padding: 25px 20px;
-  transform: translateY(100%);
   border-radius: 12px 12px 0 0;
-  transition: 0.3s ease;
   background: var(--panel-bg);
   box-shadow: 0 10px 20px var(--modal-box-shadow);
 }
 
-.bottom-sheet.show .content {
-  transform: translateY(0%);
-}
 .bottom-sheet.dragging .content {
   transition: none;
 }
@@ -189,4 +186,36 @@
 [data-theme="light"] .info-bubble {
   filter: invert(33%) sepia(9%) saturate(707%) hue-rotate(180deg)
     brightness(90%) contrast(88%);
+}
+
+@media (min-width: 920px) {
+  .bottom-sheet.display-right .content {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    height: 100% !important;
+    /* Full height for sidebar */
+    width: var(--modal-size);
+    /* Width is now controlled by our variable */
+    max-height: 100vh;
+    border-radius: 12px 0 0 12px;
+    padding: 25px 10px;
+  }
+
+  /* Adjust drag icon for vertical line if on right */
+  .bottom-sheet.display-right .header-modal .drag-icon span {
+    width: 4px;
+    height: 40px;
+  }
+
+  .bottom-sheet.display-right .header-modal {
+    align-items: center;
+    padding-right: 5px;
+  }
+
+  .bottom-sheet.display-right .body-modal {
+    align-content: center;
+    padding: 0;
+    width: 100%;
+  }
 }

@@ -116,6 +116,7 @@ const addCameraDetailsData = (plotMarker, plot) => {
     authorizeMoveBehindModal: true,
     authorizeDragModal: true,
     defaultHeight: 50,
+    displayOnRight: true,
   });
 };
 
