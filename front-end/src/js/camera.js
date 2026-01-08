@@ -170,7 +170,7 @@ const _generateContentFOV = () => {
     content += `
       <div class="modal-flex-buttons-fov" role="group">
         <button
-          class="secondary modal-button-fov button-group"
+          class="outline modal-button-fov button-group"
           id="button-best"
           onclick="_displayCameraFOV('best')"
         >${TEXTS.bestScenario}</button>
@@ -180,7 +180,7 @@ const _generateContentFOV = () => {
           onclick="_displayCameraFOV('mean')"
         >${TEXTS.meanScenario}</button>
         <button
-          class="secondary modal-button-fov button-group"
+          class="outline modal-button-fov button-group"
           id="button-worst"
           onclick="_displayCameraFOV('worst')"
         >${TEXTS.worstScenario}</button>
@@ -210,7 +210,7 @@ export const removeCameraFOVDetail = () => {
   }
   try {
     let button = document.getElementById(`button-${cameraDetailsSelectedScenario}`);
-    button.classList.add("secondary");
+    button.classList.add("outline");
   } catch (e) {}
 };
 
@@ -219,7 +219,7 @@ const _displayCameraFOV = (scenario) => {
   cameraDetailsSelectedScenario = scenario;
   try {
     let button = document.getElementById(`button-${scenario}`);
-    button.classList.remove("secondary");
+    button.classList.remove("outline");
   } catch (e) {}
   let plotDetail;
   let previousPolygon = [];
