@@ -226,7 +226,7 @@ export const TRANSLATIONS = {
     inviteDesc:
       "Vous souhaitez participer à l'enrichissement de cette carte ? 🗺️ C'est génial !\n PanoptiCity est synchronisé avec OpenStreetMap. Il vous suffit de vous connecter avec votre compte OpenStreetMap ou d'en créer un en 30 secondes pour commencer à cartographier ! 🚀🙌",
     // Tooltips for lateral buttons
-    tooltipLayers: "Fonds de plan",
+    tooltipLayers: "Style de carte",
     tooltipScenario: "Configurer la portée des caméras",
     tooltipLegend: "Légende",
     // Modal legend

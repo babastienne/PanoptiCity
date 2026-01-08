@@ -39,6 +39,7 @@ let displayMenuContent = (entry) => {
   menu.checked = false; // Close latteral menu before displaying the modal
   showBottomModal({
     authorizeMoveBehindModal: true,
+    displayOnRight: true,
   });
 };
 
