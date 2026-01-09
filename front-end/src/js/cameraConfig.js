@@ -3,18 +3,18 @@ import { TEXTS } from "./language.js";
 export const levelsCameraConfiguration = {
   identification: {
     color: "#ff3131",
-    weight: 0,
-    fill: 0.5,
+    weight: 1,
+    fill: 0.4,
   },
   recognition: {
     color: "#ffbf00",
-    weight: 0,
-    fill: 0.5,
+    weight: 1,
+    fill: 0.4,
   },
   observation: {
     color: "#00b300",
-    weight: 0,
-    fill: 0.5,
+    weight: 1,
+    fill: 0.4,
   },
 };
 
