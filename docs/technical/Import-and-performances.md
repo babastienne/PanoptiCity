@@ -63,7 +63,7 @@ You don't need to adapt the QuadTiles used for your project. Except if you are r
 
 <details markdown="block"><sumary>Detailed steps and scripts used</sumary>
 
-1. Download the dataset from the [official site](https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/). You can choose between different years and projections. I choose the 2030 scenario with the 4326 projection (`GHS_BUILT_S_E2030_GLOBE_R2023A_4326_30ss`).
+1. Download the dataset from the [official site](https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/). You can choose between different years and projections. The current setup is done with the 2030 scenario in the 4326 projection (`GHS_BUILT_S_E2030_GLOBE_R2023A_4326_30ss`).
 2. Transform the dataset into a quadtiles gpkg. You can use the following script and adapt it depending on the number of tiles or the max zoom level you want. Be aware that when computing field of view for cameras, only the buildings from the camera tiles and it's 8 neighbourgs will be retrieve from the database. So if you choose too small tiles it might not work well with very long focus, but it might speed up the process.
 
 _`generate_quadkey_grid.py`_
@@ -385,6 +385,3 @@ When handling large PBF files, you should expect to get in the end a database th
 | 2024 computer. 16 cores. 32 Gb ram. | `haute_garonne.osm.pbf` ~ 111 Mo | **42s**                           | **1m13s**              |
 | 2015 computer. 8 cores. 32 Gb ram.  | `france.osm.pbf` ~ 5.6 Go        | 53m                               | 1h18m                  |
 | 2024 computer. 16 cores. 32 Gb ram. | `france.osm.pbf` ~ 5.6 Go        | **13m12s**                        | **26m02s**             |
-
-Using another much recent computer with 16 cores, I got results 2x to 3x faster.
-

@@ -12,7 +12,7 @@ The entire processus is automatic, you just need to call the command `make updat
 
 If a modification is found, it will fetch nearby buildings to be able to compute field of view.
 
-I recommand to run a cron to launch an auto-update on a regular basis. Depending on your needs you can run it every day, every hour or every couple of minutes. To do it you can add a CRON on you system that call the script located in `panopticity/scripts/update-cameras.sh`.
+The recommandation is to run a cron to launch an auto-update on a regular basis. Depending on your needs you can run it every day, every hour or every couple of minutes. To do it you can add a CRON on you system that call the script located in `panopticity/scripts/update-cameras.sh`.
 
 It is recommanded to use this script because it will automatically fetch modifications from server and update the sequence state. In the background it will call the backend command `update_cameras_with_api` that will insert modification into the database.
 

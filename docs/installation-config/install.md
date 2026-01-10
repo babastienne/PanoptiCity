@@ -58,7 +58,7 @@ To import data to your project, you need to download file corresponding to the a
 {: .note }
 By default this project come with sample data so you can follow the import procedure without having to download any file (usefull if you just want to test the project). The data is named `sample-data.osm.pbf`. If you want to use it, you can skip this section and go directly to [Installation](#installation)
 
-In OpenStreetMap, there is multiple ways of keeping informations up to date. On this project we choose to import data from [PBF files](https://wiki.openstreetmap.org/wiki/PBF_Format). 
+In OpenStreetMap, there is multiple ways of keeping informations up to date. This project choose to import data from [PBF files](https://wiki.openstreetmap.org/wiki/PBF_Format). 
 
 To keep change of the updates we use [diff files](https://wiki.openstreetmap.org/wiki/Planet.osm/diffs) that are generated regularly. It can by : daily / hourly / minutely.
 

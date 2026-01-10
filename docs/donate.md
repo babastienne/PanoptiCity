@@ -28,7 +28,7 @@ They're not looking for donations, but this project in here also thanks to the i
 
 ## PanoptiCity donations: the very last priority 🏆
 
-Okay, so you REALLY want to support PanoptiCity? First, thank you! But honestly, I’m not doing this for money. PanoptiCity is a passion project I created for myself and other enthusiasts. If you want to support me, consider contributing to the open-source projects above first. 
+Okay, so you REALLY want to support PanoptiCity? First, thank you! But honestly, this was not created for money. PanoptiCity is a passion project created for myself and other enthusiasts. If you want to support this, consider contributing to the open-source projects above. 
 
 ## Special thanks 🙌
 
