@@ -10,3 +10,4 @@ export let getUserLang = () => {
 };
 
 export const TEXTS = TRANSLATIONS[getUserLang()];
+export const MENU_TEXTS = TRANSLATIONS[getUserLang()]["menuContent"];

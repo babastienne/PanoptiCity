@@ -9,11 +9,14 @@ import { initModal } from "./bottomModal.js";
 import { initContrib } from "./contrib.js";
 import { initSearch } from "./search.js";
 import { initSidebar } from "./sidebar.js";
+import { initMenu } from "./menu/menuController.js";
 
 // Initialize everything when the DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
   // Fill UI (+ translations)
   initUI();
+  // Init menu
+  initMenu();
   // Init map
   const map = initMap();
   // Init cameras

@@ -77,47 +77,6 @@ By default PanoptiCity suggests some contents but you can override them to remov
 
 ## Calculation methods for field of view
 
-### What is the field of view
-
-The field of view is the area visible/covered by a CCTV. the field of view of every camera depends on a lot of variables. The most important are :
-
-- The height of the camera
-- The direction in which the camera is pointed
-- The angle (tilt) of the camera that indicated if it is pointed toward the horizon or the floor
-- The [resolution](https://en.wikipedia.org/wiki/Image_resolution) of the lens of the camera. This gives the number of pixels (e.g: 1920x1080 ~= 2MP ; 2556x1440 ~= 4MP ; 3840x2160 ~= 8MP ; etc.).
-- The [focal lens](https://en.wikipedia.org/wiki/Camera_lens#Aperture_and_focal_length) of the lens. This mainly impact the angle of view and allow some cameras to be wide-angle (low focal) or on the opposite to focus on specific details (high focal). The focal is expressed in mm (e.g: 8mm ; 12mm ; 75mm).
-- The [sensor format](https://en.wikipedia.org/wiki/Image_sensor_format) which is the ratio that indicates the size of the image (usually expressed as 1/2.5" ; 2/3" ; etc.).
-
-The combination of those last 3 parameters allow to determine the quality of an image for a specific distance. The quality is expressed in PPM (pixels per meters) representing the pixel density. For example for a camera of 1920x1080 resolution with a 25mm lens and a 1/3" format, the quality of the image of a person standing 10 meters away from the camera will be 998ppm.
-
-By taking those elements in consideration, we can compute the field of view of camera in which a person can be identified, recognized, detected. We use this matching table to establish what quality corresponds to what level :
-
-| Color on map                                             | Level of surveillance                                                                                                                                                                                                            | Image quality    | Example                                                                             |
-| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------- |
-| ![Circle red](docs/images/icons/zone-identification.svg) | **Identification**: At this level a person can easily be identified by any human or automated program.                                                                                                                           | **> 250 PPM**    | 320ppm image ![320ppm image of a cyclist](docs/images/resolution/example320ppm.jpg) |
-| ![Circle red](docs/images/icons/zone-recognition.svg)    | **Recognition**: Some specific details can be seen. Sometimes not enough details to automatize the recognition but a targeted person can still be recognized by a human eye. This quality level can be used for forensic review. | **250 - 65 PPM** | 160ppm image ![160ppm image of a cyclist](docs/images/resolution/example160ppm.jpg) |
-| ![Circle red](docs/images/icons/zone-observation.svg)    | **Observation**: It is possible to detect persons, objects and movements but not to identify details. Usually for large non targeted observation.                                                                                | **25 - 65 PPM**  | 40ppm image ![40ppm image of a cyclist](docs/images/resolution/example40ppm.jpg)    |
-|                                                          | **Not usable**: At this level we consider the camera unable to detect anything and do not display any field of view anymore.                                                                                                     | **< 25 PPM**     | 20ppm image ![40ppm image of a cyclist](docs/images/resolution/example20ppm.jpg)    |
-
-> The level of surveillance and corresponding qualities are inspired from this [Department of Homeland Security document about VideoSurveillance Quality](https://www.dhs.gov/sites/default/files/publications/VQiPS_Digital-Video-Quality-HB_UPDATED-180117-508.pdf).
-
-It is important to note that a lot of modern cameras have the ability to zoom and move. We talk about dome or PTZ cameras (Pan-Tilt-Zoom). It means that for a lot of devices the variables (particularly the focal) can change depending if the camera is zoomed or not. Public cameras can generally alternate between wide angle and zoomed views depending on the operator or detection algorythm behind.
-
-### The lack of data in OpenStreetMap
-
-Obvisouly for each camera the information about resolution, focal and sensor format are not in the OpenStreetMap database. First because it would be a pain to contribute but mainly because it is not possible to get this information even when on field.
-
-The other variables (height, angle and direction) are more easy to declare in OpenStreetMap. Panopticity encourage users to declare the height of a camera every time as well as the direction and the angle when it's a fixed or panning camera.
-
-**If sometimes there is no data, how can we determine what are the values that should be used in Panopticity then ?**
-
-For basic information, we use default values if they are not tagged in OSM. If they are presents we use them. Default values are:
-
-| Field     | Default Value                                                                              |
-| --------- | ------------------------------------------------------------------------------------------ |
-| Height    | 5 meters                                                                                   |
-| Angle     | 15°                                                                                        |
-| Direction | No default value. If a fixed camera does not have direction, no field of view is displayed |
 
 For the other fields, to make an estimation, we compiled in a file the technnical information of more than 15200 models of CCTV cameras from 143 differents brands. This gave us a global view of the current technical level of the CCTV market as it is in 2025. Keep in mind that new camera models are released every week so depending when you read this lines the numbers can be differents today.
 
@@ -136,28 +95,6 @@ The models numbers choosen are the result of a statistic analysis made for the c
 **How it could be improved**
 
 One good way to improve this models would be to create a correlation between every camera model and their sales numbers to ponderate the weight of each camera in the model computation. However thoses numbers can't be easily found.
-
-### Angle of vision for fixed cameras
-
-For fixed cameras, we decided to use an angle for the width of view of 85°. Once again this angle depends a lot of the camera used and espacially its type (fisheye cameras for example, bullet cameras, etc.). Why 85° ? Our calculations showed that the average focal for fixed cameras in the best scenario (= first decile) is 2.8mm. From far the mains format of lenses are 1/3" and 1/2.7" (which corresponds respectively to 4.8mm and 5.37mm). With thoses informations we can estimate the angle of view of the majority of cameras:
-
-- Angle of view (in radian) = 2 \* ArcTan(Camera format in mm / 2 \* Camera focal in mm)
-- Conversion of radian in degrees: Degree = Radian \* 180 / Pi
-
-The results are:
-
-- For 1/3" lenses: 81.2°
-- for 1/2.7" lenses: 87.5°
-
-Therefore, to simplify we choose to use for all directed cameras an angle of view of ~85°.
-
-### Tilt angle for fixed cameras
-
-While dome and PTZ cameras can usually change their tilt angle, it is not the case for fixed cameras. Therefore this data should be taken in consideration when computing the field of view of fixed cameras.
-
-At the moment the tilt angle is used to apply a computing coefficient. We consider the angle <= 17° being the same as 0° to compensate the vertical angle of vision that is at least 35° and because when aiming for a subject at the same level as the camera we tend to tilt it by 17°.
-
-This behavior can be improved to stop applying a coefficient and compute the real limit of field of view based on the camera height.
 
 ### Statistic analysis of technical data from cameras dataset
 

@@ -1,6 +1,6 @@
 import { TEXTS } from "./language.js";
 import { displaySnackbar, showLoginModal } from "./interfaceFill.js";
-import { getCamera, createCamera, updateCamera, userIsConnected, logout } from "./osm.js";
+import { getCamera, createCamera, updateCamera, userIsConnected, OSMLogout } from "./osm.js";
 import {
   computeRenderedImageWidth,
   showBottomModal,
@@ -363,7 +363,7 @@ export const completeExistingCameraMissingAttributes = async (cameraId) => {
     chooseNextStep();
   } catch (e) {
     displaySnackbar(TEXTS.completeCameraErrorSnackbar);
-    logout();
+    OSMLogout();
   }
 };
 
