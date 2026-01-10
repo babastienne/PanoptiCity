@@ -1,6 +1,6 @@
 from django.db.models import TextChoices
 
-OVERPASS_URL = "https://overpass-api.de/api/interpreter"
+OVERPASS_URL = "https://maps.mail.ru/osm/tools/overpass/api/interpreter"
 
 # --- Choices and constants for Camera and Focus models fields ---
 

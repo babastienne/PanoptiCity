@@ -145,8 +145,9 @@ def purge_camera_tiles(camera):
     cam_url = f"{base_url}/{camera.id}.json"
     try:
         requests.get(cam_url, headers=headers, timeout=0.5)
-    except requests.RequestException:
-        pass
+    except requests.RequestException as e:
+        # Log the error instead of just printing
+        print(f"Purge failed for {tile_url}: {e}")
 
 
 def purge_focus_tiles(tiles_with_scenario):
@@ -163,11 +164,10 @@ def purge_focus_tiles(tiles_with_scenario):
         tile_url = f"{base_url}/{z}/{x}/{y}/{scenario}/"
         try:
             # Using a short timeout is good practice
-            requests.get(tile_url, headers=headers, timeout=0.5)
+            requests.get(tile_url, headers=headers, timeout=1)
         except requests.RequestException as e:
             # Log the error instead of just printing
             print(f"Purge failed for {tile_url}: {e}")
-            pass
 
 
 def degree_direction_to_radian(direction_degrees):

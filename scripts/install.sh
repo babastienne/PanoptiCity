@@ -136,8 +136,6 @@ echo -e "\033[0;33mTo speed up the process we're using multi-processing with $NU
 echo -e "\033[0;33m->You can follow logs in back-end/update_cameras.log\033[0m"
 docker compose run --remove-orphans --rm web ./manage.py load_cameras -w "$NUM_CORES" /osm-data/$OSM_FILE_NAME
 
-# TODO: Create nginx configuration
-
 echo -e "\033[0;32m--- Configuration of replication and update of data ---\033[0m"
 # Generation of the sequence state and grep the replication server URL at the same time
 REPLICATION_SERVER_URL=$(docker compose run --rm web pyosmium-get-changes -O /osm-data/$OSM_FILE_NAME  -f /osm-data/sequence.state.txt -v 2>&1 | grep -oP 'Using replication server at \K\S+')

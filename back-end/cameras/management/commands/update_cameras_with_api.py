@@ -168,7 +168,6 @@ class Command(BaseCommand):
                     update_fields=['value'],
                     unique_fields=['camera_id', 'name']
                 )
-            purge_camera_tiles(camera_to_create)
             if computed_focus:
                 logger.debug("Saving the computed focus in database")
                 for focus in computed_focus:
@@ -189,6 +188,7 @@ class Command(BaseCommand):
             Building.objects.all().delete()
 
             # Step 5: Updating nginx cache
+            purge_camera_tiles(camera_to_create)
             if tiles_to_purge:
                 purge_focus_tiles(tiles_to_purge)
 
@@ -242,7 +242,7 @@ class Command(BaseCommand):
         summary = (
             f"--- Summary ---\n"
             f"{total_imported} new cameras imported or updated\n"
-            f"{total_skipped} cameras skipped (already existing)"
+            f"{total_skipped} cameras skipped"
         )
 
         logger.info(summary)
