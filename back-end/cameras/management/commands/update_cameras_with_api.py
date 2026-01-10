@@ -1,3 +1,4 @@
+import copy
 from datetime import timedelta
 from timeit import default_timer as timer
 
@@ -89,6 +90,32 @@ class Command(BaseCommand):
                 cameras_to_import.append(data)
                 pbar_read.update(1)
         return cameras_to_import
+
+    def get_deleted_camera_ids_from_file(self, logger, filename):
+        """
+        Read OSM diff file and extract IDs of deleted nodes.
+
+        :param logger: the logger to use
+        :param filename: path to the .osc.gz file
+        :return: a list of integers representing deleted node IDs
+        """
+        deleted_ids = []
+
+        with tqdm(desc="Scanning for deletions", unit=" nodes") as pbar:
+            logger.debug("Starting to scan OSM diff for deletions...")
+
+            # We process all NODEs. We cannot use TagFilter because
+            # deleted elements usually have no tags in the diff file.
+            for elem in osmium.FileProcessor(filename, osmium.osm.NODE):
+                if elem.deleted:
+                    deleted_ids.append(elem.id)
+                    pbar.update(1)
+
+        logger.debug(f"Found {len(deleted_ids)} deleted nodes in diff.")
+        cameras_to_delete = Camera.objects.filter(id__in=deleted_ids)
+        logger.debug(f"Found {cameras_to_delete.count()} cameras to delete.")
+
+        return cameras_to_delete
 
     def camera_creation_using_overpass(self, camera, logger):
         """
@@ -199,6 +226,28 @@ class Command(BaseCommand):
             success = False
         return success
 
+    def delete_camera(self, camera):
+        """
+        Function to handle the deletion of a camera and related data
+        It will remove camera, tags and focus and then purge the nginx cache.
+        """
+        # Remove focus and purge cache
+        tiles_to_purge = set()
+        for elem in CameraFocus.objects.filter(camera_id=camera.id):
+            if elem.level == "observation":
+                tiles_cache = get_tiles_for_polygon(elem.geom)
+                for x, y, z in tiles_cache:
+                    tiles_to_purge.add((x, y, z, elem.scenario))
+            elem.delete()
+        if tiles_to_purge:
+            purge_focus_tiles(tiles_to_purge)
+        # Remove tags
+        CameraTags.objects.filter(camera_id=camera.id).delete()
+        # Remove camera and purge cache
+        copy_cam = copy.deepcopy(camera)
+        camera.delete()
+        purge_camera_tiles(copy_cam)
+
     def handle(self, *args, **options):
         start = timer()
 
@@ -213,6 +262,7 @@ class Command(BaseCommand):
 
         total_imported = 0
         total_skipped = 0
+        total_deleted = 0
 
         if self.ask_user_confirmation(ignore_prompt):
             return
@@ -237,12 +287,26 @@ class Command(BaseCommand):
                     total_skipped += 1
                 pbar_process.update(1)  # Update the progress bar
 
-        logger.debug("End of camera processing")
+        logger.debug("End of camera import / update")
+        logger.debug("Processing cameras to delete")
+
+        cameras_to_delete = self.get_deleted_camera_ids_from_file(
+            logger, filename)
+
+        with tqdm(total=len(cameras_to_delete), desc="Processing cameras", unit=" cameras deleted") as pbar_process:
+            for camera in cameras_to_delete:
+                logger.debug(
+                    "Deleting camera %s and related data...", camera.id)
+                self.delete_camera(camera)
+                logger.debug("Camera deleted with success")
+                total_deleted += 1
+                pbar_process.update(1)  # Update the progress bar
 
         summary = (
             f"--- Summary ---\n"
             f"{total_imported} new cameras imported or updated\n"
-            f"{total_skipped} cameras skipped"
+            f"{total_skipped} cameras skipped\n"
+            f"{total_deleted} cameras deleted\n"
         )
 
         logger.info(summary)
