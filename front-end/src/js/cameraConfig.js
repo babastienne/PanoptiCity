@@ -34,7 +34,7 @@ export const choicesCameraType = {
     },
     panning: {
       name: TEXTS.cameraTypePanning,
-      picture: "images/contrib/type-panning-arrow.svg",
+      picture: "images/contrib/type-panning-moving.svg",
     },
   },
 };
@@ -88,11 +88,11 @@ export const choicesCameraMount = {
     },
     doorbell: {
       name: TEXTS.cameraMountDoorbell,
-      picture: "images/contrib/type-fixed.svg",
+      picture: "images/contrib/mount-doorbell.svg",
     },
     atm: {
       name: TEXTS.cameraMountAtm,
-      picture: "images/contrib/type-fixed.svg",
+      picture: "images/contrib/mount-atm.svg",
     },
   },
 };

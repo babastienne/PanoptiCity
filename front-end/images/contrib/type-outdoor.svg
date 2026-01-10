@@ -1,4 +1,56 @@
-<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg width="800px" height="800px" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="8" cy="8" r="7" style="fill:#e0ddf1;stroke-width:1;stroke:#0055d4"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- SKY & GROUND -->
+  <rect width="512" height="512" fill="#e0f2fe"/> <!-- Light Sky -->
+  <rect y="420" width="512" height="92" fill="#94a3b8"/> <!-- Sidewalk/Road -->
+  <rect y="420" width="512" height="4" fill="#64748b"/> <!-- Curb -->
+
+  <!-- TREE (Outdoor Indicator) -->
+  <g id="Tree">
+    <rect x="420" y="320" width="12" height="100" fill="#78350f"/>
+    <circle cx="426" cy="280" r="50" fill="#22c55e" opacity="0.8"/>
+    <circle cx="396" cy="300" r="40" fill="#16a34a" opacity="0.8"/>
+    <circle cx="456" cy="300" r="35" fill="#15803d" opacity="0.8"/>
+  </g>
+
+  <!-- BUILDING FACADE (LEFT) -->
+  <rect width="120" height="420" fill="#da7756"/> <!-- Brick Base -->
+  <g stroke="#c45a3d" stroke-width="2">
+    <path d="M0 40 H120 M0 80 H120 M0 120 H120 M0 160 H120 M0 200 H120 M0 240 H120 M0 280 H120 M0 320 H120 M0 360 H120 M0 400 H120"/>
+    <path d="M30 0 V40 M90 0 V40 M60 40 V80 M30 80 V120 M90 80 V120 M60 120 V160 M30 160 V200 M90 160 V200 M60 200 V240 M30 240 V280 M90 240 V280 M60 280 V320 M30 320 V360 M90 320 V360 M60 360 V400 M30 400 V420 M90 400 V420"/>
+  </g>
+
+  <!-- SECURITY GATE -->
+  <g id="Gate">
+    <rect x="120" y="220" width="220" height="200" fill="#475569" opacity="0.1"/>
+    <rect x="120" y="220" width="10" height="200" fill="#475569"/>
+    <rect x="330" y="220" width="10" height="200" fill="#475569"/>
+    <rect x="130" y="240" width="200" height="8" fill="#475569"/>
+    <rect x="130" y="390" width="200" height="8" fill="#475569"/>
+    <!-- Vertical Bars -->
+    <path d="M160 240 V390 M190 240 V390 M220 240 V390 M250 240 V390 M280 240 V390 M310 240 V390" stroke="#475569" stroke-width="4"/>
+  </g>
+
+  <!-- OUTDOOR BULLET CAMERA -->
+  <g id="Outdoor_Camera">
+    <path d="M120 150 H140 V139" stroke="#334155" stroke-width="6"/>
+    <rect x="125" y="115" width="50" height="24" rx="2" fill="#1e293b"/>
+    <rect x="175"  y="118"  width="10" height="18" rx="2" fill="#0f172a"/>
+    <circle cx="135" cy="127" r="1.5" fill="#ef4444"/> <!-- Rec light -->
+  </g>
+
+  <!-- PRIVATE PROPERTY SIGN (NEW) -->
+  <g id="Private_Sign">
+    <!-- Sign Board -->
+    <rect x="25" y="160" width="70" height="85" fill="#ffffff" rx="2" stroke="#adb5bd" stroke-width="1"/>
+    <rect x="25" y="160" width="70" height="20" fill="#fbbf24" rx="2"/> <!-- Yellow Header -->
+    
+    <!-- Sign Content: "No Entry" Symbol -->
+    <circle cx="60" cy="205" r="18" fill="#ef4444"/>
+    <rect x="48" y="202" width="24" height="6" fill="#ffffff" rx="1"/>
+    
+    <!-- Text Representation (Muted lines) -->
+    <path d="M35 170 H55 M35 230 H85 M35 238 H75" stroke="#1e293b" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+  </g>
+
+  
 </svg>
