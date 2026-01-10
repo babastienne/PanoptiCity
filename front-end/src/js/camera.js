@@ -226,7 +226,7 @@ const _displayCameraFOV = (scenario) => {
   } catch (e) {}
   let plotDetail;
   let previousPolygon = [];
-  for (let elem in cameraDetails.fov[scenario]) {
+  ["identification", "recognition", "observation"].forEach((elem) => {
     if (cameraDetails.fov[scenario][elem]) {
       plotDetail = new L.Polygon(
         [
@@ -242,7 +242,7 @@ const _displayCameraFOV = (scenario) => {
       cameraDetailsPlots.push(plotDetail);
       previousPolygon = cameraDetails.fov[scenario][elem];
     }
-  }
+  });
   cameraDetailsPlots.reverse().forEach((layer) => map.addLayer(layer));
   // map.addLayer(plotDetail);
 };
