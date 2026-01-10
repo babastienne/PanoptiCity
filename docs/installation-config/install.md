@@ -64,8 +64,8 @@ To keep change of the updates we use [diff files](https://wiki.openstreetmap.org
 
 Depending on the frequency of updates you want and the area you wish to cover, you'll need to choose where to download your data file. Few suggestions :
 
-- https://planet.openstreetmap.org/ : Official source with possiblity to keep change daily / hourly / minutely. It is only for the entire planet therefore the file size can be important and the database for buldings may not be able to keep up without good resources.
-- https://download.openstreetmap.fr/ : Daily extracts and minutely diffs. Files are splits into continents / countries / states. Very usefull to download specific region and keep up with the changes almost in real time.
+- [https://planet.openstreetmap.org/](https://planet.openstreetmap.org/) : Official source with possiblity to keep change daily / hourly / minutely. It is only for the entire planet therefore the file size can be important and the database for buldings may not be able to keep up without good resources.
+- [https://download.openstreetmap.fr/](https://download.openstreetmap.fr/) : Daily extracts and minutely diffs. Files are splits into continents / countries / states. Very usefull to download specific region and keep up with the changes almost in real time.
 
 You can find an up to date list of mirrors on the [OpenStreetMap dedicated wiki page](https://wiki.openstreetmap.org/wiki/Planet.osm) to explore more options. If you want to keep your data up to date you'll need to find one that handle diffs.
 
