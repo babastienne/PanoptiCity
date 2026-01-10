@@ -153,45 +153,98 @@ def compute_direction(tags, camera, logger=None):
         direction = tags["direction"]
 
     if isinstance(direction, str):
-        direction = direction.lower()
-        if direction in ["n", "north"]:
-            direction = 0
-        elif direction in ["ne"]:
-            direction = 45
-        elif direction in ["e", "east"]:
-            direction = 90
-        elif direction in ["se"]:
-            direction = 135
-        elif direction in ["s", "south"]:
-            direction = 180
-        elif direction in ["sw"]:
-            direction = 225
-        elif direction in ["w", "west"]:
-            direction = 270
-        elif direction in ["nw"]:
-            direction = 315
-        # If the string got a trailing '°', we remove it
-        elif direction.endswith("°"):
-            direction = direction[:-1]
+        direction = direction.lower().rstrip('°').lstrip(
+            '-').replace('deg', '').replace('degrees', '').strip()
         # If the direction contains ";" it means its a list of directions and there is multiple cameras
-        elif ";" in direction:
+        if direction in ["0-360", "0-359", "0;90;180;270", "90;180;270;360"]:
+            return None  # See all direction
+        if ";" in direction:
             # FIXME: We take the first direction but we should store the fact that there is multiple
             # cameras to alert the user on the map and suggest a way to split them
             direction = direction.split(";")[0]
+        if "&" in direction:
+            direction = direction.split("&")[0]
 
-    try:
-        if direction:
-            direction = int(direction)
-            if direction < -1000 or direction > 1000:
-                raise ValueError("Direction out of range")
-        else:
-            direction = None
-    except Exception:
-        logger.info(
-            f"Camera #{camera.id}. Field : Direction. Expected int, found {direction}. Field kept empty.")
-        direction = None
+        COMPASS_POINTS = {
+            "n": 0, "north": 0,
+            "nne": 22,
+            "ne": 45,
+            "ene": 67,
+            "e": 90, "east": 90,
+            "ese": 112,
+            "se": 135,
+            "sse": 157,
+            "s": 180, "south": 180,
+            "ssw": 202,
+            "sw": 225,
+            "wsw": 247,
+            "w": 270, "west": 270,
+            "wnw": 292,
+            "nw": 315,
+            "nnw": 337
+        }
 
+        def parse_single_value(s):
+            """Converts a single string (N, 45, etc) to an integer degree."""
+            s = s.strip()
+            if s in COMPASS_POINTS:
+                return COMPASS_POINTS[s]
+            try:
+                # Handle float values sometimes entered (e.g. 45.5)
+                return int(round(float(s)))
+            except Exception:
+                logger.info(
+                    f"Camera #{camera.id}. Field : Direction. Expected int, found {direction}. Field kept empty.")
+                return None
+
+        if "-" in direction:
+            parts = direction.split("-")
+            if len(parts) == 2:
+                start = parse_single_value(parts[0])
+                end = parse_single_value(parts[1])
+
+                if start is not None and end is not None:
+                    # Calculate the midpoint of the arc (sense of rotation is clockwise)
+                    if end < start:
+                        # Case wrapping around North (e.g., 315 to 45)
+                        midpoint = (start + end + 360) / 2
+                    else:
+                        # Standard case (e.g., 90 to 270)
+                        midpoint = (start + end) / 2
+
+                    direction = int(midpoint % 360)
+
+        direction = parse_single_value(direction)
     return direction
+
+
+def compute_height(tags, camera, logger):
+    height = None
+    attribute = ""
+    try:
+        if "height" in tags:
+            height = tags["height"]
+            attribute = "height"
+        elif "ele" in tags:
+            height = tags["ele"]
+            attribute = "ele"
+        if height:
+            if ";" in height:
+                # FIXME: We take the first height but we should store the fact that there is multiple
+                # cameras to alert the user on the map and suggest a way to split them
+                height = height.split(";")[0]
+            if "&" in height:
+                height = height.split("&")[0]
+            # If the height has a trailing "m" or "M" or "meter" or "Meter", we remove it
+            height = height.lower().strip().rstrip("m").rstrip('meter').rstrip('meters')
+            # If height contains ',', we replace it by '.'
+            height = height.replace(",", ".")
+            height = float(height)
+    except Exception as e:
+        logger.info(
+            f"Camera #{camera.id}. Field : {attribute}. Expected float, found {tags['height']}. Field kept empty.")
+        raise e
+    return height
 
 
 def create_camera(camera_osm, logger=None, nearby_buildings_qs=None):
@@ -211,27 +264,7 @@ def create_camera(camera_osm, logger=None, nearby_buildings_qs=None):
     if "surveillance:zone" in tags:
         camera.zone = tags["surveillance:zone"]
 
-    try:
-        if "height" in tags:
-            height = tags["height"]
-        elif "ele" in tags:
-            height = tags["ele"]
-        if height:
-            # If the height has a trailing "m" or "M" or "meter" or "Meter", we remove it
-            if height.lower().endswith("m"):
-                height = height[:-1]
-            elif height.lower().endswith("meter"):
-                height = height[:-5]
-            # If height contains ',', we replace it by '.'
-            height = height.replace(",", ".")
-            camera.height = float(height)
-    except Exception:
-        if "height" in tags:
-            logger.info(
-                f"Camera #{camera.id}. Field : height. Expected float, found {tags['height']}. Field kept empty.")
-        elif "ele" in tags:
-            logger.info(
-                f"Camera #{camera.id}. Field : ele. Expected float, found {tags['ele']}. Field kept empty.")
+    camera.height = compute_height(tags, camera, logger)
 
     camera.direction = compute_direction(tags, camera, logger)
 
