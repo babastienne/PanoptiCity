@@ -4,9 +4,10 @@ import { updateBottomModalContent, showBottomModal, hideBottomSheet } from "./bo
 import { TEXTS } from "./language.js";
 import { locateControl, fovLayer, setBaseLayer, getActiveBaseLayerId, baseLayersConfig } from "./map.js";
 
+export let currentScenario = "mean";
+
 export let initSidebar = (map) => {
   const modalButtons = ["btn-add-camera", "btn-layers", "btn-scenario", "btn-legend"];
-  let currentScenario = "mean";
 
   /**
    * Sets a button as active within the modal group.
@@ -225,11 +226,8 @@ export let initSidebar = (map) => {
           </div>
 
           <footer class="modal-flex-buttons">
-              <button class="outline secondary modal-button" onclick="displayMenuContent('TODO')">
+              <button class="outline secondary modal-button" onclick="displayMenuContent('fov-more')">
               ${TEXTS.legendMoreLink}
-              </button>
-              <button class="outline secondary modal-button" onclick="displayMenuContent('TODO')">
-              ${TEXTS.legendCalculationLink}
               </button>
           </footer>
         </div>

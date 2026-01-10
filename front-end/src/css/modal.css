@@ -1,10 +1,12 @@
 :root {
+  --text-color: #373c44;
   --panel-bg: #ffffff;
   --modal-box-shadow: rgba(0, 0, 0, 0.4);
   --modal-size: 50vh;
 }
 
 [data-theme="dark"] {
+  --text-color: #c2c7d0;
   --panel-bg: #13171f;
   --modal-box-shadow: rgba(255, 255, 255, 0.4);
 }
@@ -39,6 +41,8 @@
   border-radius: 12px 12px 0 0;
   background: var(--panel-bg);
   box-shadow: 0 10px 20px var(--modal-box-shadow);
+  container-type: inline-size;
+  container-name: modal;
 }
 
 .bottom-sheet.dragging .content {
@@ -121,7 +125,16 @@
   margin-top: 20px !important;
   margin-left: auto !important;
   margin-right: auto !important;
-  /* min-width: 300px; */
+}
+.modal-button-fov.outline:hover {
+  background: var(--pico-text-selection-color);
+}
+.modal-button-fov.outline {
+  background: var(--pico-muted-border-color);
+  color: var(--text-color);
+}
+.modal-button-fov.active {
+  background: var(--pico-primary-underline);
 }
 .button-group {
   border-radius: 0 !important;
@@ -148,6 +161,18 @@
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+  width: 100%;
+}
+@container modal (max-width: 480px) {
+  .modal-flex-buttons-fov {
+    flex-direction: column;
+  }
+  .modal-flex-buttons-fov>button {
+    width: 100% !important;
+    border-radius: 0;
+    border: var(--pico-border-width) solid var(--pico-border-color) !important;
+    margin-left: 0 !important;
+  }
 }
 #modal-arrow-direction {
   height: 100px !important;
@@ -186,6 +211,37 @@
 [data-theme="light"] .info-bubble {
   filter: invert(33%) sepia(9%) saturate(707%) hue-rotate(180deg)
     brightness(90%) contrast(88%);
+}
+.modal-rich-img {
+  padding-bottom: 1rem;
+}
+.modal-attribution {
+  display: block;
+  margin-top: -0.75rem;
+  /* Pull it closer to the image above */
+  margin-bottom: 1.5rem;
+  font-size: 0.75rem;
+  color: var(--pico-muted-color);
+  text-align: right;
+  /* Standard for image credits */
+  font-style: italic;
+}
+
+/* Ensure links inside attribution don't stand out too much */
+.modal-attribution a {
+  color: var(--pico-muted-color);
+  text-decoration: underline;
+}
+
+.modal-attribution a:hover {
+  color: var(--pico-primary);
+}
+
+.table-img {
+  max-width: 120px;
+  display: block;
+  margin-top: 5px;
+  border-radius: 4px;
 }
 
 @media (min-width: 920px) {

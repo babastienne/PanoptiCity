@@ -1,26 +1,33 @@
+/* --- BURGER LOGIC --- */
 #menu__toggle {
   opacity: 0;
   position: fixed;
-  top: 22px;
-  left: 20px;
-  width: 25px;
-  height: 23px;
+  top: 10px;
+  left: 10px;
+  width: 45px;
+  height: 50px;
   z-index: 5051;
+  cursor: pointer;
 }
-#menu__toggle:checked + .menu__btn > span {
+
+#menu__toggle:checked+.menu__btn>span {
   transform: rotate(45deg);
 }
-#menu__toggle:checked + .menu__btn > span::before {
+
+#menu__toggle:checked+.menu__btn>span::before {
   top: 0;
   transform: rotate(0deg);
 }
-#menu__toggle:checked + .menu__btn > span::after {
+
+#menu__toggle:checked+.menu__btn>span::after {
   top: 0;
   transform: rotate(90deg);
 }
-#menu__toggle:checked ~ .menu__box {
+
+#menu__toggle:checked~.menu__box {
   left: 0 !important;
 }
+
 .menu__btn {
   position: fixed;
   top: 30px;
@@ -30,106 +37,121 @@
   cursor: pointer;
   z-index: 5052;
 }
-.menu__btn > span,
-.menu__btn > span::before,
-.menu__btn > span::after {
+
+.menu__btn>span,
+.menu__btn>span::before,
+.menu__btn>span::after {
   display: block;
   position: absolute;
   width: 100%;
   height: 3px;
   transition-duration: 0.25s;
+  background-color: var(--pico-contrast);
+  /* Use Pico variable */
 }
 
-[data-theme="dark"] .menu__btn > span,
-[data-theme="dark"] .menu__btn > span::before,
-[data-theme="dark"] .menu__btn > span::after {
-  background-color: white;
-}
-[data-theme="light"] .menu__btn > span,
-[data-theme="light"] .menu__btn > span::before,
-[data-theme="light"] .menu__btn > span::after {
-  background-color: black;
-}
-.menu__btn > span::before {
+.menu__btn>span::before {
   content: "";
   top: -8px;
 }
-.menu__btn > span::after {
+
+.menu__btn>span::after {
   content: "";
   top: 8px;
 }
+
+/* --- MENU BOX --- */
 .menu__box {
   display: block !important;
   position: fixed;
   top: 0;
   left: -100%;
   z-index: 5050;
-  width: 300px;
+  width: 320px;
   height: 100%;
   margin: 0;
-  padding: 50px 0 !important;
-  align-items: unset !important;
+  padding: 80px 0 0 0 !important;
   list-style: none;
-  transition-duration: 0.25s;
-  overflow: auto;
+  transition: left 0.4s cubic-bezier(0.77, 0.2, 0.05, 1);
+  overflow-y: auto;
+
+  /* Glassmorphism Effect */
+  background-color: var(--pico-background-color);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-right: 1px solid var(--pico-muted-border-color);
+  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
 }
+
 [data-theme="dark"] .menu__box {
-  box-shadow: 2px 2px 6px rgba(255, 255, 255, 0.4);
-  background-color: #1c222d;
+  background-color: rgba(20, 25, 34, 0.95);
+  /* Deeper technical blue-black */
+  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
 }
-[data-theme="light"] .menu__box {
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
-  background-color: #f3f3f3;
+
+/* --- MENU ITEMS --- */
+.menu__li {
+  position: relative;
+  overflow: hidden;
+  width: 100%
 }
+
 .menu__item {
-  display: block !important;
-  padding: 12px 24px !important;
-  margin: 0 !important;
-  font-family: "Roboto", sans-serif;
-  font-size: 20px;
-  font-weight: 600;
+  display: flex !important;
+  align-items: center;
+  padding: 16px 24px !important;
+  font-size: 1.1rem;
+  font-weight: 500;
   text-decoration: none !important;
-  transition-duration: 0.25s;
+  transition: all 0.3s ease;
   border-radius: 0 !important;
-}
-[data-theme="dark"] .menu__item {
-  color: white;
+  border-left: 4px solid transparent;
 }
 [data-theme="light"] .menu__item {
   color: black;
 }
+
+[data-theme="dark"] .menu__item {
+  color: white;
+}
+
 [data-theme="light"] .menu__item:hover {
   background-color: #cacbcb;
   cursor: pointer;
 }
+
 [data-theme="dark"] .menu__item:hover {
   background-color: #6b6b6b;
   cursor: pointer;
 }
-.menu__li {
-  display: block !important;
-  padding: 0 !important;
-  cursor: pointer;
+
+
+/* Hover State: Highlight with primary color */
+.menu__item:hover {
+  background-color: var(--pico-secondary-hover-background);
+  color: var(--pico-primary);
+  border-left: 4px solid var(--pico-primary);
+  padding-left: 30px !important;
+  /* Subtle "push" animation */
 }
-.menu__left {
-  width: 30px;
-  display: block;
+
+/* Active/Current page hint */
+.menu__li.active .menu__item {
+  background-color: var(--pico-primary-focus);
+  color: var(--pico-primary);
+  border-left: 4px solid var(--pico-primary);
 }
+
+/* --- LOGIN PORTAL (If still inside on mobile) --- */
 .menu__connection {
-  position: absolute;
-  top: 10px;
-  right: 30px;
+  margin: 0 24px 1rem 24px;
+  width: calc(100% - 48px);
+  justify-content: center;
 }
-.menu__connection.danger {
-  --pico-color: #d93526 !important;
-  --pico-border-color: #d93526 !important;
-  --pico-primary-focus: rgba(241, 121, 97, 0.375) !important;
-}
-[data-theme="dark"] .menu__hr {
-  border-top: 1px solid white;
-  box-shadow: 2px 2px 6px rgba(255, 255, 255, 0.4);
-}
-[data-theme="light"] .menu__hr {
-  border-top: 1px solid black;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+
+/* --- HEADER TITLE ALIGNMENT --- */
+.center-title {
+  margin-left: 60px;
+  font-size: 1.25rem;
+  letter-spacing: -0.5px;
 }

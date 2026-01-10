@@ -190,6 +190,7 @@ export const hideBottomSheet = () => {
 
 export const updateBottomModalContent = (content, { heightAdd = 0 } = {}) => {
   bodyModal.innerHTML = content;
+  bodyModal.scrollTop = 0; // Reset the scroll
   let maxHeightModal = bodyModal.children[0].scrollHeight + 120 + heightAdd;
   if (maxHeightModal > window.screen.height) {
     maxHeightModal = window.screen.height * 0.9;

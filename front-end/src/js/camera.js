@@ -4,6 +4,7 @@ import { showBottomModal, updateBottomModalContent } from "./bottomModal.js";
 import { cancelCameraCreation } from "./contrib.js";
 import { fovLayer, ICONS_MAPPING } from "./map.js";
 import { levelsCameraConfiguration, tagsListCamera } from "./cameraConfig.js";
+import { currentScenario } from "./sidebar.js";
 
 let map;
 let cameraDetails = {};
@@ -51,7 +52,7 @@ export let displayCameraDetails = async (marker) => {
   let idCamera = marker.options.id;
   cameraDetails = await getCameraDetails(idCamera);
   addCameraDetailsData(marker, cameraDetails);
-  _displayCameraFOV("mean");
+  _displayCameraFOV(currentScenario);
   if (map.hasLayer(fovLayer)) {
     fovLayer.removeFrom(map);
   }
@@ -162,9 +163,11 @@ const _displayEditionButton = (markerName) => {
 const _generateContentFOV = () => {
   let content = `<h4 class="modal-title">
     ${TEXTS.simulateFOV}
-    <sup><a href="https://github.com/babastienne/PanoptiCity?tab=readme-ov-file#calculation-methods-for-field-of-view" target="_blank">
-      <img class="info-bubble" src="images/cameras/info-circle.svg" />
-    </a></sup>
+    <sup>
+      <a href="#" onclick="document.getElementById('btn-scenario').click(); return false;">
+        <img class="info-bubble" src="images/cameras/info-circle.svg" />
+      </a>
+    </sup>
   </h4>`;
   if (cameraDetails.fov.mean.identification) {
     content += `
@@ -175,7 +178,7 @@ const _generateContentFOV = () => {
           onclick="_displayCameraFOV('best')"
         >${TEXTS.bestScenario}</button>
         <button
-          class="modal-button-fov button-group"
+          class="outline modal-button-fov button-group"
           id="button-mean"
           onclick="_displayCameraFOV('mean')"
         >${TEXTS.meanScenario}</button>
@@ -236,9 +239,10 @@ const _displayCameraFOV = (scenario) => {
           fillOpacity: levelsCameraConfiguration[elem].fill,
         }
       );
-      map.addLayer(plotDetail);
       cameraDetailsPlots.push(plotDetail);
       previousPolygon = cameraDetails.fov[scenario][elem];
     }
   }
+  cameraDetailsPlots.reverse().forEach((layer) => map.addLayer(layer));
+  // map.addLayer(plotDetail);
 };
