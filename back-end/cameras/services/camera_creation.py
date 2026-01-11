@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 
 from cameras.models import Camera, CameraFocus, CameraTags, Tile
 from cameras.services.utils import (get_tiles_for_polygon, purge_camera_tiles,
@@ -143,137 +144,163 @@ def process_camera_batch(camera_data_list, update=False, verbose=False, log_file
     return len(cameras_to_create), skipped
 
 
-def compute_direction(tags, camera, logger=None):
-    direction = None
-    if "camera:direction" in tags:
-        direction = tags["camera:direction"]
-    elif "surveillance:direction" in tags:
-        direction = tags["surveillance:direction"]
-    elif "direction" in tags:
-        direction = tags["direction"]
+COMPASS_POINTS = {
+    # English
+    "n": 0, "north": 0, "nne": 22, "ne": 45, "ene": 67,
+    "e": 90, "east": 90, "ese": 112, "se": 135, "sse": 157,
+    "s": 180, "south": 180, "ssw": 202, "sw": 225, "wsw": 247,
+    "w": 270, "west": 270, "wnw": 292, "nw": 315, "nnw": 337,
+    # French / Spanish / Common Shorthand
+    "o": 270, "ouest": 270, "est": 90,
+    "no": 315, "so": 225, "no": 315, "se": 135,
+    # Typos and specific variants found in logs
+    "nee": 22, "nww": 337, "ees": 112, "wws": 247, "see": 157, "sww": 202,
+    # Traffic directions
+    "nb": 0, "sb": 180, "eb": 90, "wb": 270,
+    "north-north-east": 22, "south-south-west": 202, "north east": 45,
+}
 
-    if isinstance(direction, str):
-        direction = direction.lower().rstrip('°').lstrip(
-            '-').replace('deg', '').replace('degrees', '').strip()
-        # If the direction contains ";" it means its a list of directions and there is multiple cameras
-        if direction in ["0-360", "0-359", "0;90;180;270", "90;180;270;360"]:
-            return None  # See all direction
-        if ";" in direction:
-            # FIXME: We take the first direction but we should store the fact that there is multiple
-            # cameras to alert the user on the map and suggest a way to split them
-            direction = direction.split(";")[0]
-        if "&" in direction:
-            direction = direction.split("&")[0]
+# Values that mean "we don't know" or "too complex for a single int"
+SKIP_WORDS = {
+    "clockwise", "variable", "all", "omni", "yes", "null", "fixme", "forward", "boh",
+    "left", "right", "intersection", "street", "entrance", "overheid", "backward",
+    "flock raven", "lamp post", "both", "both3", "xx", "fixed", "wide", "down", "tree", "?"
+}
 
-        COMPASS_POINTS = {
-            "n": 0, "north": 0,
-            "nne": 22,
-            "ne": 45,
-            "ene": 67,
-            "e": 90, "east": 90,
-            "ese": 112,
-            "se": 135,
-            "sse": 157,
-            "s": 180, "south": 180,
-            "ssw": 202,
-            "sw": 225,
-            "wsw": 247,
-            "w": 270, "west": 270,
-            "wnw": 292,
-            "nw": 315,
-            "nnw": 337
-        }
-
-        def parse_single_value(s):
-            """Converts a single string (N, 45, etc) to an integer degree."""
-            s = s.strip()
-            if s in COMPASS_POINTS:
-                return COMPASS_POINTS[s]
-            try:
-                # Handle float values sometimes entered (e.g. 45.5)
-                return int(round(float(s)))
-            except Exception:
-                logger.info(
-                    f"Camera #{camera.id}. Field : Direction. Expected int, found {direction}. Field kept empty.")
-                return None
-
-        if "-" in direction:
-            parts = direction.split("-")
-            if len(parts) == 2:
-                start = parse_single_value(parts[0])
-                end = parse_single_value(parts[1])
-
-                if start is not None and end is not None:
-                    # Calculate the midpoint of the arc (sense of rotation is clockwise)
-                    if end < start:
-                        # Case wrapping around North (e.g., 315 to 45)
-                        midpoint = (start + end + 360) / 2
-                    else:
-                        # Standard case (e.g., 90 to 270)
-                        midpoint = (start + end) / 2
-
-                    direction = int(midpoint % 360)
-
-        direction = parse_single_value(direction)
-    return direction
+def parse_single_numeric(s):
+    """Clean a string and try to extract a single numeric degree or compass point."""
+    s = s.strip().lower().rstrip('°').rstrip('o').rstrip('\\').replace('rees', '').strip()
+    if not s or s in SKIP_WORDS:
+        return None
+    if s in COMPASS_POINTS:
+        return COMPASS_POINTS[s]
+    return float(s.replace(',', '.'))
 
 
-def compute_height(tags, camera, logger):
-    height = None
-    attribute = ""
+def compute_direction(tags, camera_id, logger=None):
+    raw = tags.get("camera:direction") or tags.get("surveillance:direction") or tags.get("direction")
+    if raw is None: return None
+
     try:
-        if "height" in tags:
-            height = tags["height"]
-            attribute = "height"
-        elif "ele" in tags:
-            height = tags["ele"]
-            attribute = "ele"
-        if height:
-            if ";" in height:
-                # FIXME: We take the first height but we should store the fact that there is multiple
-                # cameras to alert the user on the map and suggest a way to split them
-                height = height.split(";")[0]
-            if "&" in height:
-                height = height.split("&")[0]
-            # If the height has a trailing "m" or "M" or "meter" or "Meter", we remove it
-            height = height.lower().strip().rstrip("m").rstrip('meter').rstrip('meters')
-            # If height contains ',', we replace it by '.'
-            height = height.replace(",", ".")
-            height = float(height)
-    except Exception as e:
-        logger.info(
-            f"Camera #{camera.id}. Field : {attribute}. Expected float, found {tags['height']}. Field kept empty.")
-        raise e
-    return height
+        # Handle already numeric
+        if isinstance(raw, (int, float)):
+            return int(raw) % 360
+
+        # Basic cleaning
+        s = str(raw).lower().strip()
+
+        # Check for broad coverage ranges (return None as per your requirement)
+        if s in ["0-360", "0-359", "0;90;180;270", "90;180;270;360"]:
+            return None
+
+        # Handle List Separators (FIXME: take first value only for now)
+        # Handles: ";", "&", ",", "|", " "
+        s = re.split(r'[;,&|\s]+', s)[0]
+
+        # Handle Ranges (e.g., "90-180" or "45-90-180")
+        if "-" in s:
+            range_parts = s.split("-")
+            vals = [parse_single_numeric(p) for p in range_parts if parse_single_numeric(p) is not None]
+            if len(vals) >= 2:
+                start, end = vals[0], vals[-1]
+                if end < start: midpoint = (start + end + 360) / 2
+                else: midpoint = (start + end) / 2
+                return int(midpoint % 360)
+
+        # Single value parse
+        val = parse_single_numeric(s)
+        val = int(round(val)) % 360 if val is not None else None
+    except Exception:
+        logger.info(f"Camera #{camera_id}. Field : Direction. Expected int, found {raw}. Field kept empty.")
+        val = None
+    return val
+
+
+def compute_angle(tags, camera_id, logger=None):
+    raw = tags.get("camera:angle")
+    if raw is None: return None
+    try:
+        if isinstance(raw, (int, float)): return int(raw) % 361
+
+        s = str(raw).lower().strip()
+        if "%" in s or s in SKIP_WORDS: return None # Discard tilt like -5% or "down"
+
+        # Take first in list
+        s = re.split(r'[;,&]+', s)[0]
+
+        # Handle range
+        if "-" in s:
+            parts = s.split("-")
+            vals = [parse_single_numeric(p) for p in parts if parse_single_numeric(p) is not None]
+            if len(vals) >= 2:
+                return int(round(sum(vals) / len(vals))) % 361
+
+        val = parse_single_numeric(s)
+        val = int(round(val)) % 361 if val is not None else None
+    except Exception:
+        logger.info(f"Camera #{camera_id}. Field : Angle. Expected int, found {raw}. Field kept empty.")
+        val = None
+    return val
+
+
+def compute_height(tags, camera_id, logger=None):
+    raw = tags.get("height") or tags.get("ele")
+    if raw is None: return None
+    try:
+        if isinstance(raw, (int, float)): return float(raw)
+
+        s = str(raw).lower().strip()
+
+        # Handle descriptive terms found in logs
+        if any(word in s for word in ["etage", "porte", "ground", "roof"]):
+            return None
+
+        # Handle Ranges (6-9) or (3-4m)
+        if "-" in s or " to " in s:
+            parts = re.split(r'-| to ', s)
+            vals = []
+            for p in parts:
+                res = compute_height({"height": p}, camera_id)
+                if res: vals.append(res)
+            return sum(vals) / len(vals) if vals else None
+
+        # Handle metric shorthand (2m50)
+        metric_match = re.match(r'^(\d+)\s*m\s*(\d+)$', s)
+        if metric_match:
+            return float(metric_match.group(1)) + (float(metric_match.group(2)) / 100)
+
+        # Handle imperial units (3ft, ~20ft, 102'0")
+        if "ft" in s or "'" in s:
+            # Extract all numbers and convert first found
+            nums = re.findall(r"[-+]?\d*\.\d+|\d+", s)
+            if nums:
+                return round(float(nums[0]) * 0.3048, 2)
+            return None
+
+        # Standard clean and float
+        s = s.rstrip('m').rstrip('meter').rstrip('meters').replace(',', '.').replace('..', '.').strip()
+        # Remove any leading "~" or non-numeric fluff
+        s = re.sub(r'[^\d.]', '', s)
+        return float(s)
+    except Exception:
+        logger.info(f"Camera #{camera_id}. Field : Height. Expected int, found {raw}. Field kept empty.")
+        return None
 
 
 def create_camera(camera_osm, logger=None, nearby_buildings_qs=None):
     location = Point([camera_osm['lon'], camera_osm['lat']], srid=4326)
     camera = Camera(id=camera_osm['id'], location=location)
-    tags = camera_osm['tags']
-    if "description" in tags:
-        camera.description = tags["description"]
-    if "camera:mount" in tags:
-        camera.mount = tags["camera:mount"]
-    if "surveillance:type" in tags:
-        camera.surveillance_type = tags["surveillance:type"]
-    if "surveillance" in tags:
-        camera.surveillance = tags["surveillance"]
-    if "camera:type" in tags:
-        camera.camera_type = tags["camera:type"]
-    if "surveillance:zone" in tags:
-        camera.zone = tags["surveillance:zone"]
+    tags = camera_osm.get('tags', {})
 
-    camera.height = compute_height(tags, camera, logger)
+    camera.mount = tags.get("camera:mount", "")
+    camera.surveillance_type = tags.get("surveillance:type", "camera")
+    camera.surveillance = tags.get("surveillance", "")
+    camera.camera_type = tags.get("camera:type", "")
+    camera.zone = tags.get("surveillance:zone", "")
 
-    camera.direction = compute_direction(tags, camera, logger)
-
-    if "camera:angle" in tags:
-        try:
-            camera.angle = int(tags["camera:angle"])
-        except Exception:
-            logger.info(
-                f"Camera #{camera.id}. Field : Angle. Expected integer, found {tags['camera:angle']}. Field kept empty.")
+    camera.height = compute_height(tags, camera.id, logger)
+    camera.direction = compute_direction(tags, camera.id, logger)
+    camera.angle = compute_angle(tags, camera.id, logger)
 
     try:
         camera.tile = Tile.objects.get(geom__contains=camera.location).id
@@ -283,12 +310,10 @@ def create_camera(camera_osm, logger=None, nearby_buildings_qs=None):
 
     new_or_updated_focus = camera.generate_focus(nearby_buildings_qs)
 
-    new_or_updated_tags = [CameraTags(
-        camera_id=camera,
-        name=tag_name,
-        value=tags[tag_name]
-    ) for tag_name in tags]
-
+    new_or_updated_tags = [
+        CameraTags(camera_id=camera, name=tag_name, value=str(tags[tag_name]))
+        for tag_name in tags
+    ]
     logger.debug(f"Camera #{camera.id} processed.")
 
     return camera, new_or_updated_tags, new_or_updated_focus

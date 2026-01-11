@@ -60,7 +60,7 @@ class Command(BaseCommand):
             type=str,
             default="import_cameras.log",
             dest="log_file",
-            help="Path to the output log file (default: load_cameras.log)",
+            help="Path to the output log file (default: import_cameras.log)",
         )
 
     def handle(self, *args, **options):
