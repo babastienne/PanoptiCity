@@ -2,7 +2,7 @@
 
 <p align="center"><bold>A life under surveillance</bold></p>
 
-<p align="center"><img alt="PanoptiCity logo" src="front-end/android-chrome-192x192.png"></p>
+<p align="center"><img alt="PanoptiCity logo" src="front-end/images/logoandroid-chrome-192x192.png"></p>
 
 <p align="center">
   <a href="https://panopticity.fr/">
@@ -21,7 +21,7 @@ This project's purpose is to help display information about CCTV, cameras, to ea
 
 PanoptiCity is my way to act and try to raise awareness about mass surveillance in all cities, to make people realize the amount of cameras around us that they usually not even see. In a time were artifical intelligence is generalizing, it is more than ever the moment to ask ourselves, is it really the model of society we want to build collectively ?
 
-**To learn more about the core ideas behind PanoptiCity, see our [complete manifesto](https://babastienne.github.io/PanoptiCity/manifest).**
+**To learn more about the core ideas behind PanoptiCity, see the [complete manifesto](https://babastienne.github.io/PanoptiCity/manifest).**
 
 ### Screenshots
 
