@@ -385,3 +385,6 @@ When handling large PBF files, you should expect to get in the end a database th
 | 2024 computer. 16 cores. 32 Gb ram. | `haute_garonne.osm.pbf` ~ 111 Mo | **42s**                           | **1m13s**              |
 | 2015 computer. 8 cores. 32 Gb ram.  | `france.osm.pbf` ~ 5.6 Go        | 53m                               | 1h18m                  |
 | 2024 computer. 16 cores. 32 Gb ram. | `france.osm.pbf` ~ 5.6 Go        | **13m12s**                        | **26m02s**             |
+| 2024 computer. 16 cores. 32 Gb ram. | `planet.osm.pbf` ~ 90 Go        | **37m**                        | **3h20m**             |
+
+When dealing with a large file like the entire planet the most time consuming step is the import of the buildings in the database made by `osm2pgsql`. The RAM on your machine will make a huge difference as it is recommanded to have at least as many RAM as the file size imported.
