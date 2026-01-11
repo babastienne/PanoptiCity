@@ -1,6 +1,7 @@
 services:
   postgis:
     image: postgis/postgis:latest
+    restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -31,6 +32,7 @@ services:
   web:
     build: .
     container_name: django-docker
+    restart: unless-stopped
     ports:
       - "8000:8000"
     depends_on:
@@ -52,6 +54,7 @@ services:
   nginx:
     image: nginx:alpine
     container_name: nginx-proxy
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
@@ -77,6 +80,7 @@ services:
   certbot:
     image: certbot/certbot
     container_name: certbot
+    restart: unless-stopped
     volumes:
       - certbot_etc:/etc/letsencrypt
       - certbot_var:/var/www/certbot
