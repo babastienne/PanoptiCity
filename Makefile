@@ -9,7 +9,7 @@ update:
 	/bin/bash ./scripts/update-cameras.sh
 
 PROJECT_DIR := $(shell pwd)
-SCRIPT_NAME := /scripts/update_loop.sh
+SCRIPT_NAME := scripts/update_loop.sh
 LOG_FILE := $(PROJECT_DIR)/replication.log
 CRON_JOB := @reboot sleep 60 && cd $(PROJECT_DIR) && ./$(SCRIPT_NAME) >> $(LOG_FILE) 2>&1
 
