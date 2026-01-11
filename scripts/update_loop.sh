@@ -5,7 +5,7 @@ trap 'rc=$?; echo -e >&2 "\033[0;31mError: Command \"${BASH_COMMAND}\" exited wi
 # Check if .env file exists. If not exit with an error.
 if [ ! -f .env ]; then
     echo -e "\033[0;31mError: .env file not found.\033[0m" >&2
-    exit
+    exit 1
 fi
 
 # Load environment variables from .env into the script
@@ -24,16 +24,15 @@ while true; do
 
     # Fetch changes
     echo -e "\033[0;34m--- Fetching diffs from replication server... ---\033[0m"
-    
-    # Temporarily disable 'exit on error' to handle the return code manually
-    set +e 
+
+    # Initialize status to 0 (Success)
+    FETCH_STATUS=0
+
     docker compose run --rm web pyosmium-get-changes -vv \
         --server "${REPLICATION_SERVER_URL}" \
         -f /osm-data/sequence.state.txt \
-        -o /osm-data/diff.osc.gz
-    
-    FETCH_STATUS=$?
-    set -e # Re-enable strict mode
+        -o /osm-data/diff.osc.gz \
+        || FETCH_STATUS=$?
 
     # Handle Exit Codes
     if [ $FETCH_STATUS -eq 3 ]; then
@@ -52,9 +51,6 @@ while true; do
     echo -e "\033[0;32m--- Applying diffs on the database ---\033[0m"
     echo -e "\033[0;33m->You can follow logs in back-end/update_cameras.log\033[0m"
     docker compose run --rm web ./manage.py update_cameras_with_api /osm-data/diff.osc.gz -y -d
-
-    # echo -e "\033[0;32m--- Saving the new state file sequence ---\033[0m"
-    # docker compose run --rm web pyosmium-get-changes -O /osm-data/diff.osc.gz -f /osm-data/sequence.state.txt
 
     echo -e "\033[0;32m--- Update complete. Checking for next batch immediately... ---\033[0m"
     # We do not sleep here; we loop immediately to catch up if there are multiple diffs pending.
