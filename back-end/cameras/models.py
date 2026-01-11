@@ -48,7 +48,7 @@ class Camera(models.Model):
     IS_INCOMPLETE_CONDITION = (
         Q(mount="") |
         Q(surveillance_type="") |
-        Q(camera_type="") |
+        (~Q(surveillance_type="ALPR") & Q(camera_type="")) |
         Q(zone="") |
         Q(height__isnull=True) |
         (Q(camera_type="fixed") & Q(angle__isnull=True)) |
@@ -56,7 +56,11 @@ class Camera(models.Model):
     )
 
     STATUS_SUFFIX_EXPRESSION = Case(
-        When(focus__isnull=True, then=Value("Missing")),
+        When(
+            Q(focus__isnull=True) &
+            ~Q(surveillance_type="ALPR"),
+            then=Value("Missing")
+        ),
         When(IS_INCOMPLETE_CONDITION, then=Value("Incomplete")),
         default=Value(""),
     )
