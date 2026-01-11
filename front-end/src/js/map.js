@@ -52,9 +52,6 @@ export let setBaseLayer = (layerId) => {
   currentBaseLayer = baseLayersConfig[layerId];
   currentBaseLayerId = layerId;
   currentBaseLayer.addTo(map);
-
-  // 3. Ensure fovLayer stays on top if necessary (if it's not a pane)
-  // fovLayer.bringToFront();
 };
 
 export const getActiveBaseLayerId = () => currentBaseLayerId;
@@ -196,6 +193,7 @@ export let initMap = () => {
     display: true,
     onCameraClick: displayCameraDetails,
     createCameraIcon: createCameraIcon,
+    maxNativeZoom: 15,
   });
   map.addLayer(tilesCams);
 
