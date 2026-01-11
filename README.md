@@ -2,7 +2,7 @@
 
 <p align="center"><bold>A life under surveillance</bold></p>
 
-<p align="center"><img alt="PanoptiCity logo" src="front-end/images/logoandroid-chrome-192x192.png"></p>
+<p align="center"><img alt="PanoptiCity logo" src="front-end/images/logo/android-chrome-192x192.png"></p>
 
 <p align="center">
   <a href="https://panopticity.fr/">
