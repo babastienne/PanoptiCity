@@ -37,7 +37,7 @@ services:
       - postgis
     volumes:
       - ./osm-data:/osm-data
-      # - ./back-end:/app
+      - ./back-end:/app
     environment:
       DJANGO_SECRET_KEY: ${SECRET_KEY}
       POSTGRES_DB: ${POSTGRES_DB}
