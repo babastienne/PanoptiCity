@@ -88,6 +88,7 @@
 .modal-title {
   text-align: center;
   margin-top: 0 !important;
+  color: var(--text-color) !important;
 }
 .modal-grid {
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));

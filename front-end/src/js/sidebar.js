@@ -206,30 +206,63 @@ export let initSidebar = (map) => {
     handleModalToggle("btn-legend", () => {
       const content = `
       <div class="pico modal-div">
-        <h4 class="modal-title">${TEXTS.tooltipLegend}</h4>
+        <h3 class="modal-title">${TEXTS.tooltipLegend}</h3>
         <div class="modal-content">
-          <p>${TEXTS.legendIntro}</p>
-
+          <h5 class="legend-subtitle">${TEXTS.legendLevelTitle}</h5>
+          <p><small>${TEXTS.legendIntro}</small></p>
           <div class="legend-list">
-              <div class="legend-item">
+            <div class="legend-item">
               <div class="legend-dot dot-id"></div>
               <div><strong>${TEXTS.levelIdTitle}</strong><br><small>${TEXTS.levelIdDesc}</small></div>
-              </div>
-              <div class="legend-item">
+            </div>
+            <div class="legend-item">
               <div class="legend-dot dot-rec"></div>
               <div><strong>${TEXTS.levelRecTitle}</strong><br><small>${TEXTS.levelRecDesc}</small></div>
-              </div>
-              <div class="legend-item">
+            </div>
+            <div class="legend-item">
               <div class="legend-dot dot-obs"></div>
               <div><strong>${TEXTS.levelObsTitle}</strong><br><small>${TEXTS.levelObsDesc}</small></div>
-              </div>
+            </div>
           </div>
 
-          <footer class="modal-flex-buttons">
-              <button class="outline secondary modal-button" onclick="displayMenuContent('fov-more')">
-              ${TEXTS.legendMoreLink}
-              </button>
-          </footer>
+          <button class="outline primary modal-button" onclick="displayMenuContent('fov-more')">
+            ${TEXTS.legendMoreLink}
+          </button>
+
+          <hr/>
+
+          <h5 class="legend-subtitle">${TEXTS.legendMarkerTitle}</h5>
+          <p><small>${TEXTS.legendMarkerIntro}</small></p>
+          <!-- Icon Shapes Grid -->
+          <div class="legend-icon-grid">
+              <div class="icon-grid-item">
+                  <img src="/images/cameras/fixed.png" alt="Fixed"/>
+                  <span><small>${TEXTS.typeFixed}</small></span>
+              </div>
+              <div class="icon-grid-item">
+                  <img src="/images/cameras/panning.png" alt="Panning"/>
+                  <span><small>${TEXTS.typePanning}</small></span>
+              </div>
+              <div class="icon-grid-item">
+                  <img src="/images/cameras/dome.png" alt="Dome"/>
+                  <span><small>${TEXTS.typeDome}</small></span>
+              </div>
+              <div class="icon-grid-item">
+                  <img src="/images/cameras/traffic.png" alt="Traffic"/>
+                  <span><small>${TEXTS.typeTraffic}</small></span>
+              </div>
+          </div>
+          
+          <div class="legend-list marker-status-list">
+              <div class="legend-item">
+                  <div class="legend-marker-sample status-normal"></div>
+                  <div><small>${TEXTS.legendStatusNormal}</small></div>
+              </div>
+              <div class="legend-item">
+                  <div class="legend-marker-sample status-incomplete"></div>
+                  <div><small>${TEXTS.legendStatusIncomplete}</small></div>
+              </div>
+          </div>
         </div>
       </div>
     `;

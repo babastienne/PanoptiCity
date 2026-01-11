@@ -401,12 +401,58 @@ header {
   background-color: #00b300;
 }
 
-.legend-footer-note {
-  font-size: 0.85rem;
-  padding: 0.75rem;
+.legend-subtitle {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-color) !important;
+}
+
+.marker-status-list {
+  margin-bottom: 1.5rem;
+}
+
+.legend-marker-sample {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.status-normal {
+  background-color: #6c5d53;
+}
+
+.status-incomplete {
+  background-color: #bf000d;
+}
+
+/* Grid for the 4 shapes */
+.legend-icon-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
   background: var(--pico-card-sectioning-background-color);
+  padding: 15px;
   border-radius: var(--pico-border-radius);
   margin-bottom: 1rem;
+}
+
+.icon-grid-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-grid-item img {
+  width: 24px;
+  height: 24px;
+  filter: saturate(0);
+  /* Optional: makes them look like neutral "shapes" */
+  opacity: 0.8;
 }
 
 /* Scenario switcher modal */

@@ -105,6 +105,7 @@ export const TRANSLATIONS = {
     tooltipScenario: "Configure camera range",
     tooltipLegend: "Legend",
     // Modal legend
+    legendLevelTitle: "Surveillance zones",
     legendIntro:
       "The displayed areas are the field of view calculated from each camera's technical specifications. The colors represent the surveillance level.",
     levelIdTitle: "Identification zone",
@@ -115,6 +116,15 @@ export const TRANSLATIONS = {
     levelObsTitle: "Observation zone",
     levelObsDesc: "Low detail: General monitoring of movement and crowds, not to identify details.",
     legendMoreLink: "More about camera's field of view",
+    legendMarkerTitle: "Map Markers",
+    legendMarkerIntro: "Icons indicate the equipment type. Their color represents the data completeness:",
+    legendStatusNormal: "Normal: All technical attributes are present.",
+    legendStatusIncomplete:
+      "Contribution needed: Missing data (direction, camera type, etc.). No field of view can be displayed.",
+    typeFixed: "Fixed camera",
+    typePanning: "Panning camera",
+    typeDome: "Dome camera",
+    typeTraffic: "Traffic camera (ALPR / Radar)",
     // Modal switch scenario
     scenarioIntro:
       "This website simulate multiple scenarios to render the field of view coverage based on a statistic analysis of 15,000+ real-world camera models. <br/>You can switch between each scenario.",
@@ -352,6 +362,7 @@ export const TRANSLATIONS = {
     tooltipScenario: "Configurer la portée des caméras",
     tooltipLegend: "Légende",
     // Modal legend
+    legendLevelTitle: "Zones de surveillance",
     legendIntro:
       "Les zones affichées correspondent au champ de vision calculé selon les caractéristiques techniques de chaque caméra. Les couleurs indiquent le niveau de surveillance.",
     levelIdTitle: "Zone d'identification",
@@ -364,6 +375,15 @@ export const TRANSLATIONS = {
     levelObsDesc:
       "Faibles détails : surveillance générale des mouvements et des foules, ne permet pas d'identifier de détails précis.",
     legendMoreLink: "En savoir plus sur le champ de vision des caméras",
+    legendMarkerTitle: "Pictogrammes",
+    legendMarkerIntro: "Les icônes indiquent le type d'équipement. La couleur représente l'état des données :",
+    legendStatusNormal: "Normal : Tous les attributs techniques sont renseignés.",
+    legendStatusIncomplete:
+      "Contribution requise : Données manquantes (direction, type de caméra, etc.). Le champ de vision ne peut pas être calculé.",
+    typeFixed: "Caméra fixe",
+    typePanning: "Caméra motorisée",
+    typeDome: "Caméra dôme",
+    typeTraffic: "Caméra routière (Lecteur de plaque / Radar)",
     // Modal switch scenario
     scenarioIntro:
       "Ce site modélise plusieurs scénarios pour afficher la couverture des champs de vision, basée sur une analyse statistique de plus de 15 000 modèles de caméras sur le marché. <br/>Vous pouvez basculer entre chaque scénario.",
