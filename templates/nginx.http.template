@@ -11,6 +11,10 @@ server {
     location / {
         try_files $uri $uri/ /index.html;
     }
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
 }
 
 server {
@@ -20,6 +24,10 @@ server {
     set $bypass_cache 0;
     if ($http_x_purge_token = ${NGINX_CACHE_SECRET_KEY}) {
         set $bypass_cache 1;
+    }
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
     }
 
     location /api/cameras {
