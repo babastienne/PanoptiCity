@@ -57,4 +57,6 @@ while true; do
     # docker compose run --rm web pyosmium-get-changes -O /osm-data/diff.osc.gz -f /osm-data/sequence.state.txt
 
     echo -e "\033[0;32m--- Update complete. Checking for next batch immediately... ---\033[0m"
-    # We do not sleep
+    # We do not sleep here; we loop immediately to catch up if there are multiple diffs pending.
+    # It will eventually hit Exit Code 3 and sleep when fully caught up.
+done
