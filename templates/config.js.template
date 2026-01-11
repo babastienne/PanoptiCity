@@ -9,8 +9,8 @@ export const DOMAIN_NAME = "${API_PROTOCOL}://${FRONTEND_DOMAIN_NAME}";
 // -- Map configuration --
 export const MAP_INITIAL_CENTER = [48.8566, 2.3522]; // LatLng object (see: https://leafletjs.com/reference.html#latlng)
 export const MAP_MAX_BBOX = [
-  [55.71473, 16.17187],
-  [37.03763, -14.15039],
+  [-90, -180],
+  [90, 180],
 ]; // If set, the user can't go out of this bbox on the map
 export const MAP_INITIAL_ZOOM = 11;
-export const MAP_MIN_ZOOM = 6;
+export const MAP_MIN_ZOOM = 3;

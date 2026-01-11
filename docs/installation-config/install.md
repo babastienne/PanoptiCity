@@ -83,7 +83,7 @@ The command will call the `install.sh` script and the complete procedure is auto
 
 The script will start by asking multiple questions (database name, secrets, domain names, etc.) : this is used to create an environment file and set your variables. The majority of the variables can be keep with their default values. For the secrets variables, the script auto-generate random passwords. 
 
-You still need to set at least those variables :
+You still need to set **at least** those variables (and can keep default values for the others) :
 - `FRONTEND_DOMAIN_NAME` > Domain name configured for your public website
 - `BACKEND_DOMAIN_NAME` > Domain name configured for your api
 - `CERTBOT_EMAIL` > You email address used for certbot certificates renewal (warning: fake emails will be detected)
@@ -95,7 +95,7 @@ The script will then proceed to install everything including the SSL certificate
 
 
 {: .warning }
-Depending of the size of your ata to import, the installation can be quite long (from couple minutes to couple hours). To learn more about performances, see [Import procedure and performances]({{site.baseurl}}/technical/Import-and-performances).
+Depending of the size of your data to import and the machine used, the installation can be quite long (from couple minutes to couple hours). To learn more about performances, see [Import procedure and performances]({{site.baseurl}}/technical/Import-and-performances).
 
 
 At the end of the installation, the script set everything to be ready for both :
