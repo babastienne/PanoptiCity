@@ -512,6 +512,17 @@ header {
   border-bottom-right-radius: var(--pico-border-radius);
 }
 
+/* Editorial content modals */
+.email-obfuscated {
+  background: var(--pico-card-sectioning-background-color);
+  padding: 1rem;
+  border-radius: var(--pico-border-radius);
+  font-family: var(--pico-font-family-monospace);
+  text-align: center;
+  border: 1px dashed var(--pico-muted-border-color);
+  user-select: all; /* Makes it easy for the user to select the whole line */
+}
+
 /* Layers switch modal */
 
 /* Highlight the currently active basemap */

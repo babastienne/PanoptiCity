@@ -253,6 +253,17 @@ export const TRANSLATIONS = {
       methExampleObsDesc: '<img src="/images/menu/resolution/example40ppm.jpg" class="modal-rich-img"> <p>40 PPM</p>',
       methExampleNoneTitle: "Example of an image not usable (20 PPM)",
       methExampleNoneDesc: '<img src="/images/menu/resolution/example20ppm.jpg" class="modal-rich-img"> <p>20 PPM</p>',
+      menuContact: "Contact",
+      contactIntro:
+        "Whether you found a bug, have a suggestion, or just want to reach out, here are the best ways to get in touch.",
+      contactGithubTitle: "Bugs & Feature Requests",
+      contactGithubDesc: "The preferred way to signal an issue or suggest a new feature is via the GitHub repository.",
+      contactGithubBtn: "Open an Issue on GitHub",
+      contactEmailTitle: "Direct inquiries",
+      contactEmailDesc: "For other inquiries, you can reach the maintainer via email",
+      contactEmailDisplay: "panopticity [.] translate101 [at] passinbox [.] com",
+      contactPgpDesc:
+        "We highly recommend using PGP encryption to ensure privacy. Download our <a href='/static/panopticity.asc'>public PGP key</a>.",
     },
   },
   fr: {
@@ -515,6 +526,18 @@ export const TRANSLATIONS = {
       methExampleObsDesc: '<img src="/images/menu/resolution/example40ppm.jpg" class="modal-rich-img"> <p>40 PPM</p>',
       methExampleNoneTitle: "Exemple d'une image inexploitable (20 PPM)",
       methExampleNoneDesc: '<img src="/images/menu/resolution/example20ppm.jpg" class="modal-rich-img"> <p>20 PPM</p>',
+      menuContact: "Contact",
+      contactIntro:
+        "Que vous ayez trouvé un bug, une suggestion ou que vous souhaitiez simplement nous joindre, voici les meilleurs moyens de nous contacter.",
+      contactGithubTitle: "Bugs et suggestions",
+      contactGithubDesc:
+        "Le moyen privilégié pour signaler un problème ou suggérer une nouvelle fonctionnalité est de passer par le dépôt GitHub.",
+      contactGithubBtn: "Ouvrir un ticket sur GitHub",
+      contactEmailTitle: "Demandes directes",
+      contactEmailDesc: "Pour toute autre demande, vous pouvez contacter le mainteneur par e-mail.",
+      contactEmailDisplay: "panopticity [.] translate101 [at] passinbox [.] com",
+      contactPgpDesc:
+        "Nous recommandons vivement l'utilisation du chiffrement PGP pour garantir la confidentialité. Téléchargez notre <a href='/static/panopticity.asc'>clé publique PGP</a>.",
     },
   },
 };

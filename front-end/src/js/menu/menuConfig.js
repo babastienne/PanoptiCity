@@ -137,6 +137,33 @@ export const MENU_CONFIG = [
     external: true,
   },
   {
+    id: "contact",
+    labelKey: "menuContact",
+    type: "modal",
+    content: [
+      { type: "h3", textKey: "menuContact" },
+      { type: "p", textKey: "contactIntro" },
+
+      // GitHub Section
+      { type: "h4", textKey: "contactGithubTitle" },
+      { type: "p", textKey: "contactGithubDesc" },
+      {
+        type: "button",
+        textKey: "contactGithubBtn",
+        url: "https://github.com/babastienne/panopticity/issues",
+        style: "contrast",
+      },
+
+      // Email Section
+      { type: "h4", textKey: "contactEmailTitle" },
+      { type: "p", textKey: "contactEmailDesc" },
+      { type: "p", textKey: "contactEmailDisplay", style: "email-obfuscated" },
+
+      // PGP Section
+      { type: "p", textKey: "contactPgpDesc" },
+    ],
+  },
+  {
     id: "license",
     labelKey: "menuLegal",
     type: "modal",

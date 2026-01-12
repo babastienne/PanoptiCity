@@ -7,6 +7,8 @@ export const renderBlocks = (blocks) => {
       switch (block.type) {
         case "h3":
           return `<h3>${MENU_TEXTS[block.textKey]}</h3>`;
+        case "h4":
+          return `<h4>${MENU_TEXTS[block.textKey]}</h4>`;
         case "p":
           style = block.style || "";
           return `<p class="${style}">${MENU_TEXTS[block.textKey]}</p>`;
