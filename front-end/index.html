@@ -1,15 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta
       name="description"
-      content="Display the location of surveillance cameras (CCTV) and their field of view. Easily contribute data to OpenStreetMap through a simplified interface"
+      content="Explore a real-time map of surveillance cameras (CCTV) and their field of view. Contribute data to OpenStreetMap through a simplified interface"
     />
-    <meta name="keywords" content="CCTV, surveillance, camera, panopticon, cartography, OpenStreetMap" />
+    <meta name="keywords" content="CCTV, surveillance, camera, panopticon, map, cartography, OpenStreetMap" />
     <meta name="author" content="Babastienne" />
     <link rel="manifest" href="manifest.json" />
+    <!-- *** SEO *** -->
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://panopticity.fr/" />
+    <meta property="og:title" content="PanoptiCity - A life under surveillance" />
+    <meta property="og:description" content="Map the global surveillance landscape. Explore CCTV locations and their fields of view using OpenStreetMap data." />
+    <meta property="og:image" content="https://panopticity.fr/images/screenshots/og-home.png" />
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content="PanoptiCity - A life under surveillance" />
+    <meta property="twitter:description" content="Explore the global network of surveillance cameras and contribute to OpenStreetMap." />
+    <meta property="twitter:image" content="https://panopticity.fr/images/screenshots/og-home.png" />
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://panopticity.fr/" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "PanoptiCity",
+      "url": "https://panopticity.fr",
+      "description": "An interactive map and contribution tool for global surveillance camera (CCTV) locations worldwide.",
+      "applicationCategory": "MapApplication",
+      "genre": "Open Data",
+      "author": {
+        "@type": "Person",
+        "name": "Babastienne"
+      },
+      "keywords": "CCTV, surveillance, OpenStreetMap, map, cartography"
+    }
+    </script>
+    <!-- *** Basic config *** -->
     <title>PanoptiCity - A life under surveillance</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
@@ -29,7 +61,7 @@
           <ul>
             <li>
               <div class="hamburger-menu" id="tr-burgerMenu">
-                <input id="menu__toggle" type="checkbox" />
+                <input id="menu__toggle" type="checkbox" aria-label="Menu" />
                 <label class="menu__btn" for="menu__toggle"><span class="menu__left"></span></label>
                 <ul class="menu__box" id="sideMenuContent"></ul>
               </div>
@@ -37,7 +69,7 @@
           </ul>
           <ul class="center-title">
             <li>
-              <img class="logo-img" src="/images/logo/favicon-32x32.png" alt="PanoptiCity Logo" />
+              <img class="logo-img" src="/images/logo/favicon-32x32.png" alt="PanoptiCity - Surveillance Camera Map Logo" />
               <strong>
                 <h1 id="tr-titleApp">PanoptiCity</h1>
               </strong>
@@ -68,7 +100,7 @@
               </div>
             </li>
             <li>
-              <a href="#" class="auth-trigger" id="header-auth-btn"></a>
+              <a href="#" class="auth-trigger" id="header-auth-btn" aria-label="My profile"></a>
             </li>
           </ul>
         </nav>
@@ -76,7 +108,7 @@
     </header>
 
     <!-- SEO Pool (Invisible but indexable) -->
-    <div id="seo-content-pool" style="display: none" aria-hidden="true"></div>
+    <div id="seo-content-pool" aria-hidden="true"></div>
 
     <div class="bottom-sheet">
       <div class="content">
@@ -109,7 +141,7 @@
     <div id="map-search-container" class="search-container">
       <div class="search-bar">
         <input id="search-input" type="text" placeholder="" autocomplete="off" />
-        <button id="search-action-btn" class="search-button primary">
+        <button id="search-action-btn" aria-label="Search location" class="search-button primary">
           <!-- Search Icon (Visible by default) -->
           <svg
             id="icon-search"

@@ -51,6 +51,7 @@ export let initUI = () => {
 
   // Handle translations of UI
   document.title = `${TEXTS.titleApp} - ${TEXTS.teaserApp}`;
+  document.querySelector('meta[name="description"]').setAttribute("content", TEXTS.appDescription);
   document.getElementById("tr-titleApp").innerHTML = TEXTS.titleApp;
   document.getElementById("tr-burgerMenu").title = TEXTS.burgerMenu;
   document.getElementById("tr-themeToggle").title = TEXTS.toggleTheme;

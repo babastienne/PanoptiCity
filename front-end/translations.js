@@ -1,6 +1,7 @@
 export const TRANSLATIONS = {
   en: {
     titleApp: "PanoptiCity",
+    appDescription: "Explore a real-time map of surveillance cameras (CCTV) and their field of view. Contribute data to OpenStreetMap through a simplified interface.",
     teaserApp: "A life under surveillance",
     burgerMenu: "Toggle side menu",
     toggleTheme: "Toggle theme",
@@ -268,6 +269,7 @@ export const TRANSLATIONS = {
   },
   fr: {
     titleApp: "PanoptiCity",
+    appDescription: "Naviguez sur une carte en temps réel des caméras de surveillance et de leur champ de vision. Contribuez à OpenStreetMap en fournissant des données via une interface simplifiée.",
     teaserApp: "Une vi(ll)e sous surveillance",
     burgerMenu: "Menu latéral",
     toggleTheme: "Changer de thème",

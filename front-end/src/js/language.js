@@ -6,6 +6,7 @@ export let getUserLang = () => {
   if (!Object.keys(TRANSLATIONS).includes(userLang)) {
     userLang = "en";
   }
+  document.documentElement.lang = userLang; // Set the lang attribute for accessibility
   return userLang;
 };
 
