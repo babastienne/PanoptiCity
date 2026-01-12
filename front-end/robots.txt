@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /src/land.html
+Disallow: /packages/
+Host: https://panopticity.fr
+Sitemap: https://panopticity.fr/sitemap.xml
