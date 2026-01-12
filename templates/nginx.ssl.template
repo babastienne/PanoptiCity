@@ -35,7 +35,7 @@ server {
     root /usr/share/nginx/html;
     index index.html;
 
-    location ~* ^/(images|static|packages)/ {
+    location ~* ^/(images|static|packages|src)/ {
         expires 30d;
         add_header Cache-Control "public, no-transform";
 
