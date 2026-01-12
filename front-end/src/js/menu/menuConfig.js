@@ -168,6 +168,64 @@ export const MENU_CONFIG = [
     ],
   },
   {
+    id: "resources",
+    labelKey: "menuResources",
+    type: "modal",
+    content: [
+      { type: "h3", textKey: "menuResources" },
+
+      // Learn More Section
+      { type: "h4", textKey: "resLearnTitle" },
+
+      // English / International
+      { type: "p", style: "margin-bottom: 0; font-weight: bold;", textKey: "resLangEn" },
+      {
+        type: "list",
+        items: [
+          "resLearnEnL1",
+          "resLearnEnL2",
+          "resLearnEnL3",
+          "resLearnEnL4",
+          "resLearnEnL5",
+          "resLearnEnL6",
+          "resLearnEnL7",
+          "resLearnEnL8",
+          "resLearnEnL9",
+        ],
+      },
+
+      // French
+      { type: "p", style: "margin-bottom: 0; font-weight: bold;", textKey: "resLangFr" },
+      {
+        type: "list",
+        items: ["resLearnFrL1", "resLearnFrL2", "resLearnFrL3", "resLearnFrL4", "resLearnFrL5"],
+      },
+
+      // Protection Section
+      { type: "h3", textKey: "resProtectTitle" },
+      { type: "p", style: "margin-bottom: 0;", textKey: "resProtectIRTitle" },
+      { type: "list", items: ["resProtectIRL1", "resProtectIRL2"] },
+
+      { type: "p", style: "margin-bottom: 0;", textKey: "resProtectAntiTitle" },
+      { type: "list", items: ["resProtectAntiL1", "resProtectAntiL2", "resProtectAntiL3"] },
+
+      { type: "p", style: "margin-bottom: 0;", textKey: "resProtectDisableTitle" },
+      { type: "list", items: ["resProtectDisableL1", "resProtectDisableL2"] },
+
+      { type: "p", textKey: "resProtectAction" },
+      {
+        type: "button",
+        textKey: "resProtectBtn",
+        url: "https://www.openstreetmap.org/",
+        style: "primary",
+      },
+
+      // Inspirations
+      { type: "h3", textKey: "resInspoTitle" },
+      { type: "p", textKey: "resInspoP1" },
+    ],
+  },
+  {
     id: "documentation",
     labelKey: "menuDocumentation",
     type: "link",

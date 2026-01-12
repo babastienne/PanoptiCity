@@ -310,6 +310,53 @@ export const TRANSLATIONS = {
       chartFocalMaxTitle: "Maximum focal repartition",
       chartFocalMaxContent:
         '<strong>Fixed:</strong><img src="/images/stats/data-max-focal-fixed.png" class="modal-rich-img"><strong>Dome/PTZ:</strong><img src="/images/stats/data-max-focal-domeptz.png" class="modal-rich-img">',
+      // Resources page
+      menuResources: "Resources",
+      resLearnTitle: "Resources to learn more",
+      resLangEn: "English",
+      resLangFr: "French",
+      resLearnEnL1: "<a href='https://bigbrotherwatch.org.uk/' target='_blank'>Big Brother Watch</a>",
+      resLearnEnL2:
+        "<a href='https://www.tandfonline.com/doi/full/10.1080/14794713.2015.1084797' target='_blank'>Outperforming activism: reflections on the demise of the surveillance camera players</a>",
+      resLearnEnL3:
+        "<a href='https://en.wikipedia.org/wiki/The_Age_of_Surveillance_Capitalism' target='_blank'>The Age of Surveillance Capitalism</a>",
+      resLearnEnL4:
+        "<a href='https://en.wikipedia.org/wiki/Nothing_to_hide_argument' target='_blank'>Nothing to hide argument</a>",
+      resLearnEnL5:
+        "<a href='https://banthescan.amnesty.org/index.html' target='_blank'>Amnesty International: Ban the scan</a>",
+      resLearnEnL6:
+        "<a href='https://privacyinternational.org/learn/mass-surveillance' target='_blank'>Privacy International</a>",
+      resLearnEnL7: "<a href='https://deflock.me/' target='_blank'>Deflock (against ALPR)</a>",
+      resLearnEnL8: "<a href='https://www.notrace.how/' target='_blank'>No trace project</a>",
+      resLearnEnL9:
+        "<a href='https://www.notrace.how/resources/download/pas-vue-pas-prise/you-cant-catch-what-you-cant-see-read.pdf' target='_blank'>You can't catch what you can't see</a>",
+      resLearnFrL1: "<a href='https://technopolice.fr/' target='_blank'>TechnoPolice</a>",
+      resLearnFrL2:
+        "<a href='https://editions-terresdefeu.com/catalogue-8' target='_blank'>Caméras sous surveillance</a>",
+      resLearnFrL3: "<a href='https://reclaimyourface.eu/fr/' target='_blank'>Reclaim your face</a>",
+      resLearnFrL4: "<a href='https://www.sous-surveillance.net/' target='_blank'>Sous surveillance</a>",
+      resLearnFrL5:
+        "<a href='https://www.notrace.how/resources/download/pas-vue-pas-prise/pas-vue-pas-prise.pdf' target='_blank'>Pas vue pas prise (No Trace Project)</a>",
+      resProtectTitle: "Ideas to protect yourself",
+      resProtectIRTitle: "<strong>Anonymize yourself with IR LEDs:</strong>",
+      resProtectIRL1:
+        "<a href='https://www.macpierce.com/the-camera-shy-hoodie' target='_blank'>The camera Shy Hoodie</a>",
+      resProtectIRL2: "<a href='https://urbanarmor.org/portfolio/miss-my-face/' target='_blank'>Miss my face</a>",
+      resProtectAntiTitle: "<strong>Anti-recognition systems:</strong>",
+      resProtectAntiL1:
+        "<a href='https://www.ft.com/content/a0f8d8c5-ee5c-4618-bfbd-6bfb383b803e' target='_blank'>Meet the activists perfecting the craft of anti-surveillance</a>",
+      resProtectAntiL2:
+        "<a href='https://www.nylon.com/beauty/on-anti-surveillance-makeup-and-just-how-effective-it-really-is' target='_blank'>Anti-Surveillance Makeup</a>",
+      resProtectAntiL3:
+        "<a href='https://yr.media/tech/guide-to-anti-surveillance-fashion/' target='_blank'>Clothes, masks, makeup and more</a>",
+      resProtectDisableTitle: "<strong>Disable cameras:</strong>",
+      resProtectDisableL1: "<a href='http://www.naimark.net/projects/zap/howto.html' target='_blank'>With lasers</a>",
+      resProtectDisableL2: "Or physically (paint, stickers, rocks... be creative)",
+      resProtectAction: "Help us map the surveillance network by adding cameras you spot in your daily life!",
+      resProtectBtn: "Contribute to OpenStreetMap",
+      resInspoTitle: "Inspirations & Credits",
+      resInspoP1:
+        "One major inspiration for this project has been <a href='https://sunders.uber.space/' target='_blank'>SunderS</a>. Information used is from the awesome <a href='https://www.openstreetmap.org/' target='_blank'>OpenStreetMap</a> database. Other attributions and projects used for this application can be found on our <a href='https://babastienne.github.io/PanoptiCity/license.html#attribution'>dedicated page</a>.",
     },
   },
   fr: {
@@ -630,6 +677,55 @@ export const TRANSLATIONS = {
       chartFocalMaxTitle: "Répartition de la focale maximale",
       chartFocalMaxContent:
         '<strong>Fixes :</strong><img src="/images/stats/data-max-focal-fixed.png" class="modal-rich-img"><strong>Dômes/PTZ :</strong><img src="/images/stats/data-max-focal-domeptz.png" class="modal-rich-img">',
+      // Resources page
+      menuResources: "Ressources",
+      resLearnTitle: "Ressources pour aller plus loin",
+      resLangEn: "Anglais",
+      resLangFr: "Français",
+      resLearnEnL1: "<a href='https://bigbrotherwatch.org.uk/' target='_blank'>Big Brother Watch</a>",
+      resLearnEnL2:
+        "<a href='https://www.tandfonline.com/doi/full/10.1080/14794713.2015.1084797' target='_blank'>Outperforming activism: reflections on the demise of the surveillance camera players</a>",
+      resLearnEnL3:
+        "<a href='https://en.wikipedia.org/wiki/The_Age_of_Surveillance_Capitalism' target='_blank'>L'Âge du capitalisme de surveillance</a> (Shoshana Zuboff)",
+      resLearnEnL4:
+        "<a href='https://fr.wikipedia.org/wiki/Rien_%C3%A0_cacher_(argument)' target='_blank'>L'argument du « rien à cacher » (wikipedia)</a>",
+      resLearnEnL5:
+        "<a href='https://banthescan.amnesty.org/index.html' target='_blank'>Amnesty International : Ban the scan</a>",
+      resLearnEnL6:
+        "<a href='https://privacyinternational.org/learn/mass-surveillance' target='_blank'>Privacy International</a>",
+      resLearnEnL7: "<a href='https://deflock.me/' target='_blank'>Deflock (contre les lecteurs de plaque)</a>",
+      resLearnEnL8: "<a href='https://www.notrace.how/' target='_blank'>No Trace Project</a>",
+      resLearnEnL9:
+        "<a href='https://www.notrace.how/resources/download/pas-vue-pas-prise/you-cant-catch-what-you-cant-see-read.pdf' target='_blank'>You can't catch what you can't see</a>",
+      resLearnFrL1: "<a href='https://technopolice.fr/' target='_blank'>TechnoPolice</a> par La Quadrature Du Net",
+      resLearnFrL2:
+        "<a href='https://editions-terresdefeu.com/catalogue-8' target='_blank'>Caméras sous surveillance</a> (Éditions Terres de Feu)",
+      resLearnFrL3: "<a href='https://reclaimyourface.eu/fr/' target='_blank'>Reclaim Your Face</a>",
+      resLearnFrL4: "<a href='https://www.sous-surveillance.net/' target='_blank'>Sous surveillance</a>",
+      resLearnFrL5:
+        "<a href='https://www.notrace.how/resources/download/pas-vue-pas-prise/pas-vue-pas-prise.pdf' target='_blank'>Pas vue pas prise (No Trace Project)</a>",
+      resProtectTitle: "Idées pour se protéger",
+      resProtectIRTitle: "<strong>S'anonymiser avec des LEDs infrarouges (IR) :</strong>",
+      resProtectIRL1:
+        "<a href='https://www.macpierce.com/the-camera-shy-hoodie' target='_blank'>The Camera Shy Hoodie</a>",
+      resProtectIRL2: "<a href='https://urbanarmor.org/portfolio/miss-my-face/' target='_blank'>Miss my face</a>",
+      resProtectAntiTitle: "<strong>Systèmes anti-reconnaissance :</strong>",
+      resProtectAntiL1:
+        "<a href='https://www.ft.com/content/a0f8d8c5-ee5c-4618-bfbd-6bfb383b803e' target='_blank'>Rencontre avec les activistes qui perfectionnent l'art de l'anti-surveillance</a>",
+      resProtectAntiL2:
+        "<a href='https://www.nylon.com/beauty/on-anti-surveillance-makeup-and-just-how-effective-it-really-is' target='_blank'>Maquillage anti-surveillance</a>",
+      resProtectAntiL3:
+        "<a href='https://yr.media/tech/guide-to-anti-surveillance-fashion/' target='_blank'>Vêtements, masques, maquillage et plus encore</a>",
+      resProtectDisableTitle: "<strong>Neutraliser des caméras :</strong>",
+      resProtectDisableL1:
+        "<a href='http://www.naimark.net/projects/zap/howto.html' target='_blank'>Avec des lasers</a>",
+      resProtectDisableL2: "Ou physiquement (peinture, autocollants, cailloux... soyez créatifs)",
+      resProtectAction:
+        "Aidez-nous à cartographier le réseau de surveillance en ajoutant les caméras que vous croisez au quotidien !",
+      resProtectBtn: "Contribuer à OpenStreetMap",
+      resInspoTitle: "Inspirations & Crédits",
+      resInspoP1:
+        "L'une des inspirations majeures de ce projet est le site <a href='https://sunders.uber.space/' target='_blank'>SunderS</a>. Les informations utilisées proviennent de la base de données <a href='https://www.openstreetmap.org/' target='_blank'>OpenStreetMap</a>. Les autres attributions et projets utilisés pour cette application sont listés sur notre <a href='https://babastienne.github.io/PanoptiCity/license.html#attribution'>page dédiée</a>.",
     },
   },
 };

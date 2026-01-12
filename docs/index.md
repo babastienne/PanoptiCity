@@ -6,6 +6,7 @@ description: "PanoptiCity is a website to display CCTV location and field of vie
 ---
 
 # Your daily life is under surveillance
+
 {: .fs-9 }
 
 A website to raise awareness about mass surveillance in all major cities !
@@ -30,6 +31,6 @@ PanoptiCity is a way to act and try to raise awareness about mass surveillance i
 
 Welcome to the documentation of PanoptiCity. Here you can find all the information you need to install, configure, use and contribute to the project. You'll find the information split in mutliple chapters depending on your needs.
 
-- [User guide]({{site.baseurl}}/installation-config/index) : Everything you need to know about the functionalities of the website, both for end-users and contributors. Details about the computation methodology for nerds.
 - [Installation and configuration]({{site.baseurl}}/installation-config/index) : Guide you through the installation and configuration of the project on your own server.
 - [Development and architecture]({{site.baseurl}}/technical/index) : If you want to contribute to the project or understand more about the core concepts and implementation, this is the right place.
+- **User guide** : Everything you need to know about the functionalities of the website, and details about the computation methodology for nerds is directly available on the main website in the main menu.
