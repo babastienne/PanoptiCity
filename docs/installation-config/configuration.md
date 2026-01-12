@@ -93,9 +93,38 @@ For the frontend, two files contains configuration values.
 
 #### Menu configuration
 
+To customize the navigation menu or add new editorial pages, you don't need to touch the core logic. You simply need to modify two files.
+
+The menu system is data-driven and uses a **block-based architecture**.
+
 The file `front-end/src/js/menu/menuConfig.js` contains the entire dynamic configuration for the burger menu of the website. By editing this sections you can remove menu entries, add new ones, change the content, etc. It is the place to change the "editorial" sections of the website.
 
-The good practice is to use translationKeys and put the translated content into the `translations.js` file.
+**Define the structure in `menuConfig.js`**
+
+Open `src/js/menuConfig.js` to manage the entries in the `MENU_CONFIG` array. Each item supports the following properties:
+-   **`id`**: A unique identifier (used for SEO pre-rendering).
+-   **`labelKey`**: The key used in `translations.js` for the menu button text.
+-   **`type`**: 
+    -   `modal`: Opens a side panel with rich content.
+    -   `link`: Redirects to an external URL.
+-   **`content`**: (For modals only) An array of blocks:
+    -   `{ type: "h3", textKey: "..." }`
+    -   `{ type: "p", textKey: "..." }`
+    -   `{ type: "img", src: "path/to/img.jpg" }`
+    -   `{ type: "list", items: ["key1", "key2"] }`
+    -   `{ type: "accordion", items: [{ summaryKey: "...", detailsKey: "..." }] }`
+    -   `{ type: "table", headers: [...], rows: [...] }`
+    -   ...
+
+**Add the text in `translations.js`**
+
+To keep the code clean, **never hardcode text** in the config file. Instead, use a key (e.g., `aboutDescription`) and add the corresponding text for each language in `src/js/translations.js`.
+
+**Why this system?**
+
+-   **SEO friendly**: The content is automatically pre-rendered in a hidden pool so search engines can index your "About" or "Methodology" pages.
+-   **No HTML in strings**: You can build complex layouts (images between paragraphs, technical tables) without writing raw HTML inside your translation files.
+-   **Zero logic**: To add a page, you just describe it with data. The `contentRenderer` file handles the rest.
 
 #### Camera configuration
 

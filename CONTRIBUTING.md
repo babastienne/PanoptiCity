@@ -27,6 +27,13 @@ We want PanoptiCity to be available to everyone.
 * Our translations live in `src/js/translations.js`.
 * **Add a language:** If you speak a language not yet supported, feel free to copy an existing language object and translate the keys. We can provide help if needed.
 
+You can override translations of the front-end interface or add new languages by editing the file `front-end/translations.js`. By default the project is translated in english and french. To add a new language you need to duplicate the english object, change it's language code (for example put `es` for Spanish) and then translate the entries.
+
+> Panopticity does not support the translations for countries variations (e.g `fr-CA` for Canadian french ; `en-US` for american english ; etc.). It only support main language translations. Any contribution to improve this behavior is welcome.
+
+By default PanoptiCity check the language configuration of the use browser to determine the language to display. It does not allow the user to switch the language interface directly. If you wish to improve this feel free to contribute.
+
+
 ### 🎨 UX/UI Design
 
 If you have ideas on how to improve the visual aspect, the navigation or any UX related subject feel free to discuss them in an issue, we're looking for some advices to improve it.
