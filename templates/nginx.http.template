@@ -17,7 +17,7 @@ server {
     root /usr/share/nginx/html;
     index index.html;
 
-    location ~* ^/(images|static|packages|src|translations.js|CONFIG.js)/ {
+    location ~* ^/(images|static|packages|src|translations\.js|CONFIG\.js)/ {
         expires 30d;
         add_header Cache-Control "public, no-transform";
 
