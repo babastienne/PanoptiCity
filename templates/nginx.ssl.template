@@ -1,5 +1,21 @@
+# Caching paths
 proxy_cache_path /var/cache/nginx/cameras levels=1:2 keys_zone=cameras_cache:20m max_size=5g;
 proxy_cache_path /var/cache/nginx/focus levels=1:2 keys_zone=focus_cache:20m max_size=5g;
+
+# --- COMPRESSION SETTINGS ---
+# Gzip (Fallback for older browsers)
+gzip on;
+gzip_vary on;
+gzip_proxied any;
+gzip_comp_level 6;
+gzip_types text/plain text/css text/xml application/json application/javascript application/rss+xml application/atom+xml image/svg+xml;
+
+# Brotli (Modern, higher compression)
+brotli on;
+brotli_comp_level 6;
+brotli_static on;
+brotli_types text/plain text/css text/xml application/json application/javascript application/rss+xml application/atom+xml image/svg+xml;
+# ----------------------------
 
 server {
     listen 80;
