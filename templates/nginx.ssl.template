@@ -26,6 +26,14 @@ server {
     root /usr/share/nginx/html;
     index index.html;
 
+    location ~* ^/(images|static|packages)/ {
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+
+        access_log off;
+        log_not_found off;
+    }
+
     location / {
         try_files $uri $uri/ /index.html;
     }
