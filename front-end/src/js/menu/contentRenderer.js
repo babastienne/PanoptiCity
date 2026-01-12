@@ -13,7 +13,8 @@ export const renderBlocks = (blocks) => {
           style = block.style || "";
           return `<p class="${style}">${MENU_TEXTS[block.textKey]}</p>`;
         case "img":
-          return `<img src="${block.src}" alt="${MENU_TEXTS[block.altKey] || ""}" class="modal-rich-img">`;
+          return `<img src="${block.src}" alt="${MENU_TEXTS[block.altKey] || ""}" class="modal-rich-img" loading="lazy" 
+                 fetchpriority="low"/>`;
         case "accordion":
           const items = block.items
             .map(

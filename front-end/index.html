@@ -10,6 +10,15 @@
     <meta name="keywords" content="CCTV, surveillance, camera, panopticon, map, cartography, OpenStreetMap" />
     <meta name="author" content="Babastienne" />
     <link rel="manifest" href="manifest.json" />
+    <!-- Performances optimisations -->
+    <!-- Preconnect to tile providers to skip DNS/TCP/TLS handshakes -->
+    <link rel="preconnect" href="https://a.tile.openstreetmap.org" crossorigin />
+    <link rel="preconnect" href="https://b.tile.openstreetmap.org" crossorigin />
+    <link rel="preconnect" href="https://c.tile.openstreetmap.org" crossorigin />
+    <!-- DNS Prefetch for Nominatim (Search) -->
+    <link rel="dns-prefetch" href="https://nominatim.openstreetmap.org" />
+    <!-- Preload your primary JS module -->
+    <link rel="modulepreload" href="src/js/app.js" />
     <!-- *** SEO *** -->
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -106,9 +115,6 @@
         </nav>
       </div>
     </header>
-
-    <!-- SEO Pool (Invisible but indexable) -->
-    <div id="seo-content-pool" aria-hidden="true"></div>
 
     <div class="bottom-sheet">
       <div class="content">
@@ -457,6 +463,9 @@
         </footer>
       </article>
     </div>
+
+    <!-- SEO Pool (Invisible but indexable) -->
+    <div id="seo-content-pool" aria-hidden="true"></div>
 
     <!-- ** Load external libs ** -->
     <!-- Leaflet -->

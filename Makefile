@@ -27,6 +27,7 @@ start:
 
 stop:
 	docker compose down
+	docker volume rm panopticity_nginx_cache
 
 build:
 	docker compose build
