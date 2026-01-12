@@ -1,0 +1,69 @@
+{
+    "data_format": 1,
+    "data_url": "https://raw.githubusercontent.com/babastienne/PanoptiCity/refs/heads/main/taginfo.json",
+    "data_updated": "20260113T003000Z",
+    "project": {
+        "name": "PanoptiCity",
+        "description": "An interactive map to visualize surveillance camera coverage and field of view using OpenStreetMap data.",
+        "project_url": "https://panopticity.fr/",
+        "doc_url": "https://babastienne.github.io/PanoptiCity/technical/architecture/installation-data-import/osm-data.html",
+        "icon_url": "https://panopticity.fr/images/logo/favicon-32x32.png",
+        "contact_name": "Babastienne",
+        "contact_email": "panopticity.translate101@passinbox.com"
+    },
+    "tags": [
+        {
+            "key": "man_made",
+            "value": "surveillance",
+            "description": "Primary tag used to identify and import surveillance equipment nodes."
+        },
+        {
+            "key": "building",
+            "description": "Ways and relations used as obstacles for the field of view simulation (building=roof is excluded)."
+        },
+        {
+            "key": "camera:type",
+            "description": "Specifies camera hardware (fixed, dome, panning) to select the appropriate simulation model."
+        },
+        {
+            "key": "camera:mount",
+            "description": "Type of mounting (wall, pole, ceiling, etc.) displayed in the camera details."
+        },
+        {
+            "key": "camera:direction",
+            "description": "The horizontal viewing direction used to orient the field of view on the map."
+        },
+        {
+            "key": "camera:angle",
+            "description": "The tilt angle of the camera lens, used to calculate the ground reach of the view."
+        },
+        {
+            "key": "height",
+            "description": "Camera height in meters; critical variable for perspective and FOV calculation."
+        },
+        {
+            "key": "ele",
+            "description": "Alternative key used to determine camera height if the height tag is missing."
+        },
+        {
+            "key": "surveillance:type",
+            "description": "Specific type of surveillance (camera, ALPR, etc.) used for icon selection."
+        },
+        {
+            "key": "surveillance",
+            "description": "Defines the surveillance context (indoor, outdoor, public) to categorize the equipment."
+        },
+        {
+            "key": "surveillance:zone",
+            "description": "Describes the type of area being monitored (traffic, town, entrance, etc.)."
+        },
+        {
+            "key": "surveillance:direction",
+            "description": "Alternative direction tag used if camera:direction is unavailable."
+        },
+        {
+            "key": "operator",
+            "description": "The entity responsible for operating the surveillance equipment."
+        }
+    ]
+}
