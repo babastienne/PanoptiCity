@@ -95,6 +95,51 @@ export const MENU_CONFIG = [
     ],
   },
   {
+    id: "scenarios-more",
+    labelKey: "menuScenarioComputation",
+    type: "modal",
+    content: [
+      { type: "h3", textKey: "scenTitle" },
+      { type: "p", textKey: "scenIntro" },
+      { type: "p", textKey: "scenDataLinks" },
+      { type: "p", textKey: "scenModelsIntro" },
+
+      // Scenarios Comparison Table
+      {
+        type: "table",
+        headers: ["thScen", "thDesc", "thFixedVal", "thDomeVal"],
+        rows: [
+          [{ key: "trBestTitle" }, { key: "trBestDesc" }, { raw: "2.8mm / 1080p" }, { raw: "2.8mm / 1024p" }],
+          [{ key: "trMeanTitle" }, { key: "trMeanDesc" }, { raw: "6.8mm / 1440p" }, { raw: "6.5mm / 1440p" }],
+          [{ key: "trWorstTitle" }, { key: "trWorstDesc" }, { raw: "26mm / 4K" }, { raw: "68.2mm / 4K" }],
+        ],
+      },
+
+      { type: "p", style: "modal-attribution", textKey: "scenImprovement" },
+
+      // Statistical Analysis Section
+      { type: "h3", textKey: "statsTitle" },
+      { type: "p", textKey: "statsIntro" },
+
+      { type: "h4", textKey: "statsLimitsTitle" },
+      { type: "p", textKey: "statsLimits" },
+
+      // Charts organized in accordions to save space
+      { type: "h4", textKey: "statsChartsTitle" },
+      {
+        type: "accordion",
+        titleKey: "",
+        items: [
+          { summaryKey: "chartFormatTitle", detailsKey: "chartFormatContent" },
+          { summaryKey: "chartResTitle", detailsKey: "chartResContent" },
+          { summaryKey: "chartFocalMinTitle", detailsKey: "chartFocalMinContent" },
+          { summaryKey: "chartFocalAvgTitle", detailsKey: "chartFocalAvgContent" },
+          { summaryKey: "chartFocalMaxTitle", detailsKey: "chartFocalMaxContent" },
+        ],
+      },
+    ],
+  },
+  {
     id: "why",
     labelKey: "menuWhy",
     type: "modal",

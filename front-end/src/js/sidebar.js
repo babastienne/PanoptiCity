@@ -164,10 +164,7 @@ export let initSidebar = (map) => {
           </div>
 
           <footer class="modal-flex-buttons">
-            <button class="outline secondary modal-button" onclick="displayMenuContent('TODO')">
-              ${TEXTS.scenarioWhyLink}
-            </button>
-            <button class="outline secondary modal-button" onclick="displayMenuContent('TODO')">
+            <button class="outline secondary modal-button" onclick="displayMenuContent('scenarios-more')">
               ${TEXTS.scenarioMethodologyLink}
             </button>
           </footer>

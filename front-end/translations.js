@@ -1,7 +1,8 @@
 export const TRANSLATIONS = {
   en: {
     titleApp: "PanoptiCity",
-    appDescription: "Explore a real-time map of surveillance cameras (CCTV) and their field of view. Contribute data to OpenStreetMap through a simplified interface.",
+    appDescription:
+      "Explore a real-time map of surveillance cameras (CCTV) and their field of view. Contribute data to OpenStreetMap through a simplified interface.",
     teaserApp: "A life under surveillance",
     burgerMenu: "Toggle side menu",
     toggleTheme: "Toggle theme",
@@ -136,7 +137,6 @@ export const TRANSLATIONS = {
     scenarioHighTitle: "High",
     scenarioHighDesc: "Large estimate: 10% of existing equipments can see this far or beyond.",
     scenarioMethodologyLink: "How are these scenarios built?",
-    scenarioWhyLink: "Why can't we see the exact coverage of each camera?",
     // Layers
     layerStandard: "Standard",
     layerHot: "Humanitarian",
@@ -265,11 +265,57 @@ export const TRANSLATIONS = {
       contactEmailDisplay: "panopticity [.] translate101 [at] passinbox [.] com",
       contactPgpDesc:
         "We highly recommend using PGP encryption to ensure privacy. Download our <a href='/static/panopticity.asc'>public PGP key</a>.",
+      menuScenarioComputation: "Scenarios computation",
+      scenTitle: "Calculation methods for scenarios",
+      scenIntro:
+        "To make an estimation of the potential value for missing fields needed to compute field of view (resolution, format, focal), we compiled in a file the technical information of more than 15,200 models of CCTV cameras from 143 different brands. This gave us a global view of the current technical level of the CCTV market as it is in 2025. Keep in mind that new camera models are released every week so depending when you read this lines the numbers can be differents today.",
+      scenDataLinks:
+        "The numbers used can be seen in the <a href='/static/AllCamerasList.ods'>AllCameraList.ods</a> file (or in JSON format in <a href='/static/camerasList.json'>camerasList.json</a>).",
+      scenModelsIntro:
+        "With those numbers, we sorted every variable and were able to determine statistics about quality of cameras. Depending of the camera type (fixed or dome/PTZ cameras), we created three models to help us determine the quality of cameras (and therefore their field of view):",
+
+      thScen: "Scenario",
+      thDesc: "Description",
+      thFixedVal: "Fixed cameras",
+      thDomeVal: "Dome/PTZ cameras",
+      trBestTitle: "Conservative",
+      trBestDesc: "First decile: 90% of cameras on the market have better quality than this.",
+      trMeanTitle: "Standard",
+      trMeanDesc: "Default scenario: The market median.",
+      trWorstTitle: "High",
+      trWorstDesc: "Last decile: Only the top 10% of the market can reach this quality.",
+
+      scenImprovement:
+        "<strong>How it could be improved:</strong> One good way to improve this models would be to create a correlation between every camera model and their sales numbers to ponderate the weight of each camera in the model computation. However thoses numbers can't be easily found.",
+
+      statsTitle: "Statistic analysis of technical data",
+      statsIntro:
+        "The following sections compile some graphical analysis that display trends of repartition for multiple technical features depending of cameras category (fixed or dome/ptz).",
+      statsLimitsTitle: "Limits of the dataset",
+      statsLimits:
+        "Some specific cameras as been removed from dataset analysis, especially thermal or industrial cameras. Eyeball or fisheye cameras were categorized as Dome cameras for this analysis. This is a known limitation that could be improved by a better sub-type categorization in the future.",
+
+      statsChartsTitle: "View statistical charts",
+      chartFormatTitle: "Format lens repartition",
+      chartFormatContent:
+        '<img src="/images/stats/data-format.png" class="modal-rich-img"><img src="/images/stats/data-format-log.png" class="modal-rich-img">',
+      chartResTitle: "Resolution repartition",
+      chartResContent: '<img src="/images/stats/data-resolution.png" class="modal-rich-img">',
+      chartFocalMinTitle: "Minimum focal repartition",
+      chartFocalMinContent:
+        '<strong>Fixed:</strong><img src="/images/stats/data-min-focal-fixed.png" class="modal-rich-img"><strong>Dome/PTZ:</strong><img src="/images/stats/data-min-focal-domeptz.png" class="modal-rich-img">',
+      chartFocalAvgTitle: "Average focal repartition",
+      chartFocalAvgContent:
+        '<strong>Fixed:</strong><img src="/images/stats/data-average-focal-fixed.png" class="modal-rich-img"><strong>Dome/PTZ:</strong><img src="/images/stats/data-average-focal-domeptz.png" class="modal-rich-img">',
+      chartFocalMaxTitle: "Maximum focal repartition",
+      chartFocalMaxContent:
+        '<strong>Fixed:</strong><img src="/images/stats/data-max-focal-fixed.png" class="modal-rich-img"><strong>Dome/PTZ:</strong><img src="/images/stats/data-max-focal-domeptz.png" class="modal-rich-img">',
     },
   },
   fr: {
     titleApp: "PanoptiCity",
-    appDescription: "Naviguez sur une carte en temps réel des caméras de surveillance et de leur champ de vision. Contribuez à OpenStreetMap en fournissant des données via une interface simplifiée.",
+    appDescription:
+      "Naviguez sur une carte en temps réel des caméras de surveillance et de leur champ de vision. Contribuez à OpenStreetMap en fournissant des données via une interface simplifiée.",
     teaserApp: "Une vi(ll)e sous surveillance",
     burgerMenu: "Menu latéral",
     toggleTheme: "Changer de thème",
@@ -407,7 +453,6 @@ export const TRANSLATIONS = {
     scenarioHighTitle: "Élevé",
     scenarioHighDesc: "Estimation haute : 10 % des équipements existants peuvent voir aussi loin ou au-delà.",
     scenarioMethodologyLink: "Comment ces scénarios sont-ils construits ?",
-    scenarioWhyLink: "Pourquoi ne peut-on pas voir la couverture exacte de chaque caméra ?",
     // Layers
     layerStandard: "Standard",
     layerHot: "Humanitaire",
@@ -540,6 +585,51 @@ export const TRANSLATIONS = {
       contactEmailDisplay: "panopticity [.] translate101 [at] passinbox [.] com",
       contactPgpDesc:
         "Nous recommandons vivement l'utilisation du chiffrement PGP pour garantir la confidentialité. Téléchargez notre <a href='/static/panopticity.asc'>clé publique PGP</a>.",
+      menuScenarioComputation: "Calcul des scénarios",
+      scenTitle: "Méthodes de calcul des scénarios",
+      scenIntro:
+        "Pour estimer la valeur potentielle des attributs manquants nécessaires au calcul du champ de vision des caméras (résolution, format, focale), nous avons compilé dans un fichier les informations techniques de plus de 15 200 modèles de caméras de vidéosurveillance provenant de 143 marques différentes. Cela nous a permis d'obtenir une vision globale du niveau technique actuel du marché de la vidéosurveillance tel qu'il est en 2025. Gardez à l'esprit que de nouveaux modèles de caméras sortent chaque semaine ; selon le moment où vous lisez ces lignes, les chiffres peuvent donc être différents aujourd'hui.",
+      scenDataLinks:
+        "Les chiffres utilisés peuvent être consultés dans le fichier <a href='/static/AllCamerasList.ods'>AllCameraList.ods</a> (ou au format JSON dans <a href='/static/camerasList.json'>camerasList.json</a>).",
+      scenModelsIntro:
+        "À partir de ces chiffres, nous avons trié chaque variable et avons pu déterminer des statistiques sur la qualité des caméras. Selon le type de caméra (fixes ou dômes/PTZ), nous avons créé trois modèles pour nous aider à déterminer la qualité des caméras (et par conséquent leur champ de vision) :",
+
+      thScen: "Scénario",
+      thDesc: "Description",
+      thFixedVal: "Caméras fixes",
+      thDomeVal: "Caméras dômes/PTZ",
+      trBestTitle: "Conservateur",
+      trBestDesc: "Premier décile : 90 % des caméras du marché ont une meilleure qualité que celle-ci.",
+      trMeanTitle: "Standard",
+      trMeanDesc: "Scénario par défaut : La médiane du marché.",
+      trWorstTitle: "Élevé",
+      trWorstDesc: "Dernier décile : Seul le top 10 % du marché peut atteindre cette qualité.",
+
+      scenImprovement:
+        "<strong>Comment cela pourrait être amélioré :</strong> Une bonne façon d'améliorer ces modèles serait de créer une corrélation entre chaque modèle de caméra et ses chiffres de vente afin de pondérer le poids de chaque caméra dans le calcul du modèle. Cependant, ces chiffres ne sont pas facilement accessibles.",
+
+      statsTitle: "Analyse statistique des données techniques",
+      statsIntro:
+        "Les sections suivantes compilent des analyses graphiques présentant les tendances de répartition de plusieurs caractéristiques techniques selon la catégorie des caméras (fixes ou dômes/PTZ).",
+      statsLimitsTitle: "Limites du jeu de données",
+      statsLimits:
+        "Certaines caméras spécifiques ont été retirées de l'analyse, notamment les caméras thermiques ou industrielles. Les caméras de type 'globe' ou 'fisheye' ont été catégorisées comme caméras dômes pour cette analyse. Il s'agit d'une limitation connue qui pourrait être améliorée par une meilleure catégorisation des sous-types à l'avenir.",
+
+      statsChartsTitle: "Voir les graphiques statistiques",
+      chartFormatTitle: "Répartition du format de l'objectif",
+      chartFormatContent:
+        '<img src="/images/stats/data-format.png" class="modal-rich-img"><img src="/images/stats/data-format-log.png" class="modal-rich-img">',
+      chartResTitle: "Répartition de la résolution",
+      chartResContent: '<img src="/images/stats/data-resolution.png" class="modal-rich-img">',
+      chartFocalMinTitle: "Répartition de la focale minimale",
+      chartFocalMinContent:
+        '<strong>Fixes :</strong><img src="/images/stats/data-min-focal-fixed.png" class="modal-rich-img"><strong>Dômes/PTZ :</strong><img src="/images/stats/data-min-focal-domeptz.png" class="modal-rich-img">',
+      chartFocalAvgTitle: "Répartition de la focale moyenne",
+      chartFocalAvgContent:
+        '<strong>Fixes :</strong><img src="/images/stats/data-average-focal-fixed.png" class="modal-rich-img"><strong>Dômes/PTZ :</strong><img src="/images/stats/data-average-focal-domeptz.png" class="modal-rich-img">',
+      chartFocalMaxTitle: "Répartition de la focale maximale",
+      chartFocalMaxContent:
+        '<strong>Fixes :</strong><img src="/images/stats/data-max-focal-fixed.png" class="modal-rich-img"><strong>Dômes/PTZ :</strong><img src="/images/stats/data-max-focal-domeptz.png" class="modal-rich-img">',
     },
   },
 };
