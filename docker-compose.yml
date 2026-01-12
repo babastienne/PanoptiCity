@@ -52,7 +52,7 @@ services:
       - .env
 
   nginx:
-    image: fholzer/nginx-brotli:latest
+    image: nginx:alpine
     container_name: nginx-proxy
     restart: unless-stopped
     ports:
