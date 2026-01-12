@@ -20,8 +20,10 @@ export const renderBlocks = (blocks) => {
             .map(
               (item) => `
           <details>
-            <summary>${MENU_TEXTS[item.summaryKey]}</summary>
-            <p>${MENU_TEXTS[item.detailsKey]}</p>
+            <summary class="modal-accordion-summary">${MENU_TEXTS[item.summaryKey]}</summary>
+            <div class="modal-accordion-content">
+                <p>${MENU_TEXTS[item.detailsKey]}</p>
+            </div>
           </details>
         `
             )

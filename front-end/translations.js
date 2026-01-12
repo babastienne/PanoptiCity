@@ -143,12 +143,6 @@ export const TRANSLATIONS = {
     layerSatellite: "Satellite",
     // Static content available from menu
     menuContent: {
-      // About
-      menuAbout: "About this site",
-      aboutP1:
-        "This project's purpose is to help display information about CCTV, cameras, to easily map where they are, what they can see, and get data about their usage in cities. The website also gives you an easy way to contribute into the OpenStreetMap database if you want to add cameras when you see some that are not already known or improve the attributes of existing ones.",
-      aboutP2:
-        "PanoptiCity is a way to act and try to raise awareness about mass surveillance in all cities, to make people realize the amount of cameras around us that they usually not even see. In a time were artifical intelligence is generalizing, it is more than ever the moment to ask ourselves, is it really the model of society we want to build collectively?",
       // Why this name
       menuWhy: "What is a PanoptiCity?",
       whyP1:
@@ -357,6 +351,66 @@ export const TRANSLATIONS = {
       resInspoTitle: "Inspirations & Credits",
       resInspoP1:
         "One major inspiration for this project has been <a href='https://sunders.uber.space/' target='_blank'>SunderS</a>. Information used is from the awesome <a href='https://www.openstreetmap.org/' target='_blank'>OpenStreetMap</a> database. Other attributions and projects used for this application can be found on our <a href='https://babastienne.github.io/PanoptiCity/license.html#attribution'>dedicated page</a>.",
+      // Core Values Page
+      menuValues: "About this site",
+      valTitle: "Core values of this website",
+      valIntro1:
+        "This project was born in 2025. The initial idea was to create a map displaying CCTV cameras and their fields of view to raise awareness about mass surveillance and urban coverage. Inspired by <a href='https://sunders.uber.space/' target='_blank'>SunderS</a>, it was motivated by the proliferation of cameras and the total lack of transparency regarding their locations and capabilities.",
+      valIntro2:
+        'The deployment of CCTV and Algorithmic Video Surveillance (AVS) is often presented as a neutral technical evolution. However, these "eyes in the city" carry profound implications for our democracy and fundamental freedoms.',
+      valConcernsTitle: "Concerns about CCTV and Algorithmic Video Surveillance (AVS)",
+      valSumInnocence: "Suspect by default: ending presumption of innocence",
+      valDetInnocence:
+        'Mass surveillance operates on the assumption that all data is potentially useful to address a hypothetical future threat. This flips the legal pillar of "innocent until proven guilty".<br/><br/>When a city is saturated with cameras, you are no longer a citizen moving freely: you are a "data point" being scrutinized for "abnormality". We move from a society where the police need reasonable suspicion to track someone, to one where the act of being in public is itself a reason for being watched.',
+      valSumAi: "The AI panopticon: automation of social control",
+      valDetAi:
+        'Modern CCTV is no longer just a "dumb" recorder: it is increasingly powered by Algorithmic Video Surveillance (VSA) and Facial Recognition.<br/><br/>Even without facial regnition, algorithms are used already to analyze behavior in real-time:<ul><li>If you\'re in a car and stop for an "abnormal" time in an intersection or park outside a parking spot, CCTV can automatically detect it, zoom onto your license plate and sometimes (depending on your location), verbalize you.</li><li>If you\'re walking in the streets, cameras are programmed to detect "suspicious" patterns and zoom automatically onto your face, alerting an agent if needed. For example if you stop in a crowd to tie your shoes, if you change direction or start to run, thoses are behavior that can be automatically detected.</li></ul>Facial recognition is just the last step of a completely automated workflow, and the perfect start for social control.<br/><br/>AI doesn\'t just watch; it categorizes. It detects "suspicious gait", "unusual loitering", or "crowd movements". This removes the human element from policing and replaces it with mathematical authoritarianism. If an algorithm flags you as "suspicious", you have no way to argue with the machine\'s "objective" logic.<br/><br/>La Quadrature du Net (and the awesome <a href=\'https://technopolice.fr/blog/the-technopolice-manifesto-resisting-the-total-surveillance-of-our-cities-and-of-our-lives/\' target=\'_blank\'>Technopolice Project</a>) documents how "safe cities" projects transform urban centers into experiments for automated behavior modification, especially usefull to target vulnerable groups and activists.',
+      valSumFascism: "Techno-fascism and the centralization of power",
+      valDetFascism:
+        'Techno-fascism is the use of advanced technology to centralize power, suppress opposition and civil liberties with the argument of efficiency.<br/><br/>With CCTV, total visibility leads to total control. When the state (or any group) knows every meeting you attend, every person you talk to, and every path you take, the "checks and balances" of democracy disappear. Surveillance technology is a danger at any time: even if today’s government is "good", the infrastructure remains for a future authoritarian leader to use at the push of a button.',
+      valSumChilling: "The chilling effect, how to change our behavior without noticing",
+      valDetChilling:
+        "<a href='https://privacyinternational.org/learn/mass-surveillance' target='_blank'>Surveillance changes how people act</a>, even when they have done nothing wrong. This is the <a href='https://en.wikipedia.org/wiki/Chilling_effect' target='_blank'>chilling effect</a>.<br/><br/>When people know they are being watched, they self-censor. They stop attending protests, avoid \"controversial\" books and conform to the \"average\" to avoid being flagged by an AI. The result is a sterile, stagnant society where the creative \"deviance\" necessary for social progress is extinguished.<br/><br/>Amnesty International (see <a href='https://banthescan.amnesty.org/index.html' target='_blank'>ban the scan</a>) has documented how the only presence of facial-recognition-capable cameras in New York or London has a chilling effect on the right to peaceful assembly and protest.",
+      valSumProtection: 'From surveillance to "protection"',
+      valDetProtection:
+        'In political discourse, the word "surveillance" is increasingly replaced by "protection", "safety", or "video-protection". This is exactly what George Orwell described as <a href=\'https://en.wikipedia.org/wiki/Newspeak\' target=\'_blank\'>newspeak</a>: the use of language to limit the range of thought and change the perception of an action.<br/><br/>By labeling intrusive monitoring as "protection", authorities bypass the critical debate on the loss of privacy. <strong>"Protection" implies a service / "Surveillance" implies control.</strong><br/><br/>In reality, it is obvious to say that a camera cannot protect you...',
+      valSumHide: '"I have nothing to hide"',
+      valDetHide:
+        "One frequent argument in defense of surveillance is: \"If you have nothing to hide, you have nothing to fear\".<br/><br/>This argument misinterprets the nature of privacy. Privacy is not about hiding \"wrong\" things, it is about the right to an autonomous life. We have blinds on our windows and doors on our bathrooms not because we are criminals, but because we require an intimate space to exist as individuals.<br/><br/><blockquote>\"Arguing that you don't care about the right to privacy because you have nothing to hide is no different than saying you don't care about free speech because you have nothing to say.\" ~ Edward Snowden</blockquote><br/><br/>This argument is so common that there is a <a href='https://en.wikipedia.org/wiki/Nothing_to_hide_argument' target='_blank'>dedicated wikipedia page</a> about it.",
+      valSumExpansion: "Technology never stops",
+      valDetExpansion:
+        "Security technology is rarely settled, it always expands.<br/><br/>Cameras installed to \"stop terrorism\" are quickly used to fine people for littering, then to track political activists, then to monetize foot-traffic data, etc.<br/><br/>With technologies and surveillance, the argument to make it acceptable is always one that cannot be objected: fighting terrorism for CCTV, finding pedophiles for <a href='https://fightchatcontrol.eu/' target='_blank'>chat control</a>, etc. In the end it always expands and is used against the population.<br/><br/>Moreover, there is a massive global lobby of security companies that profits from fear. These companies sell \"solutions\" to cities for problems that often require social, not technological, interventions.",
+      valSumEffectiveness: "CCTV Effectiveness",
+      valDetEffectiveness:
+        "<a href='https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q=cctv+effectiveness&btnG=&oq=cctv' target='_blank'>Multiple studies</a> has been conducted to measure effectiveness of CCTV in public areas. It usually shows relative effectiveness but not in the spots we could imagine: in car parkings and residential areas ... so not really in public spaces and city centers. It has <strong>zero impact on violent crime</strong> (crimes of passion or impulse). In most cases, it simply displaces crime to the next street over, rather than preventing it.<br/><br/>Also, <a href='https://academicworks.cuny.edu/cgi/viewcontent.cgi?article=1275&context=jj_pubs' target='_blank'>field studies</a> in cities have shown that video surveillance does not significantly help to solve investigations, nor does it reduce the number of violent crimes, drug-related offences or public order disturbances in cities. There are a number of reasons for this ineffectiveness: lack of coordination between security forces (private, state, municipal), poor quality images, misdirected or dirty cameras, etc. But the major problem is the staggering number of video streams compared with the small number of officers who are supposed to be using them.",
+      valSumCost: "The true economic cost",
+      valDetCost:
+        'Installing and maintaining a network of cameras is immensely expensive.<br/><br/>Every euro or dollar spent on a camera is a not spent on social workers, youth centers, street lighting, or mental health services—measures that are statistically proven to reduce crime more effectively than surveillance.<br/><br/>Furthermore, cameras have a short lifespan (around 5 years) and require constant, expensive software updates, creating a "subscription to surveillance" for the taxpayer.<br/><br/>There is no official data about the cost of video-surveillance but estimations of the global worldwide market can vary between 50 to 130 billions dollars per year.',
+      valSumHack: "Hackable cities",
+      valDetHack:
+        'A city of cameras is a city of "digital backdoors".<br/><br/>By creating a massive network of connected cameras, cities create a massive attack surface for hackers or foreign actors. If a city’s camera grid is compromised, a malicious actor can track the movements of police, politicians, or any citizen in real-time. Surveillance infrastructure intended for "security" often becomes the greatest security vulnerability.<br/><br/>A recent example is <a href=\'https://www.theverge.com/2021/3/9/22322122/verkada-hack-150000-security-cameras-tesla-factory-cloudflare-jails-hospitals\' target=\'_blank\'>the "Verkada" hack</a>, where hackers gained access to 150 000 live camera feeds (including hospitals, police stations, and prisons).',
+      valSumEcology: "Environmental impact",
+      valDetEcology:
+        'Surveillance is an ecological issue.<br/><br/>The "cloud" isn\'t invisible. Storing petabytes of high-definition video 24/7 requires massive data centers that consume enormous amounts of electricity and water for cooling. Furthermore, the production of millions of electronic devices obviously contributes to the global e-waste crisis.<br/><br/><a href=\'https://theshiftproject.org/app/uploads/2025/02/Deploying-digital-sobriety_TSP_2020_final.pdf\' target=\'_blank\'>"Digital Sobriety" is incompatible with the "Smart City" model</a>, which relies on constant, energy-intensive data streaming.',
+      valSumBias: "Algorithmic bias",
+      valDetBias:
+        'Surveillance, as well a algorithms and AI are not "objective". They are biased by the people who build it, by the data used for training.<br/><br/>AI and facial recognition are notoriously bad at identifying people of color, women, and non-binary individuals. This leads to <a href=\'https://www.ssoar.info/ssoar/handle/document/20067\' target=\'_blank\'>"automated racial profiling"</a>, where certain demographics are flagged more often by "suspicion algorithms" simply because of the data used to train the AI.',
+      valObjTitle: "What should we do ? The objective behind PanoptiCity",
+      valObjP1:
+        'PanoptiCity does not exist to tell you that cameras are "evil". <strong>It exists to make the invisible visible</strong>.',
+      valObjP2:
+        'For too long, the deployment of mass surveillance has happened in the shadows, voted on in small committees, funded by opaque grants, and marketed as "innovation". Politicians often trust the lobisters because they\'re not familiar with the subject and the reality of the statistics, because it looks like a miracle solution.',
+      valObjHighlight1: "We believe that the architecture of our cities is a <strong>democratic choice</strong>.",
+      valObjQIntro: "Some questions we must ask ourselves are:",
+      valObjQ1: "<strong>Do we want a society built on trust?</strong>",
+      valObjQ2: "<strong>Do we want to give up our privacy for a so call security?</strong>",
+      valObjQ3: "<strong>Do this really bring more security?</strong>",
+      valObjQ4:
+        "<strong>Who can see and control thoses images, and if the argument is transparency (nothing to hide) why the images are not public?</strong>",
+      valObjQ5: "<strong>Do we want those images to be automatically analyzed by algorithms?</strong>",
+      valObjQ6: "<strong>How much did it really costs to my city?</strong>",
+      valObjHighlight2:
+        'Whether you are "pro-camera" for security or "anti-camera" for liberty, you cannot have a balanced opinion if you do not know where the eyes are. <strong>PanoptiCity provides the map: the conversation is up to you.</strong>',
     },
   },
   fr: {
@@ -506,12 +560,6 @@ export const TRANSLATIONS = {
     layerSatellite: "Satellite",
     // Static content available from menu
     menuContent: {
-      // About
-      menuAbout: "À propos de ce site",
-      aboutP1:
-        "L'objectif de ce projet est de simplifier l'affichage d'informations autour des caméras de surveillance, afin de les cartographier, savoir ce qu'elles peuvent voir, et avoir des informations à propos de leur usage en ville. Ce site internet offre également un moyen simple pour contribuer des informations dans la base de données d'OpenStreetMap si vous souhaitez ajouter des caméras quand vous en voyez qui ne sont pas sur la plateforme ou si vous souhaitez enrichir leurs attributs.",
-      aboutP2:
-        "PanoptiCity est une manière d'agir et d'essayer de sensibiliser à propos de la surveillance de masse dans toutes les villes, pour que les gens réalisent le volume de caméras autour d'eux qu'on ne voit plus. Dans une ère où l'intelligence artificielle se généralise, c'est plus que jamais le moment de nous demander, si c'est bien ce modèle de société que nous souhaitons construire collectivement ?",
       // Why this name
       menuWhy: "Qu'est-ce qu'une PanoptiCity ?",
       whyP1:
@@ -726,6 +774,67 @@ export const TRANSLATIONS = {
       resInspoTitle: "Inspirations & Crédits",
       resInspoP1:
         "L'une des inspirations majeures de ce projet est le site <a href='https://sunders.uber.space/' target='_blank'>SunderS</a>. Les informations utilisées proviennent de la base de données <a href='https://www.openstreetmap.org/' target='_blank'>OpenStreetMap</a>. Les autres attributions et projets utilisés pour cette application sont listés sur notre <a href='https://babastienne.github.io/PanoptiCity/license.html#attribution'>page dédiée</a>.",
+      // Core Values Page
+      // Page des Valeurs Fondamentales
+      menuValues: "À propos de ce site",
+      valTitle: "Valeurs fondamentales de ce site",
+      valIntro1:
+        "Ce projet est né en 2025. L'idée initiale était de créer une carte affichant les caméras de vidéosurveillance et leur champ de vision afin de sensibiliser à la surveillance de masse et à la couverture urbaine. Inspiré par <a href='https://sunders.uber.space/' target='_blank'>SunderS</a>, il a été motivé par la prolifération des caméras et l'absence totale de transparence concernant leurs emplacements et leurs capacités.",
+      valIntro2:
+        'Le déploiement généralisé des caméras et de la Vidéosurveillance Algorithmique (VSA) est souvent présenté comme une évolution technique neutre de la gestion urbaine. Cependant, ces "yeux dans la ville" portent des implications profondes pour notre démocratie et nos libertés fondamentales.',
+      valConcernsTitle: "Inquiétudes concernant les caméras et la surveillance algorithmique (VSA)",
+      valSumInnocence: "Suspect par défaut : la fin de la présomption d'innocence",
+      valDetInnocence:
+        "La surveillance de masse repose sur l'hypothèse que toutes les données sont potentiellement utiles pour répondre à une hypothétique menace future. Cela inverse le pilier juridique de la \"présomption d'innocence\".<br/><br/>Lorsqu'une ville est saturée de caméras, vous n'êtes plus un citoyen circulant librement : vous êtes un \"point de donnée\" scruté à la recherche d'une \"anomalie\". Nous passons d'une société où la police a besoin de soupçons raisonnables pour suivre quelqu'un, à une société où le simple fait d'être dans l'espace public est une raison suffisante pour être surveillé.",
+      valSumAi: "Le panoptique dopé à l'IA : l'automatisation du contrôle social",
+      valDetAi:
+        'La vidéosurveillance moderne n\'est plus un simple enregistreur passif : elle est de plus en plus couplée à la Vidéosurveillance Algorithmique (VSA) et à la reconnaissance faciale.<br/><br/>Même sans reconnaissance faciale, des algorithmes sont déjà utilisés pour analyser les comportements en temps réel :<ul><li>Si vous êtes en voiture et que vous vous arrêtez un temps "anormal" à une intersection ou que vous vous garez hors d\'une place, la caméra peut le détecter automatiquement, zoomer sur votre plaque et parfois (selon la ville), déclencher une verbalisation.</li><li>Si vous marchez dans la rue, les caméras sont programmées pour détecter des schémas "suspects" et zoomer automatiquement sur votre visage, alertant un agent si nécessaire. Par exemple, si vous vous arrêtez dans une foule pour lacer vos chaussures, si vous changez brusquement de direction ou si vous vous mettez à courir.</li></ul>La reconnaissance faciale n\'est que la dernière étape d\'un flux de travail complètement automatisé, et le point de départ idéal pour un contrôle social total.<br/><br/>L\'IA ne se contente pas de regarder ; elle catégorise. Elle détecte une "démarche suspecte", une "errance inhabituelle" ou des "mouvements de foule". Cela supprime l\'élément humain du maintien de l\'ordre pour le remplacer par un autoritarisme mathématique. Si un algorithme vous identifie comme "suspect", vous n\'avez aucun moyen de contester la logique "objective" de la machine.<br/><br/>La Quadrature du Net (et l\'excellent <a href=\'https://technopolice.fr/\' target=\'_blank\'>Projet Technopolice</a>) documente comment les projets de "Safe Cities" transforment les centres urbains en laboratoires de modification comportementale automatisée, particulièrement utiles pour cibler les groupes vulnérables et les activistes.',
+      valSumFascism: "Techno-fascisme et centralisation du pouvoir",
+      valDetFascism:
+        "Le techno-fascisme est l'utilisation de technologies avancées pour centraliser le pouvoir, supprimer l'opposition et les libertés civiles sous couvert d'efficacité.<br/><br/>Avec la vidéosurveillance, la visibilité totale mène au contrôle total. Lorsque l'État (ou n'importe quel groupe) connaît chaque réunion à laquelle vous assistez, chaque personne à qui vous parlez et chaque chemin que vous empruntez, les contre-pouvoirs démocratiques disparaissent. La technologie de surveillance est un danger permanent : même si le gouvernement actuel est \"bienveillant\", l'infrastructure reste en place pour qu'un futur leader autoritaire puisse l'utiliser d'une simple pression sur un bouton.",
+      valSumChilling: "Le chilling effect : changer de comportement sans s'en rendre compte",
+      valDetChilling:
+        "<a href='https://privacyinternational.org/learn/mass-surveillance' target='_blank'>La surveillance modifie la façon dont les gens agissent</a>, même lorsqu'ils n'ont rien fait de mal. C'est ce qu'on appelle <a href='https://en.wikipedia.org/wiki/Chilling_effect' target='_blank'>l'effet de gel ou chilling effect</a>.<br/><br/>Lorsque les gens se savent observés, ils s'autocensurent. Ils cessent de participer à des manifestations, évitent les livres \"controversés\" et se conforment à la \"moyenne\" pour éviter d'être signalés par une IA. Le résultat est une société stérile et stagnante où la \"déviance\" créative, nécessaire au progrès social, est étouffée.<br/><br/>Amnesty International (voir <a href='https://banthescan.amnesty.org/' target='_blank'>Ban the Scan</a>) a documenté comment la seule présence de caméras capables de reconnaissance faciale à New York ou Londres a un effet dissuasif sur le droit de réunion et de manifestation pacifique.",
+      valSumProtection: 'De la surveillance à la "protection"',
+      valDetProtection:
+        'Dans le discours politique, le mot "surveillance" est de plus en plus remplacé par "protection", "sûreté" ou "vidéoprotection". C\'est précisément ce que George Orwell décrivait comme la <a href=\'https://fr.wikipedia.org/wiki/N%C3%A9oparler\' target=\'_blank\'>novlangue</a> : l\'utilisation du langage pour limiter la portée de la pensée et modifier la perception d\'une action.<br/><br/>En qualifiant une surveillance intrusive de "protection", les autorités contournent le débat critique sur la perte de vie privée. <strong>La "protection" implique un service, là où la "surveillance" implique un contrôle.</strong><br/><br/>En réalité, il est évident qu\'une caméra ne peut pas vous protéger physiquement...',
+      valSumHide: '"Je n\'ai rien à cacher"',
+      valDetHide:
+        "Un argument fréquent en défense de la surveillance est : \"Si vous n'avez rien à cacher, vous n'avez rien à craindre\".<br/><br/>Cet argument interprète mal la nature de la vie privée. La vie privée ne consiste pas à cacher des choses \"mal\", elle concerne le droit à une vie autonome. Nous avons des stores à nos fenêtres et des verrous sur nos portes de salle de bain non pas parce que nous sommes des criminels, mais parce que nous avons besoin d'un espace intime pour exister en tant qu'individus.<br/><br/><blockquote>\"Dire que votre droit à la vie privée ne vous importe pas parce que vous n'avez rien à cacher, c'est comme dire que votre droit à la liberté d'expression ne vous importe pas parce que vous n'avez rien à dire.\" ~ Edward Snowden</blockquote><br/><br/>Cet argument est si commun qu'il existe une <a href='https://fr.wikipedia.org/wiki/Rien_%C3%A0_cacher_(argument)' target='_blank'>page Wikipédia dédiée</a> à ce sujet.",
+      valSumExpansion: "La technologie ne s'arrête jamais",
+      valDetExpansion:
+        "La technologie sécuritaire n'est jamais figée, elle s'étend toujours.<br/><br/>Des caméras installées pour \"lutter contre le terrorisme\" sont rapidement utilisées pour amender les dépôts sauvages de déchets, puis pour suivre des militants politiques, puis pour monétiser les données de flux piétons, etc.<br/><br/>Avec les technologies de surveillance, l'argument pour les rendre acceptables est toujours celui auquel on ne peut s'opposer : la lutte contre le terrorisme pour les caméras, la recherche de pédophiles pour le <a href='https://fightchatcontrol.eu/' target='_blank'>Chat Control</a>, etc. Au final, l'usage s'étend toujours et finit par être utilisé contre la population.<br/><br/>De plus, il existe un lobby mondial massif d'entreprises de sécurité qui profite de la peur. Ces entreprises vendent des \"solutions\" technologiques à des problèmes qui nécessitent souvent des interventions sociales et non techniques.",
+      valSumEffectiveness: "Efficacité de la vidéosurveillance",
+      valDetEffectiveness:
+        "<a href='https://scholar.google.com/scholar?hl=fr&q=cctv+effectiveness' target='_blank'>De multiples études</a> ont été menées pour mesurer l'efficacité de la vidéosurveillance dans les espaces publics. Elles montrent généralement une efficacité relative, mais pas là où on l'imagine : dans les parkings fermés et les zones résidentielles... mais pas réellement dans les centres-villes. Elle a un <strong>impact nul sur les crimes violents</strong> (crimes passionnels ou d'impulsion). Dans la plupart des cas, elle déplace simplement la criminalité vers la rue suivante.<br/><br/>De plus, des <a href='https://academicworks.cuny.edu/cgi/viewcontent.cgi?article=1275&context=jj_pubs' target='_blank'>études de terrain</a> ont montré que la vidéosurveillance n'aide pas significativement à résoudre les enquêtes, ni ne réduit les délits liés à la drogue ou les troubles à l'ordre public. Plusieurs raisons expliquent cette inefficacité : manque de coordination entre les forces de sécurité, mauvaise qualité des images, caméras sales ou mal orientées... Mais le problème majeur est le nombre ahurissant de flux vidéo par rapport au faible nombre d'agents censés les visionner.",
+      valSumCost: "Le véritable coût économique",
+      valDetCost:
+        "L'installation et l'entretien d'un réseau de caméras coûtent extrêmement cher.<br/><br/>Chaque euro dépensé dans une caméra est un euro qui n'est pas investi dans des travailleurs sociaux, des centres de jeunesse, l'éclairage public ou les services de santé mentale — des mesures statistiquement prouvées comme étant plus efficaces pour réduire la criminalité.<br/><br/>Par ailleurs, les caméras ont une durée de vie courte (environ 5 ans) et nécessitent des mises à jour logicielles constantes et onéreuses, créant un \"abonnement à la surveillance\" pour le contribuable.<br/><br/>Il n'existe pas de données officielles consolidées sur le coût total, mais le marché mondial de la vidéosurveillance est estimé entre 50 et 130 milliards de dollars par an.",
+      valSumHack: "Villes piratables",
+      valDetHack:
+        "Une ville truffée de caméras est une ville pleine de \"portes dérobées numériques\".<br/><br/>En créant un réseau massif de caméras connectées, les villes créent une surface d'attaque immense pour des hackers ou des acteurs étrangers. Si le réseau est compromis, un acteur malveillant peut suivre les mouvements de la police, des élus ou de n'importe quel citoyen en temps réel.<br/><br/>Un exemple récent est le <a href='https://www.theverge.com/2021/3/9/22322122/verkada-hack-150000-security-cameras-tesla-factory-cloudflare-jails-hospitals' target='_blank'>piratage de \"Verkada\"</a>, où des hackers ont accédé à 150 000 flux en direct (hôpitaux, commissariats et prisons).",
+      valSumEcology: "Impact environnemental",
+      valDetEcology:
+        "La surveillance est aussi un enjeu écologique.<br/><br/>Le \"cloud\" n'est pas invisible. Stocker des pétaoctets de vidéo haute définition 24h/24 nécessite des centres de données massifs qui consomment d'énormes quantités d'électricité et d'eau pour le refroidissement. De plus, la production de millions d'appareils électroniques contribue à la crise mondiale des déchets électroniques.<br/><br/>La <a href='https://theshiftproject.org/article/deployer-la-sobriete-numerique-rapport-shift/' target='_blank'>\"sobriété numérique\" est incompatible avec le modèle de la \"Smart City\"</a>, qui repose sur un streaming de données constant et énergivore.",
+      valSumBias: "Biais algorithmiques",
+      valDetBias:
+        "La surveillance, tout comme les algorithmes et l'IA, n'est pas \"objective\". Elle est biaisée par les personnes qui la conçoivent et par les données utilisées pour l'entraînement.<br/><br/>L'IA et la reconnaissance faciale sont notoirement moins performantes pour identifier les personnes racisées, les femmes et les individus non-binaires. Cela mène à un <a href='https://www.ssoar.info/ssoar/handle/document/20067' target='_blank'>\"profilage racial automatisé\"</a>, où certaines catégories de population sont signalées plus souvent par les algorithmes simplement à cause des biais des données d'entraînement.",
+      valObjTitle: "Que faire ? L'objectif derrière PanoptiCity",
+      valObjP1:
+        "PanoptiCity n'existe pas pour vous dire que les caméras sont \"le mal\". <strong>Il existe pour rendre l'invisible visible</strong>.",
+      valObjP2:
+        "Pendant trop longtemps, le déploiement de la surveillance de masse s'est fait dans l'ombre, voté en petits comités, financé par des subventions opaques et commercialisé sous le nom d'\"innovation\". Les décideurs politiques font souvent confiance aux lobbyistes car ils ne sont pas familiers avec le sujet et la réalité des statistiques, et parce que cela ressemble à une solution miracle.",
+      valObjHighlight1: "Nous pensons que l'architecture de nos villes est un <strong>choix démocratique</strong>.",
+      valObjQIntro: "Voici quelques questions que nous devons nous poser :",
+      valObjQ1: "<strong>Voulons-nous une société bâtie sur la confiance ?</strong>",
+      valObjQ2: "<strong>Voulons-nous renoncer à notre vie privée pour une prétendue sécurité ?</strong>",
+      valObjQ3: "<strong>Cela apporte-t-il réellement plus de sécurité ?</strong>",
+      valObjQ4:
+        "<strong>Qui peut voir et contrôler ces images ? Si l'argument est la transparence (rien à cacher), pourquoi ces images ne sont-elles pas publiques ?</strong>",
+      valObjQ5: "<strong>Voulons-nous que nos images soient analysées automatiquement par des algorithmes ?</strong>",
+      valObjQ6: "<strong>Combien cela coûte-t-il réellement à ma ville ?</strong>",
+      valObjHighlight2:
+        'Que vous soyez "pro-caméra" pour la sécurité ou "anti-caméra" pour la liberté, vous ne pouvez pas avoir une opinion éclairée si vous ne savez pas où se trouvent les yeux. <strong>PanoptiCity fournit la carte : la conversation vous appartient.</strong>',
     },
   },
 };

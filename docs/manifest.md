@@ -4,14 +4,15 @@ nav_order: 2
 ---
 
 # The Panopticity manifesto: why mapping matters
+
 {: .no_toc }
 
-
 ## Table of contents
+
 {: .no_toc .text-delta }
 
 - TOC
-{:toc}
+  {:toc}
 
 ---
 
@@ -19,7 +20,7 @@ This project is born in 2025. The initial idea was to create a website that woul
 
 The rapid deployment of CCTV and Algorithmic Video Surveillance (AVS) is often presented as a neutral, technical evolution of urban management. However, these "eyes in the city" carry profound implications for our democracy and our fundamental freedoms.
 
-## Concerns about CCTV and Algorithmic Video Surveillance
+## Concerns about CCTV and Algorithmic Video Surveillance (AVS)
 
 ### Suspect by default: ending presumption of innocence
 
@@ -32,6 +33,7 @@ When a city is saturated with cameras, you are no longer a citizen moving freely
 Modern CCTV is no longer just a "dumb" recorder: it is increasingly powered by Algorithmic Video Surveillance (VSA) and Facial Recognition.
 
 Even without facial regnition, algorithms are used already to analyze behavior in real-time:
+
 - If you're in a car and stop for an "abnormal" time in an intersection or park outside a parking spot, CCTV can automatically detect it, zoom onto your license plate and sometimes (depending on your location), verbalize you.
 - If you're walking in the streets, cameras are programmed to detect "suspicious" patterns and zoom automatically onto your face, alerting an agent if needed. For example if you stop in a crowd to tie your shoes, if you change direction or start to run, thoses are behavior that can be automatically detected.
 
@@ -127,14 +129,14 @@ AI and facial recognition are notoriously bad at identifying people of color, wo
 
 ## What should we do ? The objective behind PanoptiCity
 
-PanoptiCity does not exist to tell you that cameras are "evil". **It exists to make the invisible visible**. 
+PanoptiCity does not exist to tell you that cameras are "evil". **It exists to make the invisible visible**.
 
 For too long, the deployment of mass surveillance has happened in the shadows, voted on in small committees, funded by opaque grants, and marketed as "innovation". Politicians often trust the lobisters because they're not familiar with the subject and the reality of the statistics, because it looks like a miracle solution.
 
-We believe that the architecture of our cities is a **democratic choice**. 
+We believe that the architecture of our cities is a **democratic choice**.
 {: .fs-5 .fw-300 .text-purple-000 }
 
-Some questions we must ask ourselves are: 
+Some questions we must ask ourselves are:
 
 - **Do we want a society built on trust?**
 - **Do we want to give up our privacy for a so call security?**

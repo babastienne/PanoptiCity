@@ -1,12 +1,70 @@
 export const MENU_CONFIG = [
   {
-    id: "about",
-    labelKey: "menuAbout",
+    id: "values",
+    labelKey: "menuValues",
     type: "modal",
     content: [
-      { type: "h3", textKey: "menuAbout" },
-      { type: "p", textKey: "aboutP1" },
-      { type: "p", textKey: "aboutP2" },
+      { type: "h3", textKey: "valTitle" },
+      { type: "p", textKey: "valIntro1" },
+      { type: "p", textKey: "valIntro2" },
+
+      { type: "h3", textKey: "valConcernsTitle" },
+      {
+        type: "accordion",
+        titleKey: "",
+        items: [
+          { summaryKey: "valSumInnocence", detailsKey: "valDetInnocence" },
+          { summaryKey: "valSumAi", detailsKey: "valDetAi" },
+          { summaryKey: "valSumFascism", detailsKey: "valDetFascism" },
+          { summaryKey: "valSumChilling", detailsKey: "valDetChilling" },
+          { summaryKey: "valSumProtection", detailsKey: "valDetProtection" },
+          { summaryKey: "valSumHide", detailsKey: "valDetHide" },
+          { summaryKey: "valSumExpansion", detailsKey: "valDetExpansion" },
+          { summaryKey: "valSumEffectiveness", detailsKey: "valDetEffectiveness" },
+          { summaryKey: "valSumCost", detailsKey: "valDetCost" },
+          { summaryKey: "valSumHack", detailsKey: "valDetHack" },
+          { summaryKey: "valSumEcology", detailsKey: "valDetEcology" },
+          { summaryKey: "valSumBias", detailsKey: "valDetBias" },
+        ],
+      },
+      { type: "h3", textKey: "valObjTitle" },
+      { type: "p", textKey: "valObjP1" },
+      { type: "p", textKey: "valObjP2" },
+      { type: "p", textKey: "valObjHighlight1" },
+      { type: "p", textKey: "valObjQIntro" },
+      {
+        type: "list",
+        items: ["valObjQ1", "valObjQ2", "valObjQ3", "valObjQ4", "valObjQ5", "valObjQ6"],
+      },
+      { type: "p", textKey: "valObjHighlight2" },
+    ],
+  },
+  {
+    id: "why",
+    labelKey: "menuWhy",
+    type: "modal",
+    content: [
+      { type: "h3", textKey: "menuWhy" },
+      { type: "p", textKey: "whyP1" },
+      { type: "img", src: "images/menu/panopticon.jpeg" },
+      {
+        type: "attribution",
+        items: [
+          {
+            text: "Friman",
+            url: "https://commons.wikimedia.org/wiki/User:Friman",
+          },
+          {
+            text: "CC BY-SA 3.0",
+            url: "http://creativecommons.org/licenses/by-sa/3.0/",
+          },
+          {
+            text: "Link",
+            url: "https://commons.wikimedia.org/w/index.php?curid=2410607",
+          },
+        ],
+      },
+      { type: "p", textKey: "whyP2" },
     ],
   },
   {
@@ -137,34 +195,6 @@ export const MENU_CONFIG = [
           { summaryKey: "chartFocalMaxTitle", detailsKey: "chartFocalMaxContent" },
         ],
       },
-    ],
-  },
-  {
-    id: "why",
-    labelKey: "menuWhy",
-    type: "modal",
-    content: [
-      { type: "h3", textKey: "menuWhy" },
-      { type: "p", textKey: "whyP1" },
-      { type: "img", src: "images/menu/panopticon.jpeg" },
-      {
-        type: "attribution",
-        items: [
-          {
-            text: "Friman",
-            url: "https://commons.wikimedia.org/wiki/User:Friman",
-          },
-          {
-            text: "CC BY-SA 3.0",
-            url: "http://creativecommons.org/licenses/by-sa/3.0/",
-          },
-          {
-            text: "Link",
-            url: "https://commons.wikimedia.org/w/index.php?curid=2410607",
-          },
-        ],
-      },
-      { type: "p", textKey: "whyP2" },
     ],
   },
   {
