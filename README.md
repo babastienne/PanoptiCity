@@ -23,12 +23,6 @@ PanoptiCity is my way to act and try to raise awareness about mass surveillance 
 
 **To learn more about the core ideas behind PanoptiCity, see the [complete manifesto](https://babastienne.github.io/PanoptiCity/manifest).**
 
-### Screenshots
-
-| ![Home page](docs/images/home.png)                        | ![Details view](docs/images/camera-details.png)           |
-| --------------------------------------------------------- | --------------------------------------------------------- |
-| ![Creation camera type](docs/images/camera-add-mount.png) | ![Limits of camera vision](docs/images/camera-limits.png) |
-
 ### Supported features
 
 - Get data from OpenStreetMap database
@@ -51,3 +45,14 @@ The entire technical documentation is available directly on [https://babastienne
 - Performances
 - Development
 - Contributions
+
+### Screenshots
+
+![Home page with legend](docs/images/screenshots/home-light.png)
+![Home page with scenario switcher view](docs/images/screenshots/home.png)
+![Detail view of a camera](docs/images/screenshots/details.png)
+
+| ![Home page](docs/images/screenshots/home-mobile-light.png)               | ![Contribution camera type](docs/images/screenshots/mobile-contrib.png) |
+| ------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| ![Contribution camera mount](docs/images/screenshots/mobile-contrib2.png) | ![Select tile layer](docs/images/screenshots/mobile-layers-light.png)   |
+| ![Login view](docs/images/screenshots/home-login.png)                     | ![Information for user](docs/images/screenshots/editorial-dark.png)     |
