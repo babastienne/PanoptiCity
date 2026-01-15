@@ -134,7 +134,7 @@ The file `front-end/src/js/cameraConfig.js` contains :
 
 ## Updating the project after modifications
 
-If you ave modified any backend or env configuration file, you'll need to rebuild the project for the modifications to be taken into consideration. To do so you need to run :
+If you have configuration file, you'll need to rebuild the project for the modifications to be taken into consideration. To do so you need to run :
 
 ```bash
 make stop   # Only if your instance was up and running
@@ -142,4 +142,4 @@ make build  # Will recreate the buld of the backend application
 make start  # Retard the application
 ```
 
-If you only modified a front-end configuration file the change will be made instantly without having to reload the application. You only need to refresh your browser.
+IT is important to run `make stop` as it will also remove your nginx cache. If you do not run this command you'll not see any change in your frontend.
