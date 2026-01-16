@@ -76,6 +76,7 @@ class Camera(models.Model):
             When(camera_type="fixed", then=Value("fixed")),
             When(camera_type="panning", then=Value("panning")),
             When(camera_type="dome", then=Value("dome")),
+            When(camera_type="panorama", then=Value("pano")),
             default=Value("cam"),
         ),
         STATUS_SUFFIX_EXPRESSION,
@@ -253,7 +254,7 @@ class Camera(models.Model):
         if self.camera_type == "fixed":
             if self.direction is not None:
                 result = self.compute_all_focus(nearby_buildings_qs)
-        elif self.camera_type in ["dome", "panning"]:
+        elif self.camera_type in ["dome", "panning", "panorama"]:
             result = self.compute_all_focus(nearby_buildings_qs)
         return result
 

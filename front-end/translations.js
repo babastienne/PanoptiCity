@@ -56,6 +56,7 @@ export const TRANSLATIONS = {
     cameraTypeDome: "Dome",
     cameraTypeFixed: "Fixed",
     cameraTypePanning: "Panning",
+    cameraTypePanorama: "Multi-sensors (360°)",
     cameraMountQuestion: "How is the camera mounted ?",
     cameraMountName: "Support",
     cameraMountWall: "Wall",
@@ -127,6 +128,8 @@ export const TRANSLATIONS = {
     typePanning: "Panning camera",
     typeDome: "Dome camera",
     typeTraffic: "Traffic camera (ALPR / Radar)",
+    typePano: "Panoramic camera (360°)",
+    typeCam: "Default camera (missing type)",
     // Modal switch scenario
     scenarioIntro:
       "This website simulate multiple scenarios to render the field of view coverage based on a statistic analysis of 15,000+ real-world camera models. <br/>You can switch between each scenario.",
@@ -471,6 +474,7 @@ export const TRANSLATIONS = {
     cameraTypeDome: "Dome",
     cameraTypeFixed: "Fixe",
     cameraTypePanning: "Panoramique (motorisée)",
+    cameraTypePanorama: "Multi-capteurs (360°)",
     cameraMountQuestion: "Comment est montée la caméra ?",
     cameraMountName: "Support",
     cameraMountWall: "Mur",
@@ -544,6 +548,8 @@ export const TRANSLATIONS = {
     typePanning: "Caméra motorisée",
     typeDome: "Caméra dôme",
     typeTraffic: "Caméra routière (Lecteur de plaque / Radar)",
+    typePano: "Camera panoramique (360°)",
+    typeCam: "Caméra par défaut (type manquant)",
     // Modal switch scenario
     scenarioIntro:
       "Ce site modélise plusieurs scénarios pour afficher la couverture des champs de vision, basée sur une analyse statistique de plus de 15 000 modèles de caméras sur le marché. <br/>Vous pouvez basculer entre chaque scénario.",

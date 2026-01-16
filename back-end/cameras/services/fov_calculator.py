@@ -44,7 +44,7 @@ class FOVCalculator():
         if is_fixed and self.camera.direction is not None:
             # -7 to 7 = 15 iterations ~= 85°
             rng = range(-7, 8)
-        elif self.camera.camera_type in ["dome", "panning"]:
+        elif self.camera.camera_type in ["dome", "panning", "panorama"]:
             # 6.3 ~= 2pi = 360°
             rng = range(0, 63)
         else:

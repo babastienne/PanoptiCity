@@ -36,6 +36,10 @@ export const choicesCameraType = {
       name: TEXTS.cameraTypePanning,
       picture: "images/contrib/type-panning-moving.svg",
     },
+    panorama: {
+      name: TEXTS.cameraTypePanorama,
+      picture: "images/contrib/type-panorama.png",
+    },
   },
 };
 

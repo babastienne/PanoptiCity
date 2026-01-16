@@ -23,7 +23,7 @@
         },
         {
             "key": "camera:type",
-            "description": "Specifies camera hardware (fixed, dome, panning) to select the appropriate simulation model."
+            "description": "Specifies camera hardware (fixed, dome, panning, panorama) to select the appropriate simulation model."
         },
         {
             "key": "camera:mount",

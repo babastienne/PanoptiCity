@@ -31,7 +31,7 @@ PanoptiCity imports **surveillance cameras** and **buildings** from OpenStreetMa
 The project processes these OSM tags for cameras:
 
 **Core camera properties**:
-- `camera:type` - Camera type (fixed, dome, panning)
+- `camera:type` - Camera type (fixed, dome, panning, panorama)
 - `camera:mount` - Mount type (wall, pole, ceiling, etc.)
 - `camera:direction` - Viewing direction in degrees
 - `camera:angle` - Tilt angle of the camera

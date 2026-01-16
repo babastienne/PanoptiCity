@@ -45,7 +45,8 @@ class ZoneChoices(TextChoices):
 class CameraTypeChoices(TextChoices):
     FIXED = "fixed", "fixed"
     PANNING = "panning", "panning"
-    DOM = "dom", "dom"
+    DOME = "dome", "dome"
+    PANORAMA = "panorama", "panorama"
 
 
 class FocusScenarioChoices(TextChoices):

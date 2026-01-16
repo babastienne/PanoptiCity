@@ -18,16 +18,19 @@ export const ICONS_MAPPING = {
   fixed: "images/cameras/fixed.png",
   panning: "images/cameras/panning.png",
   dome: "images/cameras/dome.png",
+  pano: "images/cameras/pano.png",
   trafficIncomplete: "images/cameras/traffic.png",
   camIncomplete: "images/cameras/cam.png",
   fixedIncomplete: "images/cameras/fixed.png",
   panningIncomplete: "images/cameras/panning.png",
   domeIncomplete: "images/cameras/dome.png",
+  panoIncomplete: "images/cameras/pano.png",
   trafficMissing: "images/cameras/trafficRed.png",
   camMissing: "images/cameras/camRed.png",
   fixedMissing: "images/cameras/fixedRed.png",
   panninMissing: "images/cameras/panningRed.png",
   domeMissing: "images/cameras/domeRed.png",
+  panoMissing: "images/cameras/panoRed.png",
 };
 
 /**

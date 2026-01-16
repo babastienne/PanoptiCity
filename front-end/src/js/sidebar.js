@@ -248,6 +248,14 @@ export let initSidebar = (map) => {
                   <img src="/images/cameras/traffic.png" alt="Traffic"/>
                   <span><small>${TEXTS.typeTraffic}</small></span>
               </div>
+              <div class="icon-grid-item">
+                  <img src="/images/cameras/pano.png" alt="Traffic"/>
+                  <span><small>${TEXTS.typePano}</small></span>
+              </div>
+              <div class="icon-grid-item">
+                  <img src="/images/cameras/cam.png" alt="Traffic"/>
+                  <span><small>${TEXTS.typeCam}</small></span>
+              </div>
           </div>
           
           <div class="legend-list marker-status-list">
