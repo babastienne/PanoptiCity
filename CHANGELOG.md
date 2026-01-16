@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file. This projec
 
 ---
 
+## [1.1.0] - 2026-01-16 - 📷 Add panorama support for camera type
+
+- **✨ Feature**: PanoptiCity now support "Panoramic" cameras as a new type. It is computed the same way dome and panning cameras are. The contribution form is also updated and the user can select "multi-sensors" cameras as a type (which correponds to panorama). Related issue #36 and OSM wiki https://wiki.openstreetmap.org/wiki/Key:camera:type.
+- **💫 Improvements**:
+    - Improvements for SEO and search engines related meta
+    - Performances improvements with nginx compression
+- **📝 Documentation**:
+    - Update documentation with minor changes
+    - Remove unused files
+    - Convert all todo into issues and remove todo.md file
+
+---
+
 ## [1.0.0] - 2026-01-12 - 🚀 First release
 
 - **Stability**: Reached the first stable production milestone.
