@@ -16,7 +16,7 @@ click==8.3.1
     # via mercantile
 debugpy==1.8.19
     # via -r requirements.in
-django==6.0
+django==6.0.4
     # via
     #   -r requirements.in
     #   django-cors-headers
