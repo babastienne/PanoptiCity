@@ -158,6 +158,10 @@ export let initMap = () => {
     zoomControl: false,
   });
 
+  if (window.location.hostname.split(".").at(-1) === "onion") {
+    currentBaseLayerId = "hot";
+  }
+
   currentBaseLayer = baseLayersConfig[currentBaseLayerId];
   currentBaseLayer.addTo(map);
 

@@ -1,3 +1,6 @@
+# Fix for long onion addresses
+server_names_hash_bucket_size 64;
+
 # Caching paths
 proxy_cache_path /var/cache/nginx/cameras levels=1:2 keys_zone=cameras_cache:20m max_size=5g;
 proxy_cache_path /var/cache/nginx/focus levels=1:2 keys_zone=focus_cache:20m max_size=5g;
