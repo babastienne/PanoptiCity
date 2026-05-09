@@ -22,7 +22,7 @@ PanoptiCity is powered by **OpenStreetMap (OSM)**. The most effective way to imp
 * **Identify:** Look for cameras in your neighborhood.
 * Create new objects for missing cameras.
 * Add technical details like `direction`, `type`, `height`, `angle` and `surveillance:type` for cameras where it is missing.
-* **Tools:** Use the built-in "Add Camera" tool in PanoptiCity or apps like [StreetComplete](https://github.com/streetcomplete/StreetComplete) or [Every Door](https://every-door.app/).
+* **Tools:** Use the built-in "Add Camera" tool in PanoptiCity or apps like [the surveillance theme on MapComplete.org](https://mapcomplete.org/surveillance) [StreetComplete](https://github.com/streetcomplete/StreetComplete) or [Every Door](https://every-door.app/).
 
 ### 🌐 Translations (i18n)
 
