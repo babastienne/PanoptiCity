@@ -167,6 +167,12 @@ SKIP_WORDS = {
     "flock raven", "lamp post", "both", "both3", "xx", "fixed", "wide", "down", "tree", "?"
 }
 
+# Supported OSM camera:type values (see wiki.openstreetmap.org/wiki/Key:camera:type)
+VALID_CAMERA_TYPES = {
+    "fixed", "dome", "panning", "spot", "panorama", "ptz", "panorama_with_ptz",
+}
+
+
 def parse_single_numeric(s):
     """Clean a string and try to extract a single numeric degree or compass point."""
     s = s.strip().lower().rstrip('°').rstrip('o').rstrip('\\').replace('rees', '').strip()
