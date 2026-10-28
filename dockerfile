@@ -14,6 +14,7 @@ ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update -qq && apt-get install -y -qq  \
     postgresql-client \
+    osmium-tool \
     && apt-get install -y gdal-bin
 
 # Upgrade pip
@@ -24,6 +25,10 @@ COPY /back-end/requirements.txt  /app/
 
 # run this command to install all dependencies
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Install the DuckDB HTTP extension at build time (used by the Overture buildings provider)
+# so that nothing has to be downloaded when the service starts
+RUN python -c "import duckdb; duckdb.connect().execute('INSTALL httpfs')"
 
 
 # Copy the Django project to the container

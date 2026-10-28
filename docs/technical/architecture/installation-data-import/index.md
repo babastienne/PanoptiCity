@@ -22,37 +22,20 @@ This document provides a high-level overview of PanoptiCity's data import and ma
 
 ## Import strategy overview
 
-PanoptiCity implements two distinct data import strategies that differ in how building geometries are stored and accessed during FOV (Field of View) calculations.
+The initial import and the continuous updates use different strategies to get the buildings needed by FOV (Field of View) calculations.
 
-### Local buildings mode
+### Initial import
 
-In this mode, building geometries from OpenStreetMap are permanently stored in the `cameras_building` table using `osm2pgsql`. Camera FOV calculations query this local database, enabling fast updates but requiring significant storage space.
+`osm2pgsql` imports into the `cameras_building` table the buildings located near cameras (see [Initial setup & camera loading](install-architecture.md)). Once every focus is computed, the table is truncated to keep the database small.
 
-**Characteristics:**
+### Continuous updates
 
-* Full building database stored locally in PostGIS
-* Faster camera updates (no external API calls)
-* Larger database footprint (depends on geographic coverage)
-* Uses `load_cameras` management command for updates
-* Suitable for production environments with ample storage
+The `replication` service (`replicate_cameras` command) follows OSM minutely diffs. Only new or moved cameras, and cameras whose focus-related tags changed, need buildings. They are requested from a **buildings provider** for the camera's largest possible focus, inserted in `cameras_building` inside the camera's transaction, used for the computation, and deleted before commit.
 
-{: .note }
-This strategy is recommanded for low instances (small areas like countries or cities). It is heavier on the disk but way faster.
+* `overture`: OSM buildings of the monthly Overture Maps release, read from GeoParquet files on S3. No local storage.
+* `local`: the install extract, kept up to date with OSM diffs and cut with `osmium extract`. No third-party service.
 
-### Overpass API mode
-
-In this mode, the `cameras_building` table remains empty. For each camera update, the system queries the Overpass API to fetch only the buildings needed for that specific camera's FOV calculation. Buildings are temporarily stored during processing and then dropped.
-
-**Characteristics:**
-
-* Minimal database storage (no persistent building data)
-* Slower camera updates (external API calls per camera)
-* Requires reliable internet connection to Overpass API
-* Uses `update_cameras_with_api` management command
-* Suitable for resource-constrained environments
-
-{: .note }
-This strategy is recommanded for large instances (entire worls areas, or continents) or very small servers. It is lighter on the disk but way slower.
+If the provider is unavailable, the camera is saved with a focus without buildings and retried later (`buildings_pending`). See [Update the database](../../../installation-config/update.md) for details.
 
 ---
 
@@ -63,12 +46,12 @@ flowchart TD
 
 OSM_PBF["OpenStreetMap<br>PBF Files"]
 OSM_DIFF["OSM Replication<br>Diff Files (.osc.gz)"]
-Overpass["Overpass API<br>Building Queries"]
-pyosmium["pyosmium-get-changes<br>Diff Fetching"]
+Provider["Buildings provider<br>Overture / local extract"]
+pyosmium["pyosmium<br>Diff Fetching"]
 osm2pgsql["osm2pgsql<br>Building Import"]
 buildings_lua["buildings.lua<br>Flex Configuration"]
 load_cameras["load_cameras<br>Parallel Import"]
-update_api["update_cameras_with_api<br>Overpass Integration"]
+update_api["replicate_cameras<br>Replication service"]
 camera_creation["camera_creation.py<br>Batch Processing"]
 process_batch["process_camera_batch()<br>Worker Function"]
 create_camera["create_camera()<br>Camera Object Factory"]
@@ -83,7 +66,7 @@ purge_utils["purge_camera_tiles()<br>purge_focus_tiles()"]
 
 pyosmium -.-> load_cameras
 pyosmium -.-> update_api
-Overpass -.->|"Temporary Buildings"| building_table
+Provider -.->|"Temporary Buildings"| building_table
 
 subgraph subGraph5 ["Cache Layer"]
     nginx_cache
@@ -120,7 +103,7 @@ end
 subgraph subGraph0 ["External Data Sources"]
     OSM_PBF
     OSM_DIFF
-    Overpass
+    Provider
 end
 ```
 

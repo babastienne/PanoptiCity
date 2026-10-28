@@ -2,11 +2,12 @@ import logging
 import os
 import re
 
+from django.contrib.gis.geos import Point
+from django.db import connections
+
 from cameras.models import Camera, CameraFocus, CameraTags, Tile
 from cameras.services.utils import (get_tiles_for_polygon, purge_camera_tiles,
                                     purge_focus_tiles)
-from django.contrib.gis.geos import Point
-from django.db import connections
 
 
 def get_worker_logger(log_file_path, verbose):
@@ -33,7 +34,7 @@ def get_worker_logger(log_file_path, verbose):
     return logger
 
 
-def process_camera_batch(camera_data_list, update=False, verbose=False, log_file=None):
+def process_camera_batch(camera_data_list, update=False, verbose=False, log_file=None):  # pylint: disable=too-many-branches
     """
     Worker function executed in a separate process.
     Receives a list of dictionaries containing raw OSM data.
@@ -152,7 +153,7 @@ COMPASS_POINTS = {
     "w": 270, "west": 270, "wnw": 292, "nw": 315, "nnw": 337,
     # French / Spanish / Common Shorthand
     "o": 270, "ouest": 270, "est": 90,
-    "no": 315, "so": 225, "no": 315, "se": 135,
+    "no": 315, "so": 225,
     # Typos and specific variants found in logs
     "nee": 22, "nww": 337, "ees": 112, "wws": 247, "see": 157, "sww": 202,
     # Traffic directions
@@ -179,7 +180,8 @@ def parse_single_numeric(s):
 
 def compute_direction(tags, camera_id, logger=None):
     raw = tags.get("camera:direction") or tags.get("surveillance:direction") or tags.get("direction")
-    if raw is None: return None
+    if raw is None:
+        return None
 
     try:
         # Handle already numeric
@@ -203,8 +205,10 @@ def compute_direction(tags, camera_id, logger=None):
             vals = [parse_single_numeric(p) for p in range_parts if parse_single_numeric(p) is not None]
             if len(vals) >= 2:
                 start, end = vals[0], vals[-1]
-                if end < start: midpoint = (start + end + 360) / 2
-                else: midpoint = (start + end) / 2
+                if end < start:
+                    midpoint = (start + end + 360) / 2
+                else:
+                    midpoint = (start + end) / 2
                 return int(midpoint % 360)
 
         # Single value parse
@@ -218,12 +222,15 @@ def compute_direction(tags, camera_id, logger=None):
 
 def compute_angle(tags, camera_id, logger=None):
     raw = tags.get("camera:angle")
-    if raw is None: return None
+    if raw is None:
+        return None
     try:
-        if isinstance(raw, (int, float)): return int(raw) % 361
+        if isinstance(raw, (int, float)):
+            return int(raw) % 361
 
         s = str(raw).lower().strip()
-        if "%" in s or s in SKIP_WORDS: return None # Discard tilt like -5% or "down"
+        if "%" in s or s in SKIP_WORDS:
+            return None  # Discard tilt like -5% or "down"
 
         # Take first in list
         s = re.split(r'[;,&]+', s)[0]
@@ -243,11 +250,13 @@ def compute_angle(tags, camera_id, logger=None):
     return val
 
 
-def compute_height(tags, camera_id, logger=None):
+def compute_height(tags, camera_id, logger=None):  # pylint: disable=too-many-return-statements
     raw = tags.get("height") or tags.get("ele")
-    if raw is None: return None
+    if raw is None:
+        return None
     try:
-        if isinstance(raw, (int, float)): return float(raw)
+        if isinstance(raw, (int, float)):
+            return float(raw)
 
         s = str(raw).lower().strip()
 
@@ -261,7 +270,8 @@ def compute_height(tags, camera_id, logger=None):
             vals = []
             for p in parts:
                 res = compute_height({"height": p}, camera_id)
-                if res: vals.append(res)
+                if res:
+                    vals.append(res)
             return sum(vals) / len(vals) if vals else None
 
         # Handle metric shorthand (2m50)
@@ -277,8 +287,8 @@ def compute_height(tags, camera_id, logger=None):
                 return round(float(nums[0]) * 0.3048, 2)
             return None
 
-        # Standard clean and float
-        s = s.rstrip('m').rstrip('meter').rstrip('meters').replace(',', '.').replace('..', '.').strip()
+        # Standard clean and float (units like "m" / "meters" are removed with the other letters below)
+        s = s.replace(',', '.').replace('..', '.').strip()
         # Remove any leading "~" or non-numeric fluff
         s = re.sub(r'[^\d.]', '', s)
         return float(s)
@@ -287,7 +297,13 @@ def compute_height(tags, camera_id, logger=None):
         return None
 
 
-def create_camera(camera_osm, logger=None, nearby_buildings_qs=None):
+def build_camera(camera_osm, logger=None):
+    """
+    Build an unsaved Camera and its tags from raw OSM data, without computing any focus.
+
+    :param camera_osm: dict with 'id', 'lon', 'lat' and 'tags'
+    :return: tuple (camera, list of unsaved CameraTags)
+    """
     location = Point([camera_osm['lon'], camera_osm['lat']], srid=4326)
     camera = Camera(id=camera_osm['id'], location=location)
     tags = camera_osm.get('tags', {})
@@ -308,12 +324,17 @@ def create_camera(camera_osm, logger=None, nearby_buildings_qs=None):
         camera.tile = Tile.objects.filter(
             geom__intersects=camera.location).first().id
 
-    new_or_updated_focus = camera.generate_focus(nearby_buildings_qs)
-
-    new_or_updated_tags = [
+    tags_objects = [
         CameraTags(camera_id=camera, name=tag_name, value=str(tags[tag_name]))
         for tag_name in tags
     ]
-    logger.debug(f"Camera #{camera.id} processed.")
+    return camera, tags_objects
+
+
+def create_camera(camera_osm, logger=None, nearby_buildings_qs=None):
+    camera, new_or_updated_tags = build_camera(camera_osm, logger)
+    new_or_updated_focus = camera.generate_focus(nearby_buildings_qs)
+    if logger:
+        logger.debug(f"Camera #{camera.id} processed.")
 
     return camera, new_or_updated_tags, new_or_updated_focus

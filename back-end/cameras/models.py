@@ -1,5 +1,12 @@
 import math
 
+from django.contrib.gis.db import models
+from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.geos import MultiPolygon
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models import Case, Q, Value, When
+from django.db.models.functions import Concat
+
 from cameras.constants import (BASE_COEFICIENT, CAMERA_ANGLE_MIN,
                                CAMERA_HEIGHT_DEFAULT, CAMERA_HEIGHT_MAX,
                                CAMERA_HEIGHT_MIN, LEVEL_COEFFICIENTS,
@@ -10,12 +17,6 @@ from cameras.constants import (BASE_COEFICIENT, CAMERA_ANGLE_MIN,
 from cameras.services.fov_calculator import FOVCalculator
 from cameras.services.utils import (create_polygon, get_lat_coef,
                                     get_neighboring_tiles)
-from django.contrib.gis.db import models
-from django.contrib.gis.db.models.functions import Distance
-from django.contrib.gis.geos import MultiPolygon
-from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db.models import Case, Q, Value, When
-from django.db.models.functions import Concat
 
 
 class ExteriorRing(models.functions.GeomOutputGeoFunc):
@@ -44,6 +45,9 @@ class Camera(models.Model):
     # This field store the recognition + identification focus for the mean scenario which is the default focus
     focus = models.PolygonField(null=True)
     tile = models.CharField(max_length=15, db_index=True)
+    # True when the focus was computed without surrounding buildings because the
+    # buildings provider was unavailable. The replication service retries these cameras.
+    buildings_pending = models.BooleanField(default=False, db_index=True)
 
     IS_INCOMPLETE_CONDITION = (
         Q(mount="") |
@@ -174,7 +178,10 @@ class Camera(models.Model):
 
         calculator = FOVCalculator(self)
 
-        if not nearby_buildings_qs:
+        if nearby_buildings_qs is not None and not isinstance(nearby_buildings_qs, models.QuerySet):
+            # An explicit empty list means "compute without buildings"
+            nearby_buildings_qs = Building.objects.none()
+        elif not nearby_buildings_qs:
             neighboring_tiles = get_neighboring_tiles(self.tile, Tile)
             # Fetch buildings associated to the camera
             # We need the max possible distance to filter the DB query efficiently
@@ -298,3 +305,17 @@ class Tile(models.Model):
 
     def __str__(self):
         return f"Tile {self.id} (L{self.level})"
+
+
+class ReplicationState(models.Model):
+    """
+    Last OSM replication sequence applied to the database (single row).
+    Stored in the database so the state cannot drift from the data it describes.
+    """
+    server_url = models.URLField()
+    sequence = models.BigIntegerField()
+    sequence_timestamp = models.DateTimeField(null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Replication state #{self.sequence} ({self.server_url})"

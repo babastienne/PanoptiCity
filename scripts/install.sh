@@ -61,6 +61,7 @@ ensure_env_var "FRONTEND_DOMAIN_NAME" "example.org" "Enter the domain name that 
 ensure_env_var "BACKEND_DOMAIN_NAME" "api.example.org" "Enter the domain name that will be used for the backend application"
 ensure_env_var "CERTBOT_EMAIL" "NO DEFAULT" "Enter the email address that will be associated with the SSL certificates"
 ensure_env_var "CLIENT_ID_OSM_APP" "NO DEFAULT" "Enter the client ID of your OSM app to allow users to connect to OSM"
+ensure_env_var "BUILDINGS_PROVIDER" "overture" "Source of buildings for camera updates: 'overture' (no local storage, any area) or 'local' (keep the imported OSM file up to date, no third-party service)"
 
 # Generate a secret key and add it in .env file
 GENERATED_SECRET=$(openssl rand -hex 32)
@@ -96,6 +97,13 @@ read -rp "Enter the names to the OSM file to import (located in osm-data folder)
 if [ ! -f "osm-data/$OSM_FILE_NAME" ]; then
     echo -e "\033[0;31mError: File osm-data/$OSM_FILE_NAME not found. Please make sure the file exists before running this script.\033[0m" >&2
     exit
+fi
+
+# The local buildings provider reads the imported file, kept up to date by the replication service
+if [ "${BUILDINGS_PROVIDER:-}" = "local" ] && ! grep -qE "^BUILDINGS_LOCAL_PBF=.+" .env; then
+    sed -i.bak "s|^BUILDINGS_LOCAL_PBF=.*|BUILDINGS_LOCAL_PBF=/osm-data/$OSM_FILE_NAME|" .env
+    grep -q "^BUILDINGS_LOCAL_PBF=" .env || echo "BUILDINGS_LOCAL_PBF=/osm-data/$OSM_FILE_NAME" >> .env
+    echo -e "\033[0;32m-> BUILDINGS_LOCAL_PBF set to /osm-data/$OSM_FILE_NAME\033[0m"
 fi
 
 # Build backend container
@@ -202,4 +210,4 @@ envsubst '$BACKEND_DOMAIN_NAME $FRONTEND_DOMAIN_NAME $CLIENT_ID_OSM_APP $API_PRO
 
 # TODO: Run the website and configure the auto-update of cameras
 echo -e "\033[0;32m--- Installation complete! You can now run the application using 'docker compose up -d' ---\033[0m"
-echo -e "\033[0;32m--- To update the database with latests changes from OSM you can run 'make update' ---\033[0m"
+echo -e "\033[0;32m--- The 'replication' service started by 'docker compose up -d' keeps cameras up to date with OSM every minute ---\033[0m"

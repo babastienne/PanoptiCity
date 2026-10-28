@@ -120,6 +120,27 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# --- OSM replication and buildings provider ---
+# See docs/installation-config/update.md
+
+# Replication server followed by the `replicate_cameras` service
+REPLICATION_SERVER_URL = os.getenv(
+    "REPLICATION_SERVER_URL", "https://planet.osm.org/replication/minute")
+# State file written by the install script, used once to initialise the database state
+REPLICATION_STATE_FILE = os.getenv(
+    "REPLICATION_STATE_FILE", "/osm-data/sequence.state.txt")
+
+# Source of buildings used to compute the focus of new or moved cameras:
+# "overture" (Overture Maps monthly release, no local storage), "local" (local .osm.pbf
+# extract kept up to date with OSM diffs) or "none" (focus computed without buildings)
+BUILDINGS_PROVIDER = os.getenv("BUILDINGS_PROVIDER", "overture")
+BUILDINGS_OVERTURE_RELEASE = os.getenv("BUILDINGS_OVERTURE_RELEASE", "latest")
+BUILDINGS_OVERTURE_OSM_ONLY = os.getenv(
+    "BUILDINGS_OVERTURE_OSM_ONLY", "true").lower() in ("1", "true", "yes")
+BUILDINGS_LOCAL_PBF = os.getenv("BUILDINGS_LOCAL_PBF", "")
+BUILDINGS_LOCAL_UPDATE_HOURS = int(os.getenv("BUILDINGS_LOCAL_UPDATE_HOURS", "24"))
+BUILDINGS_CACHE_DIR = os.getenv("BUILDINGS_CACHE_DIR", "/osm-data/cache")
+
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"

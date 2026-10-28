@@ -27,6 +27,8 @@ django-cors-headers==4.9.0
     # via -r requirements.in
 django-filter==25.2
     # via djangorestframework-gis
+duckdb==1.5.6
+    # via -r requirements.in
 djangorestframework==3.16.1
     # via
     #   -r requirements.in

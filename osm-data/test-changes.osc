@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osmChange version="0.6" generator="panopticity-test">
+  <create>
+    <!-- 1. New fixed camera in Monaco: focus must be computed with buildings -->
+    <node id="99000000001" version="1" timestamp="2026-10-27T12:00:00Z" lat="43.7310" lon="7.4180">
+      <tag k="man_made" v="surveillance"/>
+      <tag k="surveillance:type" v="camera"/>
+      <tag k="camera:type" v="fixed"/>
+      <tag k="camera:direction" v="90"/>
+      <tag k="camera:mount" v="wall"/>
+      <tag k="surveillance" v="public"/>
+    </node>
+  </create>
+  <modify>
+    <!-- 2. Tags only (mount + zone): focus kept -->
+    <node id="6459866647" version="5" timestamp="2026-10-27T12:00:00Z" lat="43.7332957" lon="7.4155145">
+      <tag k="camera:mount" v="wall"/>
+      <tag k="camera:type" v="fixed"/>
+      <tag k="direction" v="240"/>
+      <tag k="man_made" v="surveillance"/>
+      <tag k="source" v="survey 2019"/>
+      <tag k="surveillance" v="outdoor"/>
+      <tag k="surveillance:type" v="camera"/>
+      <tag k="surveillance:zone" v="street"/>
+    </node>
+    <!-- 3. Direction changed: focus recomputed -->
+    <node id="6473583428" version="5" timestamp="2026-10-27T12:00:00Z" lat="43.732037" lon="7.413999">
+      <tag k="camera:type" v="fixed"/>
+      <tag k="direction" v="20"/>
+      <tag k="man_made" v="surveillance"/>
+      <tag k="surveillance" v="outdoor"/>
+      <tag k="surveillance:type" v="camera"/>
+      <tag k="surveillance:zone" v="building"/>
+    </node>
+    <!-- 4. Camera moved: focus recomputed -->
+    <node id="6482706094" version="5" timestamp="2026-10-27T12:00:00Z" lat="43.731200" lon="7.410600">
+      <tag k="camera:mount" v="pole"/>
+      <tag k="camera:type" v="dome"/>
+      <tag k="man_made" v="surveillance"/>
+      <tag k="source" v="survey 2019"/>
+      <tag k="surveillance" v="outdoor"/>
+      <tag k="surveillance:type" v="camera"/>
+      <tag k="surveillance:zone" v="traffic"/>
+    </node>
+    <!-- 5. man_made=surveillance removed: camera deleted -->
+    <node id="6480060615" version="5" timestamp="2026-10-27T12:00:00Z" lat="43.732252" lon="7.422405">
+      <tag k="highway" v="street_lamp"/>
+    </node>
+    <!-- Unrelated node: ignored -->
+    <node id="99000000002" version="3" timestamp="2026-10-27T12:00:00Z" lat="43.7320" lon="7.4190">
+      <tag k="amenity" v="bench"/>
+    </node>
+  </modify>
+  <delete>
+    <!-- 6. Camera node deleted -->
+    <node id="11148498422" version="6" timestamp="2026-10-27T12:00:00Z" lat="43.739624" lon="7.425784"/>
+  </delete>
+</osmChange>

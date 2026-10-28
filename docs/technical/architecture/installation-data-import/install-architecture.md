@@ -122,7 +122,7 @@ The `install.sh` script uses an interactive configuration system to set up requi
 | `BACKEND_DOMAIN_NAME`    | **(required)**   | Backend API domain           |
 | `CERTBOT_EMAIL`          | **(required)**   | Email for SSL certificates   |
 | `CLIENT_ID_OSM_APP`      | **(required)**   | OSM OAuth client ID          |
-| `UPDATE_WITH_OVERPASS`   | y                | Use Overpass API for updates |
+| `BUILDINGS_PROVIDER`     | overture         | Buildings source for updates |
 | `SECRET_KEY`             | (auto-generated) | Django secret key            |
 | `NGINX_CACHE_SECRET_KEY` | (auto-generated) | Cache purge secret           |
 

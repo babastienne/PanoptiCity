@@ -5,22 +5,13 @@ delete_database:
 install:
 	/bin/bash ./scripts/install.sh
 
+# Apply all pending OSM changes once (the `replication` service does it continuously)
 update:
-	/bin/bash ./scripts/update-cameras.sh
+	docker compose run --rm replication python manage.py replicate_cameras --once
 
-PROJECT_DIR := $(shell pwd)
-SCRIPT_NAME := scripts/update_loop.sh
-LOG_FILE := $(PROJECT_DIR)/replication.log
-CRON_JOB := @reboot sleep 60 && cd $(PROJECT_DIR) && ./$(SCRIPT_NAME) >> $(LOG_FILE) 2>&1
-
-install_update:
-	@echo "--- Installing Cron Job ---"
-	@chmod +x $(SCRIPT_NAME)
-	@(crontab -l 2>/dev/null | grep -v "$(SCRIPT_NAME)" || true; echo "$(CRON_JOB)") | crontab -
-	@echo "✅ Cron job installed."
-	@echo "   - Trigger: @reboot (System Startup)"
-	@echo "   - Delay: 60 seconds (waiting for Docker daemon)"
-	@echo "   - Log file: $(LOG_FILE)"
+# Follow the logs of the replication service
+replication_logs:
+	docker compose logs -f replication
 
 start:
 	docker compose up -d

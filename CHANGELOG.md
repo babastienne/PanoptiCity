@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file. This projec
 
 ---
 
+## [Unreleased] - 🔄 Camera updates without Overpass
+
+- **✨ Feature**: New `replication` docker service (`replicate_cameras` command) following OSM minutely diffs, replacing the bash update loop, the cron and the Overpass API.
+    - Buildings needed to compute the focus of new or moved cameras come from a configurable provider: `overture` (OSM buildings of the monthly Overture Maps release, no local storage) or `local` (install extract kept up to date with OSM diffs).
+    - Changes limited to descriptive tags no longer require buildings and keep the existing focus.
+    - Cameras whose `man_made=surveillance` tag is removed are now deleted.
+    - If the provider is unavailable, cameras are saved with a focus without buildings and retried later: an update never deletes a camera.
+    - The replication sequence is stored in the database.
+- **🐛 Bug fixes**: A failed building request no longer deletes the camera being updated.
+- **🏗️ Maintenance**: Removed `update_cameras_with_api`, `scripts/update_loop.sh`, `scripts/update-cameras.sh` and the `install_update` make target. See the migration notes in the documentation.
+
+---
+
 ## [1.1.0] - 2026-01-16 - 📷 Add panorama support for camera type
 
 - **✨ Feature**: PanoptiCity now support "Panoramic" cameras as a new type. It is computed the same way dome and panning cameras are. The contribution form is also updated and the user can select "multi-sensors" cameras as a type (which correponds to panorama). Related issue #36 and OSM wiki https://wiki.openstreetmap.org/wiki/Key:camera:type.

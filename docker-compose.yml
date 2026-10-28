@@ -51,6 +51,27 @@ services:
     env_file:
       - .env
 
+  # Follows OSM minutely diffs and keeps cameras up to date
+  # (see docs/installation-config/update.md)
+  replication:
+    build: .
+    restart: unless-stopped
+    command: ["python", "manage.py", "replicate_cameras", "--log-file", "/app/replication.log"]
+    depends_on:
+      - postgis
+    volumes:
+      - ./osm-data:/osm-data
+      - ./back-end:/app
+    environment:
+      DJANGO_SECRET_KEY: ${SECRET_KEY}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: postgis
+      POSTGRES_PORT: 5432
+    env_file:
+      - .env
+
   nginx:
     image: nginx:alpine
     container_name: nginx-proxy
